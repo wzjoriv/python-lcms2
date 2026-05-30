@@ -5,6 +5,7 @@ import numpy as np
 from .implementation import WHITE_POINTS, CMSError, create_profile, open_profile, profile_from_memory
 
 DATA_TYPES = _lcms2.DATA_TYPES
+_DATA_TYPES_UPPER = {k.upper(): k for k in DATA_TYPES}
 
 INTENT = {
     "PERCEPTUAL": 0,
@@ -77,18 +78,25 @@ class Transform:
                  proofing_profile=None, proofing_intent=None):
         if not isinstance(src_profile, (Profile, _lcms2.Profile)):
             raise CMSError(f"Wrong type of src_profile. Expected Profile but got '{type(src_profile)}'")
-        if src_format not in DATA_TYPES.keys():
+        src_format_key = _DATA_TYPES_UPPER.get(src_format.upper())
+        if src_format_key is None:
             raise CMSError(f"Invalid source data format: '{src_format}'")
+        src_format = src_format_key
         if not isinstance(dst_profile, (Profile, _lcms2.Profile)):
             raise CMSError(f"Wrong type of dst_profile. Expected Profile but got '{type(src_profile)}'")
-        if dst_format not in DATA_TYPES.keys():
+        dst_format_key = _DATA_TYPES_UPPER.get(dst_format.upper())
+        if dst_format_key is None:
             raise CMSError(f"Invalid destination data format: '{dst_format}'")
-        if intent not in INTENT.keys():
+        dst_format = dst_format_key
+        intent_key = intent.upper()
+        if intent_key not in INTENT:
             raise CMSError(f"Invalid rendering intent: '{intent}'")
-        flag_list = re.split("[ ,;|]", flags)
+        intent = intent_key
+        flag_list = [f for f in re.split("[ ,;|]+", flags) if f]
         transform_flags = FLAG["NONE"]
         for f in flag_list:
-            if f not in FLAG.keys():
+            f = f.upper()
+            if f not in FLAG:
                 raise CMSError(f"Invalid flag: '{f}'")
             transform_flags = transform_flags | FLAG[f]
 

@@ -8,7 +8,7 @@ Python binding for the [LittleCMS2](https://github.com/mm2/Little-CMS) color man
 pip install python-lcms2
 ```
 
-Pre-built wheels are available on PyPI for Windows (x86-64) and Linux (x86-64) on Python 3.10 and later. For other platforms, see [Building from source](#building-from-source).
+Pre-built wheels are available on PyPI for Windows (x86-64, ARM64), Linux (x86-64, ARM64), and macOS (Intel, Apple Silicon) on Python 3.10 and later. For other platforms, see [Building from source](#building-from-source).
 
 ## Usage
 
@@ -50,7 +50,23 @@ The constructor signature is:
 Transform(src_profile, src_format, dst_profile, dst_format, intent="PERCEPTUAL", flags="NONE")
 ```
 
-All supported format strings:
+#### Format strings
+
+Format strings follow the pattern `{COLORSPACE}_{DTYPE}` with an optional suffix. The dtype suffix determines the NumPy array type expected at runtime:
+
+| Suffix | NumPy dtype | Typical use |
+|--------|-------------|-------------|
+| `_8`   | `uint8`     | 8-bit images (0–255) |
+| `_16`  | `uint16`    | 16-bit images (0–65535) |
+| `_FLT` | `float32`   | Single-precision float |
+| `_DBL` | `float64`   | Double-precision float |
+| `_HALF_FLT` | `float16` | Half-precision float |
+
+Common colorspace prefixes: `RGB`, `BGR`, `RGBA`, `BGRA`, `GRAY`, `Lab`, `XYZ`, `CMYK`, `YCbCr`, `HSV`, `HLS`.
+
+Optional suffixes: `_PLANAR` (channel-first layout), `_REV` (ink-reversed), `_SE` (swap-endian), `_PREMUL` (premultiplied alpha).
+
+The full list of supported format strings:
 
 ```python
 lcms2.DATA_TYPES.keys()
@@ -68,13 +84,64 @@ transform = lcms2.Transform(lab, "Lab_DBL", srgb, "RGB_16",
 
 ### Applying a transform
 
-`Transform.apply` accepts a NumPy array or any array-compatible object and returns a transformed NumPy array:
+`Transform.apply` accepts a NumPy array or any array-compatible object and returns a transformed NumPy array. It works on single pixels, batches, and full images — the last dimension is always the channel axis:
 
 ```python
-result = transform.apply([50.0, 0.0, 0.0])   # L*a*b* neutral grey
+result = transform.apply([50.0, 0.0, 0.0])   # L*a*b* neutral grey, shape (3,)
 ```
 
-The input type must match the source format declared at construction time. When passing lists or other convertibles, the data is cast automatically where possible.
+The array dtype must match the source format declared at construction time. When passing lists or other convertibles, the data is cast automatically where possible.
+
+#### Converting a full image
+
+`apply` treats any array shape as `(..., channels)`, so a 2D image `(H, W, C)` is processed in one call:
+
+```python
+import numpy as np
+import lcms2
+
+srgb     = lcms2.Profile("sRGB")
+prophoto = lcms2.Profile("ProPhoto RGB")
+
+transform = lcms2.Transform(srgb, "RGB_8", prophoto, "RGB_16")
+
+image   = np.random.randint(0, 256, (480, 640, 3), dtype=np.uint8)
+result  = transform.apply(image)   # shape (480, 640, 3), dtype uint16
+```
+
+A common use case is editing in Lab — perceptually uniform, so lightness adjustments look natural. OpenCV loads images as BGR uint8:
+
+```python
+import cv2
+import numpy as np
+import lcms2
+import matplotlib.pyplot as plt
+
+image = cv2.imread("photo.jpg")               # uint8, BGR
+
+srgb = lcms2.Profile("sRGB")
+lab  = lcms2.Profile("Lab")
+
+to_lab  = lcms2.Transform(srgb, "bgr_8",   lab,  "lab_flt")
+to_srgb = lcms2.Transform(lab,  "lab_flt", srgb, "rgb_flt")
+
+lab_image = to_lab.apply(image)
+lab_image[..., 0] = np.clip(lab_image[..., 0] * 1.2, 0, 100)  # boost lightness
+
+result = np.clip(to_srgb.apply(lab_image), 0.0, 1.0)   # float32, RGB, 0.0–1.0
+
+plt.imshow(result)
+plt.show()
+```
+
+Format strings are case-insensitive, so `"BGR_8"`, `"bgr_8"`, and `"Bgr_8"` are all accepted.
+
+To save back to a file with cv2:
+
+```python
+bgr_out = cv2.cvtColor((result * 255).astype(np.uint8), cv2.COLOR_RGB2BGR)
+cv2.imwrite("output.jpg", bgr_out)
+```
 
 ## Building from source
 

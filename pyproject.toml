@@ -34,11 +34,3 @@ where = ["src"]
 build = "cp310-* cp311-* cp312-* cp313-* cp314-*"
 build-frontend = "build"
 
-[tool.cibuildwheel.linux]
-archs = ["x86_64", "aarch64"]
-
-[tool.cibuildwheel.windows]
-archs = ["AMD64"]
-
-[tool.cibuildwheel.macos]
-archs = ["native"]
