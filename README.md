@@ -8,7 +8,7 @@ Python binding for the [LittleCMS2](https://github.com/mm2/Little-CMS) color man
 pip install python-lcms2
 ```
 
-Pre-built wheels are available on PyPI for Windows (x86-64, ARM64), Linux (x86-64, ARM64), and macOS (Intel, Apple Silicon) on Python 3.10 and later. For other platforms, see [Building from source](#building-from-source).
+Pre-built wheels are available on PyPI for Windows (x86-64, ARM64), Linux (x86-64, ARM64), and macOS (Intel, Apple Silicon) on Python 3.10 and later. Windows ARM64 requires Python 3.11 or later. For other platforms, see [Building from source](#building-from-source).
 
 ## Usage
 
