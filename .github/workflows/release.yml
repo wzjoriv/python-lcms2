@@ -110,6 +110,11 @@ jobs:
           name: sdist
           path: dist
 
+      - uses: actions/download-artifact@v6
+        with:
+          name: pyodide-wheels
+          path: dist/pyodide
+
       - uses: actions/upload-artifact@v6
         with:
           name: dist
