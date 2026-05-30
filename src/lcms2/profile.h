@@ -101,7 +101,7 @@ static PyMethodDef profile_methods[] = {
 
 static PyTypeObject profile_type = {
     .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "pylcms2.Profile",
+    .tp_name = "lcms2.Profile",
     .tp_doc = PyDoc_STR("Little CMS2 profile"),
     .tp_basicsize = sizeof(profile_object),
     .tp_itemsize = 0,

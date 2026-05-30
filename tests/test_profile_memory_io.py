@@ -1,4 +1,4 @@
-import pylcms2
+import lcms2
 import os
 
 def get_filepath(filename):
@@ -9,19 +9,19 @@ def get_filepath(filename):
 
 def test_profile_from_memory():
     fn = get_filepath("CMYK.icm")
-    reference = pylcms2.open_profile(fn)
+    reference = lcms2.open_profile(fn)
     with open(fn, "rb") as fid:
         buffer = fid.read()
-        p = pylcms2.Profile(buffer=buffer)
+        p = lcms2.Profile(buffer=buffer)
     assert reference.name == p.name
     assert reference.info == p.info
     assert reference.copyright == p.copyright
 
 
 def test_memory_round_trip():
-    reference = pylcms2.Profile("XYZ")
+    reference = lcms2.Profile("XYZ")
     buffer = reference.to_bytes()
-    p = pylcms2.Profile(buffer=buffer)
+    p = lcms2.Profile(buffer=buffer)
     assert reference.name == p.name
     assert reference.info == p.info
     assert reference.copyright == p.copyright

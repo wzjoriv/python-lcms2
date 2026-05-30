@@ -53,7 +53,7 @@ def get_additional_paths():
     return include_path, libraries_path
 
 
-SOURCES = ["src/pylcms2/_lcms2.c",
+SOURCES = ["src/lcms2/_lcms2.c",
            "Little-CMS/src/cmsalpha.c",
            "Little-CMS/src/cmscam02.c",
            "Little-CMS/src/cmscgats.c",
@@ -89,7 +89,7 @@ extra_include, extra_libs = get_additional_paths()
 setup_args = dict(
     ext_modules=[
         Extension(
-            name="_lcms2",
+            name="lcms2._lcms2",
             language="c",
             define_macros=[('MAJOR_VERSION', '0'), ('MINOR_VERSION', '4')],
             include_dirs=INCLUDE_DIRECTORIES + extra_include,

@@ -270,7 +270,7 @@ static PyMethodDef transform_methods[] = {
 
 static PyTypeObject transform_type = {
     .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
-                   .tp_name = "pylcms2.Transform",
+                   .tp_name = "lcms2.Transform",
     .tp_doc = PyDoc_STR("Little CMS2 transform"),
     .tp_basicsize = sizeof(transform_object),
     .tp_itemsize = 0,

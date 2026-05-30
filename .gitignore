@@ -6,6 +6,8 @@ dist
 *.egg-info/
 *.pyd
 __pycache__/
+.pytest_cache/
+.mypy_cache/
 
 build.bat
 run.bat

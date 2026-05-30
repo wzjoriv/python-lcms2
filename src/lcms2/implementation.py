@@ -1,4 +1,4 @@
-import _lcms2
+from . import _lcms2
 import numpy as np
 import os
 

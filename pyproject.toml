@@ -1,16 +1,16 @@
 [build-system]
-requires = ["setuptools>=61.0", "numpy>=2.2.2"]
+requires = ["setuptools>=61.0", "numpy>=2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pylcms2"
-version = "0.0.20"
+name = "python-lcms2"
+version = "0.1.0"
 authors = [
-    { name = "Roman Kosobrodov", email = "roman@kosobrodov.net" },
+    { name = "Josue N Rivera", email = "josuevaldez1.com@gmail.com" },
 ]
 description = "Python binding for LittleCMS2 library"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     'Programming Language :: C',
@@ -21,9 +21,24 @@ classifiers = [
     'Topic :: Multimedia :: Graphics :: Graphics Conversion'
 ]
 keywords = [""]
-dependencies = ["numpy>=2.2.2"]
+dependencies = ["numpy>=2.0"]
 
 [project.urls]
-"Homepage" = "https://github.com/RomanKosobrodov/python-lcms2"
-"Bug Tracker" = "https://github.com/RomanKosobrodov/python-lcms2/issues"
+"Homepage" = "https://github.com/wzjoriv/python-lcms2"
+"Bug Tracker" = "https://github.com/wzjoriv/python-lcms2/issues"
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.cibuildwheel]
+build = "cp310-* cp311-* cp312-* cp313-* cp314-*"
+build-frontend = "build"
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "aarch64"]
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]
+
+[tool.cibuildwheel.macos]
+archs = ["native"]

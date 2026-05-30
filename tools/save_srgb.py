@@ -1,4 +1,4 @@
-import pylcms2
+import lcms2
 
-profile = pylcms2.Profile("sRGB")
+profile = lcms2.Profile("sRGB")
 profile.save("sRGB.icc")

@@ -1,6 +1,6 @@
 import os
 import re
-import _lcms2
+from . import _lcms2
 import numpy as np
 from .implementation import WHITE_POINTS, CMSError, create_profile, open_profile, profile_from_memory
 

@@ -1,12 +1,12 @@
-import pylcms2
+import lcms2
 import os
 import numpy as np
 
 
 def test_neutral_grey():
-    x = pylcms2.create_profile("Lab")
-    y = pylcms2.create_profile("sRGB")
-    t = pylcms2.Transform(x, "Lab_DBL",
+    x = lcms2.create_profile("Lab")
+    y = lcms2.create_profile("sRGB")
+    t = lcms2.Transform(x, "Lab_DBL",
                           y, "RGB_16",
                           "PERCEPTUAL",
                           "NONE")
@@ -19,9 +19,9 @@ def test_rgb_to_cmyk():
     fn = os.path.join(os.path.dirname(__file__),
                       'cms_data',
                       "CMYK.icm")
-    x = pylcms2.Profile("sRGB")
-    y = pylcms2.Profile(filename=fn)
-    t = pylcms2.Transform(x, "RGB_DBL",
+    x = lcms2.Profile("sRGB")
+    y = lcms2.Profile(filename=fn)
+    t = lcms2.Transform(x, "RGB_DBL",
                           y, "CMYK_DBL",
                           "PERCEPTUAL",
                           "NONE")
@@ -31,9 +31,9 @@ def test_rgb_to_cmyk():
 
 
 def test_apply_sliced():
-    x = pylcms2.create_profile("sRGB")
-    y = pylcms2.create_profile("XYZ")
-    t = pylcms2.Transform(x, "RGB_8",
+    x = lcms2.create_profile("sRGB")
+    y = lcms2.create_profile("XYZ")
+    t = lcms2.Transform(x, "RGB_8",
                           y, "XYZ_DBL",
                           "PERCEPTUAL",
                           "NONE")
@@ -45,16 +45,16 @@ def test_apply_sliced():
 
 
 def test_proofing_transform():
-    src = pylcms2.Profile("Lab")
-    dst = pylcms2.Profile("sRGB")
-    proof = pylcms2.Profile("sRGB")
-    t1 = pylcms2.Transform(src, "Lab_DBL",
+    src = lcms2.Profile("Lab")
+    dst = lcms2.Profile("sRGB")
+    proof = lcms2.Profile("sRGB")
+    t1 = lcms2.Transform(src, "Lab_DBL",
                           dst, "RGB_16",
                           proofing_profile=proof,
                           proofing_intent="PRESERVE_K_ONLY_PERCEPTUAL",
                           intent="PERCEPTUAL",
                           flags="NONE")
-    t2 = pylcms2.Transform(src, "Lab_DBL",
+    t2 = lcms2.Transform(src, "Lab_DBL",
                           dst, "RGB_16",
                           intent="PERCEPTUAL",
                           flags="NONE")

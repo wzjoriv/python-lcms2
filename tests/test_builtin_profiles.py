@@ -1,7 +1,7 @@
-import pylcms2
+import lcms2
 
 def test_version():
-    assert len(pylcms2.get_version()) >= 3
+    assert len(lcms2.get_version()) >= 3
 
 
 def is_valid_handle(h):
@@ -10,7 +10,7 @@ def is_valid_handle(h):
 
 
 def test_default_profile():
-    p = pylcms2.Profile()
+    p = lcms2.Profile()
     assert "NULL" in p.name
     assert "use freely" in p.copyright
     assert is_valid_handle(p.handle)
@@ -18,7 +18,7 @@ def test_default_profile():
 
 def test_builtins():
     for profile_name in ("sRGB", "Lab", "XYZ"):
-        p = pylcms2.Profile(profile_name)
+        p = lcms2.Profile(profile_name)
         assert profile_name in p.name
         assert "use freely" in p.copyright
         assert is_valid_handle(p.handle)

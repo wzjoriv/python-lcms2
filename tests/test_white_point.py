@@ -1,6 +1,6 @@
-import pylcms2
-from pylcms2.implementation import WHITE_POINTS
-import _lcms2
+import lcms2
+from lcms2.implementation import WHITE_POINTS
+from lcms2 import _lcms2
 import numpy as np
 
 def is_valid_lab(profile):
@@ -17,22 +17,22 @@ def test_temperature_to_white_point():
 
 
 def test_lab_from_illuminant():
-    p = pylcms2.Profile("Lab", white_point="D65")
+    p = lcms2.Profile("Lab", white_point="D65")
     assert is_valid_lab(p)
 
 def test_lab_from_temperature():
-    p = pylcms2.Profile("Lab", temperature=6504)
+    p = lcms2.Profile("Lab", temperature=6504)
     assert is_valid_lab(p)
 
 
 def test_lab_from_white_point():
     wp = [0.31271405688264753, 0.3291190991371872, 1.0]
-    p = pylcms2.Profile("Lab", white_point=wp)
+    p = lcms2.Profile("Lab", white_point=wp)
     assert is_valid_lab(p)
 
 
 def test_default_lab():
-    p = pylcms2.Profile("Lab")
+    p = lcms2.Profile("Lab")
     assert is_valid_lab(p)
 
 
