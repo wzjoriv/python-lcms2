@@ -5,6 +5,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -89,14 +92,11 @@ jobs:
           name: sdist
           path: dist/*.tar.gz
 
-  publish:
-    name: Publish to PyPI
+  collect:
+    name: Collect all distributions
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    if: ${{ always() && github.event_name == 'release' && needs.build_sdist.result == 'success' }}
-    environment: pypi
-    permissions:
-      id-token: write
+    if: ${{ always() && needs.build_sdist.result == 'success' }}
 
     steps:
       - uses: actions/download-artifact@v6
@@ -108,6 +108,26 @@ jobs:
       - uses: actions/download-artifact@v6
         with:
           name: sdist
+          path: dist
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: [collect, build_sdist]
+    runs-on: ubuntu-latest
+    if: ${{ always() && github.event_name == 'release' && needs.build_sdist.result == 'success' && needs.collect.result == 'success' }}
+    environment: pypi
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: dist
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
