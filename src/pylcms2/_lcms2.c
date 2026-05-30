@@ -1,7 +1,12 @@
-
 #define PY_SSIZE_T_CLEAN
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <Python.h>
+
+#if PY_VERSION_HEX < 0x030c0000
+  #define Py_T_INT        T_INT
+  #define Py_T_OBJECT_EX  T_OBJECT_EX
+#endif
+
 #include <numpy/arrayobject.h>
 #include <lcms2.h>
 #include <lcms2_internal.h>
