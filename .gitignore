@@ -5,9 +5,20 @@ build
 dist
 *.egg-info/
 *.pyd
+*.so
 __pycache__/
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+docs/_build/
 
 build.bat
 run.bat
+
+# local planning notes and agent state
+DESIGN.md
+TODO.md
+LATER.md
+.claude/
