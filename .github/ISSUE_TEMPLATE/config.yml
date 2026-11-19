@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: LittleCMS bugs
+    url: https://github.com/mm2/Little-CMS/issues
+    about: Bugs in LittleCMS itself (the C library), not in python-lcms2's bindings. Report them upstream.

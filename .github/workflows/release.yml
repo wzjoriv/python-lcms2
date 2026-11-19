@@ -94,7 +94,7 @@ jobs:
 
   collect:
     name: Collect all distributions
-    needs: [build_wheels, build_sdist]
+    needs: [build_wheels, build_pyodide, build_sdist]
     runs-on: ubuntu-latest
     if: ${{ always() && needs.build_sdist.result == 'success' }}
 
