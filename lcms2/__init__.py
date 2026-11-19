@@ -1,3 +1,8 @@
+"""Color management for NumPy, built on LittleCMS2."""
+
+__version__ = "0.2.0"
+__author__ = "Josue N Rivera"
+
 import os
 import re
 from . import _lcms2
