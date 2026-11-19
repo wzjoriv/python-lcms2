@@ -113,6 +113,8 @@ class Profile(ProfileData):
         data = make()
         if isinstance(data, Profile):
             return data
+        if isinstance(data, dict):  # ColorSpace.to_icc_profile() -> {"bytes", "method", "notes"}
+            data = data["bytes"]
         return cls.from_bytes(data)
 
     @classmethod
@@ -232,6 +234,20 @@ class Profile(ProfileData):
         return cls._from_handle(_lcms2.profile_create_linearization(color_space, list(curves)))
 
     # Serialisation ---------------------------------------------------------------------------------
+
+    @property
+    def space(self):
+        """A :class:`lcms2.spaces.ColorSpace` view of this profile (pure NumPy evaluation).
+
+        Examples
+        --------
+        >>> import lcms2
+        >>> lcms2.Profile("sRGB").space.n_channels
+        3
+        """
+        from .icc import ICCSpace
+
+        return ICCSpace(self.to_bytes())
 
     def to_bytes(self) -> bytes:
         """The profile as ICC bytes."""

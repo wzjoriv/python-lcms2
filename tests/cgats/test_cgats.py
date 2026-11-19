@@ -2,8 +2,8 @@
 
 import numpy as np
 import pytest
-from lcms2._lcms2 import LCMSError
 
+from lcms2._lcms2 import LCMSError
 from lcms2.cgats import CGATS
 
 SAMPLE = b"""IT8.7/2

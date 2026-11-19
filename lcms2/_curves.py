@@ -41,6 +41,13 @@ class ToneCurve:
             source = _lcms2.curve_tabulated(_table_array(source))
         self._handle = source
 
+    @classmethod
+    def _from_handle(cls, handle) -> ToneCurve:
+        """Wrap a curve capsule returned by the extension."""
+        self = cls.__new__(cls)
+        self._handle = handle
+        return self
+
     # -- construction -------------------------------------------------------------------------
 
     @classmethod

@@ -66,6 +66,14 @@ def _resolve_space(obj: Any) -> Profile | Any:
             space = _lookup_space_name(obj)
             if space is not None:
                 return space
+            if not os.path.splitext(obj)[1] and not any(c in obj for c in "/\\"):
+                from .spaces import ColorSpace
+
+                raise KeyError(
+                    f"unknown color space or profile {obj!r}. Built-in profiles: "
+                    f"{', '.join(Profile.builtins())}. Color spaces: {', '.join(ColorSpace.list())}. "
+                    "Or pass a path to an ICC file."
+                )
         return Profile(obj)
     if _is_space(obj):
         return obj

@@ -10,14 +10,20 @@ array([54.29, 80.81, 69.89])
 __version__ = "0.2.0"
 __author__ = "Josue N Rivera"
 
-from . import _lcms2
+from . import _lcms2, cgats, colorimetry, colormap, icc, spaces
 from ._constants import ColorSpaceSignature, DeviceClass, Flag, Intent
 from ._convert import convert
+from ._curves import ToneCurve
 from ._data import RGB_SPACES, WHITE_POINTS
 from ._errors import CMSError
 from ._formats import FORMATS
+from ._parse import parse_color, parse_colors, to_hex
 from ._profile import Profile
 from ._transform import Transform, get_alarm_codes, set_adaptation_state, set_alarm_codes
+from .cgats import CGATS
+from .colorimetry import CIECAM02, delta_e
+from .colormap import Colormap
+from .spaces import ColorSpace
 
 
 def get_version() -> str:
@@ -27,6 +33,20 @@ def get_version() -> str:
 
 
 __all__ = [
+    "CGATS",
+    "CIECAM02",
+    "ColorSpace",
+    "Colormap",
+    "ToneCurve",
+    "cgats",
+    "colorimetry",
+    "colormap",
+    "delta_e",
+    "icc",
+    "parse_color",
+    "parse_colors",
+    "spaces",
+    "to_hex",
     "CMSError",
     "ColorSpaceSignature",
     "DeviceClass",

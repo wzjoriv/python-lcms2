@@ -49,15 +49,15 @@ def test_duck_typed_space_routes_through_xyz():
     np.testing.assert_allclose(lcms2.convert([0.2, 0.3, 0.4], space, space), [0.2, 0.3, 0.4])
 
 
-def test_space_name_lookup(monkeypatch):
-    mod = type(sys)("lcms2.spaces")
-    mod.get = lambda name: FakeLinearSRGB() if name == "linear-srgb" else (_ for _ in ()).throw(KeyError(name))
-    monkeypatch.setitem(sys.modules, "lcms2.spaces", mod)
-    monkeypatch.setattr(lcms2, "spaces", mod, raising=False)
-    assert isinstance(_convert._resolve_space("linear-srgb"), FakeLinearSRGB)
+def test_space_name_lookup():
+    from lcms2.spaces import OKLabSpace
+
+    assert isinstance(_convert._resolve_space("OKLab"), OKLabSpace)
     assert isinstance(_convert._resolve_space("sRGB"), lcms2.Profile)  # built-ins win
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(KeyError, match="Color spaces: .*oklab"):
         _convert._resolve_space("unknown")
+    with pytest.raises(FileNotFoundError):
+        _convert._resolve_space("missing.icc")
 
 
 def test_intent_and_flag_parsing():

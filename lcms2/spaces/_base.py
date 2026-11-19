@@ -202,22 +202,21 @@ class ColorSpace:
         >>> srgb.to(xyz_d50, np.array([1.0, 1.0, 1.0])).round(4)
         array([0.9642, 1.    , 0.8249])
         """
+        if (isinstance(target, str) and target.lower() not in _REGISTRY) or (
+            not isinstance(target, (str, ColorSpace))
+        ):
+            # Profiles, built-in profile names and ICC files go through LittleCMS.
+            from .._convert import convert
+
+            return convert(array, self, target)
         if isinstance(target, str):
-            target_cls = _REGISTRY.get(target.lower())
-            if target_cls is None:
-                raise KeyError(
-                    f"no color space registered as {target!r}; registered: {ColorSpace.list()}"
-                )
+            target_cls = _REGISTRY[target.lower()]
             try:
                 target = target_cls()
             except TypeError as e:
                 raise TypeError(
                     f"{target_cls.__name__} needs constructor arguments; pass an instance"
                 ) from e
-        elif not isinstance(target, ColorSpace):
-            raise TypeError(
-                f"target must be a registered name or a ColorSpace, got {type(target).__name__}"
-            )
         return target.from_xyz(self.to_xyz(array))
 
     def to_xyz(self, values: Any) -> np.ndarray:
@@ -257,6 +256,23 @@ class ColorSpace:
             have shape ``(..., n_channels)``.
         """
         raise NotImplementedError
+
+    @property
+    def profile(self):
+        """This space as an :class:`lcms2.Profile` (built once, exactly when possible).
+
+        Examples
+        --------
+        >>> from lcms2.spaces import display_p3
+        >>> display_p3.profile.color_space == "RGB"
+        True
+        """
+        cached = self.__dict__.get("_profile")
+        if cached is None:
+            from .._profile import Profile
+
+            cached = self.__dict__["_profile"] = Profile.from_space(self)
+        return cached
 
     def to_icc_profile(
         self,
@@ -327,3 +343,23 @@ class ColorSpace:
 
     def __repr__(self) -> str:
         return f"<{type(self).__name__} name={self.name!r} n_channels={self.n_channels}>"
+
+
+def get(name: str) -> ColorSpace:
+    """The registered color space called `name` (case-insensitive), as an instance.
+
+    Raises
+    ------
+    KeyError
+        If no space is registered under `name`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import get
+    >>> get("OKLab").n_channels
+    3
+    """
+    cls = _REGISTRY.get(str(name).lower())
+    if cls is None:
+        raise KeyError(f"no color space registered as {name!r}; registered: {ColorSpace.list()}")
+    return cls()

@@ -111,7 +111,7 @@ def _real_profiles():
             cs = ICCSpace(path)
         except Exception:
             continue
-        mode = MODES.get(cs.profile.header.data_colour_space)
+        mode = MODES.get(cs.icc.header.data_colour_space)
         if mode is not None:
             out.append(pytest.param(path, cs, mode, id=os.path.basename(path)))
     return out

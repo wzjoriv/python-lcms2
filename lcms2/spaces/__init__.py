@@ -16,7 +16,7 @@ from __future__ import annotations
 from typing import Any
 
 from ._a98_rgb import A98RGBSpace, a98_rgb
-from ._base import ColorSpace
+from ._base import ColorSpace, get
 from ._cmyk import CMYKSpace, cmyk
 from ._display_p3 import DisplayP3Space, display_p3
 from ._display_p3_linear import DisplayP3LinearSpace, display_p3_linear
@@ -40,6 +40,7 @@ from ._xyz_d65 import XYZD65Space, xyz_d65
 
 __all__ = [
     "ColorSpace",
+    "get",
     "ICCSpace",
     "RGBSpace",
     "SRGBSpace",

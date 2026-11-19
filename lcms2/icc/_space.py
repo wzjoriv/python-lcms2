@@ -39,13 +39,13 @@ class ICCSpace(ColorSpace):
     _abstract = True
 
     def __init__(self, source: str | bytes | ICCProfile):
-        self.profile = source if isinstance(source, ICCProfile) else ICCProfile.load(source)
+        self.icc = source if isinstance(source, ICCProfile) else ICCProfile.load(source)
         self.description = self._read_description()
-        built = build_transform(self.profile)
+        built = build_transform(self.icc)
         self.kind = built.kind
         to_xyz, from_xyz = built.to_xyz, built.from_xyz
 
-        domain = read_device_domain(self.profile, built.n_channels)
+        domain = read_device_domain(self.icc, built.n_channels)
         if domain is not None:
             lo = np.array([p[0] for p in domain])
             span = np.array([p[1] - p[0] for p in domain])
@@ -57,9 +57,9 @@ class ICCSpace(ColorSpace):
             def from_xyz(xyz: Any, _f: Callable = raw_from) -> np.ndarray:
                 return _f(xyz) * span + lo
 
-        self.circular_device_channels = read_circular_channels(self.profile)
+        self.circular_device_channels = read_circular_channels(self.icc)
 
-        header = self.profile.header
+        header = self.icc.header
         try:
             super().__init__(
                 n_channels=built.n_channels,
@@ -74,7 +74,7 @@ class ICCSpace(ColorSpace):
         self.icc_colour_space_signature = header.data_colour_space
 
     def _read_description(self) -> str | None:
-        body = self.profile.get_tag(b"desc")
+        body = self.icc.get_tag(b"desc")
         if body is None:
             return None
         try:
@@ -106,7 +106,7 @@ class ICCSpace(ColorSpace):
             ``{'bytes': bytes, 'method': str, 'notes': list of str}``.
         """
         version = normalize_icc_version(kwargs.get("version", 4))
-        header = self.profile.header
+        header = self.icc.header
         if version[0] != header.version_major or kwargs.get("force_clut"):
             return super().to_icc_profile(path, **{**kwargs, "version": version})
         raw = ICCProfile.build_bytes(
@@ -116,7 +116,7 @@ class ICCSpace(ColorSpace):
             pcs=header.pcs,
             rendering_intent=kwargs.get("rendering_intent", header.rendering_intent),
             pcs_illuminant=header.pcs_illuminant,
-            tags=dict(self.profile.tags),
+            tags=dict(self.icc.tags),
         )
         if path is not None:
             with open(path, "wb") as f:
