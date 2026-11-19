@@ -1,5 +1,4 @@
-Name,CIE 1931 2°,CIE 1964 10°,CCT (K),Note
-x2°,y2°,x10°,y10°
+name,x2,y2,x10,y10,cct,description
 A,0.44758,0.40745,0.45117,0.40594,2856,incandescent / tungsten
 B,0.34842,0.35161,0.34980,0.35270,4874,"obsolete, direct sunlight at noon"
 C,0.31006,0.31616,0.31039,0.31905,6774,"obsolete, average / North sky daylight NTSC 1953, PAL-M"
