@@ -1,6 +1,21 @@
 /* Transforms: creation (plain, proofing, multi-profile, extended), apply, device links. */
 #include "common.h"
 
+#include <stdarg.h>
+
+/* ValueError with a printf-style message (PyErr_Format has no %g). */
+static void
+value_errorf(const char *fmt, ...)
+{
+    char buf[256];
+    va_list ap;
+    va_start(ap, fmt);
+    PyOS_vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    PyErr_SetString(PyExc_ValueError, buf);
+}
+
+
 #define MAX_PROFILES 255
 
 /* Profiles from a sequence; fills hs[] (borrowed). Returns the count or -1. */
@@ -311,7 +326,7 @@ py_to_device_link(PyObject *self, PyObject *args)
     if (t == NULL)
         return NULL;
     if (version < 2.0 || version >= 5.0) {
-        PyErr_Format(PyExc_ValueError, "device link version must be between 2.0 and 4.4, got %g", version);
+        value_errorf("device link version must be between 2.0 and 4.4, got %g", version);
         return NULL;
     }
     lcms2_clear_error();
@@ -379,7 +394,7 @@ py_set_adaptation_state(PyObject *self, PyObject *arg)
     if (d == -1.0 && PyErr_Occurred())
         return NULL;
     if (d > 1.0) {
-        PyErr_Format(PyExc_ValueError, "adaptation state must be 0..1 (negative queries), got %g", d);
+        value_errorf("adaptation state must be 0..1 (negative queries), got %g", d);
         return NULL;
     }
     return PyFloat_FromDouble(cmsSetAdaptationState(d));

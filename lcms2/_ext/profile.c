@@ -5,6 +5,21 @@
  */
 #include "profile.h"
 
+#include <stdarg.h>
+
+/* ValueError with a printf-style message (PyErr_Format has no %g). */
+static void
+value_errorf(const char *fmt, ...)
+{
+    char buf[256];
+    va_list ap;
+    va_start(ap, fmt);
+    PyOS_vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    PyErr_SetString(PyExc_ValueError, buf);
+}
+
+
 /* Helpers ------------------------------------------------------------------------------------ */
 
 /* xyY from a sequence of 2 (Y = 1) or 3 numbers. */
@@ -33,7 +48,7 @@ parse_xyY(PyObject *obj, cmsCIExyY *out, const char *what)
     }
     Py_DECREF(seq);
     if (!(v[1] > 0.0)) {
-        PyErr_Format(PyExc_ValueError, "%s: chromaticity y must be > 0, got %g", what, v[1]);
+        value_errorf("%s: chromaticity y must be > 0, got %g", what, v[1]);
         return -1;
     }
     out->x = v[0];
@@ -71,7 +86,7 @@ build_curve(PyObject *obj, int *owned)
         if (g == -1.0 && PyErr_Occurred())
             return NULL;
         if (!(g > 0.0)) {
-            PyErr_Format(PyExc_ValueError, "gamma must be > 0, got %g", g);
+            value_errorf("gamma must be > 0, got %g", g);
             return NULL;
         }
         lcms2_clear_error();
@@ -348,7 +363,7 @@ py_create_ink_limiting(PyObject *self, PyObject *args)
     if (lcms2_parse_signature(cs_obj, &cs, "color space") < 0)
         return NULL;
     if (limit < 0.0 || limit > 400.0) {
-        PyErr_Format(PyExc_ValueError, "ink limit must be between 0 and 400 percent, got %g", limit);
+        value_errorf("ink limit must be between 0 and 400 percent, got %g", limit);
         return NULL;
     }
     lcms2_clear_error();
