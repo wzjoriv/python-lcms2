@@ -1,89 +1,71 @@
-#define PY_SSIZE_T_CLEAN
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <Python.h>
+/* Module init for lcms2._lcms2: concatenates the per-file method tables. */
+#define LCMS2_MODULE_MAIN
+#include "common.h"
 
-#if PY_VERSION_HEX < 0x030c0000
-  #define Py_T_INT        T_INT
-  #define Py_T_OBJECT_EX  T_OBJECT_EX
-#endif
+static PyMethodDef *method_tables[] = {
+    lcms2_errors_methods,
+    lcms2_formats_methods,
+    lcms2_profile_methods,
+    lcms2_transform_methods,
+    lcms2_curves_methods,
+    lcms2_colorimetry_methods,
+    lcms2_cgats_methods,
+};
 
-#include <numpy/arrayobject.h>
-#include <lcms2.h>
-#include <lcms2_internal.h>
+static PyMethodDef *all_methods = NULL;
 
+static struct PyModuleDef lcms2_def = {
+    PyModuleDef_HEAD_INIT,
+    "_lcms2",
+    "Low-level LittleCMS2 bindings. Use the lcms2 package instead.",
+    -1,
+    NULL,
+};
 
-#include "profile.h"
-#include "transform.h"
-#include "definitions.h"
-#include "white_point.h"
-
-static PyObject *
-get_version (PyObject *self, PyObject *args) {
-	return Py_BuildValue("i",  LCMS_VERSION);
+static int
+build_method_table(void)
+{
+    size_t total = 0, n = sizeof(method_tables) / sizeof(method_tables[0]);
+    for (size_t i = 0; i < n; i++)
+        for (PyMethodDef *m = method_tables[i]; m->ml_name != NULL; m++)
+            total++;
+    all_methods = PyMem_Calloc(total + 1, sizeof(PyMethodDef));
+    if (all_methods == NULL) {
+        PyErr_NoMemory();
+        return -1;
+    }
+    size_t k = 0;
+    for (size_t i = 0; i < n; i++)
+        for (PyMethodDef *m = method_tables[i]; m->ml_name != NULL; m++)
+            all_methods[k++] = *m;
+    return 0;
 }
 
-static
-PyMethodDef pycms_methods[] = {
-    {"create_profile", create_profile, METH_VARARGS},
-    {"create_default_profile", create_default_profile, METH_NOARGS},
-    {"create_rgb_profile", create_rgb_profile, METH_VARARGS},
-    {"open_profile", open_profile, METH_VARARGS},
-    {"profile_from_memory", profile_from_memory, METH_VARARGS},
-    {"profile_to_bytes", profile_to_bytes, METH_VARARGS},
-    {"white_point_from_temperature", white_point_from_temperature, METH_VARARGS},
-	{"get_version", get_version, METH_NOARGS},
-	{NULL, NULL}
-};
-
-
-static struct PyModuleDef lcms2_def =
+PyMODINIT_FUNC
+PyInit__lcms2(void)
 {
-    PyModuleDef_HEAD_INIT,
-    "_lcms2",     /* name of module */
-    "",          /* module documentation, may be NULL */
-    -1,          /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
-    pycms_methods
-};
+    import_array();
 
-PyMODINIT_FUNC PyInit__lcms2(void)
-{
-    PyObject *m;
-    m = PyModule_Create(&lcms2_def);
+    if (all_methods == NULL && build_method_table() < 0)
+        return NULL;
+    lcms2_def.m_methods = all_methods;
+
+    PyObject *m = PyModule_Create(&lcms2_def);
     if (m == NULL)
-        return NULL;    
-		
-	if (PyType_Ready(&profile_type) < 0) {
-        Py_DECREF(m);
-		return NULL;
-	}
-
-	if (PyModule_AddObjectRef(m, "Profile", (PyObject *) &profile_type) < 0) {
-		Py_DECREF(m);
-		return NULL;
-	}
-
-	if (PyType_Ready(&transform_type) < 0) {
-		Py_DECREF(m);
-		return NULL;
-	}
-
-	if (PyModule_AddObjectRef(m, "Transform", (PyObject *) &transform_type) < 0) {
-        Py_DECREF(m);
         return NULL;
-    }
 
-	PyObject* types_dict = create_data_types_dict();
-	if (types_dict == NULL)
-	{
-        Py_DECREF(m);
-        return NULL;		
-	}
-	if (PyModule_AddObjectRef(m, "DATA_TYPES", (PyObject *) types_dict) < 0) {
-        Py_DECREF(m);
-        return NULL;
-    }
+    lcms2_Error = PyErr_NewException("lcms2._lcms2.LCMSError", PyExc_ValueError, NULL);
+    if (lcms2_Error == NULL || PyModule_AddObjectRef(m, "LCMSError", lcms2_Error) < 0)
+        goto fail;
+    if (PyModule_AddIntConstant(m, "LCMS_VERSION", LCMS_VERSION) < 0)
+        goto fail;
+    if (lcms2_formats_init(m) < 0)
+        goto fail;
 
-    import_array(); // initialize  NumPy
-
+    lcms2_install_error_handler();
     return m;
+
+fail:
+    Py_DECREF(m);
+    return NULL;
 }
