@@ -265,7 +265,7 @@ class ColorSpace:
         if isinstance(target, str):
             target_cls = _REGISTRY[target.lower()]
             try:
-                target = target_cls()
+                target = get(target)
             except TypeError as e:
                 raise TypeError(f"{target_cls.__name__} needs constructor arguments; pass an instance") from e
         return target.from_xyz(self.to_xyz(array))
