@@ -72,8 +72,7 @@ RGB_STYLES = {
     ),
     "untraceable_python": (
         lambda x: (
-            np.vectorize(lambda v: v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4)(x)
-            @ M.T
+            np.vectorize(lambda v: v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4)(x) @ M.T
         ),
         lambda x: srgb_encode(x @ M_INV.T),
     ),
@@ -204,9 +203,7 @@ def test_math_module_space_uses_numeric_probe():
 def test_legacy_profiles_use_only_legal_tag_types(version):
     for cs in (srgb, _log_luminance(np.array([0.0, 1.0, 0.0]))):
         for force in (False, True):
-            prof = ICCProfile.from_bytes(
-                cs.to_icc_profile(version=version, force_clut=force)["bytes"]
-            )
+            prof = ICCProfile.from_bytes(cs.to_icc_profile(version=version, force_clut=force)["bytes"])
             types = {body[:4] for body in prof.tags.values()}
             if version == 2:
                 assert not types & {b"para", b"mAB ", b"mBA ", b"mluc", b"mpet"}
@@ -242,9 +239,7 @@ def _random_fn(rng, n_in, n_out, depth):
             stages.append(("m", rng.normal(size=(width, w_out)), rng.normal(size=w_out) * 0.1))
             width = w_out
         else:
-            stages.append(
-                ("c", [_FUZZ_CURVES[rng.integers(len(_FUZZ_CURVES))] for _ in range(width)])
-            )
+            stages.append(("c", [_FUZZ_CURVES[rng.integers(len(_FUZZ_CURVES))] for _ in range(width)]))
 
     def fn(x):
         x = np.asarray(x, dtype=np.float64)

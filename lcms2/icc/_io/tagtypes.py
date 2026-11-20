@@ -43,18 +43,14 @@ def decode_lut8(body: bytes):
     grid = bn.read_u8(body, 10)
     matrix = np.array([bn.read_s15Fixed16(body, 12 + 4 * i) for i in range(9)]).reshape(3, 3)
     off = 48
-    in_tables = (
-        np.frombuffer(body, dtype=np.uint8, count=in_ch * 256, offset=off).astype(np.float64)
-        / 255.0
-    )
+    in_tables = np.frombuffer(body, dtype=np.uint8, count=in_ch * 256, offset=off).astype(np.float64) / 255.0
     in_tables = in_tables.reshape(in_ch, 256)
     off += in_ch * 256
     clut_n = grid**in_ch * out_ch
     clut = np.frombuffer(body, dtype=np.uint8, count=clut_n, offset=off).astype(np.float64) / 255.0
     off += clut_n
     out_tables = (
-        np.frombuffer(body, dtype=np.uint8, count=out_ch * 256, offset=off).astype(np.float64)
-        / 255.0
+        np.frombuffer(body, dtype=np.uint8, count=out_ch * 256, offset=off).astype(np.float64) / 255.0
     )
     out_tables = out_tables.reshape(out_ch, 256)
     clut_shape = tuple([grid] * in_ch) + (out_ch,)
@@ -80,8 +76,7 @@ def decode_lut16(body: bytes):
     n_out_entries = bn.read_u16(body, 50)
     off = 52
     in_tables = (
-        np.frombuffer(body, dtype=">u2", count=in_ch * n_in_entries, offset=off).astype(np.float64)
-        / 65535.0
+        np.frombuffer(body, dtype=">u2", count=in_ch * n_in_entries, offset=off).astype(np.float64) / 65535.0
     )
     in_tables = in_tables.reshape(in_ch, n_in_entries)
     off += 2 * in_ch * n_in_entries
@@ -89,9 +84,7 @@ def decode_lut16(body: bytes):
     clut = np.frombuffer(body, dtype=">u2", count=clut_n, offset=off).astype(np.float64) / 65535.0
     off += 2 * clut_n
     out_tables = (
-        np.frombuffer(body, dtype=">u2", count=out_ch * n_out_entries, offset=off).astype(
-            np.float64
-        )
+        np.frombuffer(body, dtype=">u2", count=out_ch * n_out_entries, offset=off).astype(np.float64)
         / 65535.0
     )
     out_tables = out_tables.reshape(out_ch, n_out_entries)

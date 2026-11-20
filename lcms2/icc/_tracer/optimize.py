@@ -88,9 +88,7 @@ def _simplify(node: Node) -> Node:
             return a
         if _const_equals(a, 1.0):
             return b
-        if (_const_equals(a, 0.0) and (b.width or 1) == 1) or (
-            _const_equals(b, 0.0) and (a.width or 1) == 1
-        ):
+        if (_const_equals(a, 0.0) and (b.width or 1) == 1) or (_const_equals(b, 0.0) and (a.width or 1) == 1):
             return _make_const(0.0)
     elif op == "div":
         a, b = args

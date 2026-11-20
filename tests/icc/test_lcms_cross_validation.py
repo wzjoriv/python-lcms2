@@ -88,12 +88,14 @@ def test_lcms_reads_a_real_v2_and_v4_srgb_profile_the_same_way_crs_does():
     from lcms2.spaces import ICCSpace
 
     profiles_dir = os.path.join(os.path.dirname(__file__), "..", "data", "profiles")
-    candidates = list(glob.glob(
+    candidates = list(
+        glob.glob(
             os.path.join(
                 profiles_dir,
                 "*srgb*",
             )
-        ))
+        )
+    )
     candidates += glob.glob(os.path.join(profiles_dir, "*sRGB*"))
     tested = 0
     for path in sorted(set(candidates)):

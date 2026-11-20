@@ -39,9 +39,7 @@ def write_matrix_trc(ctx: Context, tags: dict, notes: list) -> bool:
     curves, matrix = unit
     if not np.isfinite(np.linalg.cond(matrix)) or np.linalg.cond(matrix) > 1e8:
         return False
-    for i, (xyz_sig, trc_sig) in enumerate(
-        ((b"rXYZ", b"rTRC"), (b"gXYZ", b"gTRC"), (b"bXYZ", b"bTRC"))
-    ):
+    for i, (xyz_sig, trc_sig) in enumerate(((b"rXYZ", b"rTRC"), (b"gXYZ", b"gTRC"), (b"bXYZ", b"bTRC"))):
         tags[xyz_sig] = tt.encode_XYZType([tuple(matrix[i])])
         tags[trc_sig] = cv.trc_tag(curves[i], ctx.major)
     notes.append("per-channel curves followed by a 3x3 matrix, written as rXYZ/gXYZ/bXYZ + TRCs")

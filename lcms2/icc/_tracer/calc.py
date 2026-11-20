@@ -252,12 +252,7 @@ class _CalcCompiler:
         if op == "where":
             cond, a, b = kids
             then_ops, else_ops = self.expr(a), self.expr(b)
-            return (
-                self.expr(cond)
-                + [("if  ", len(then_ops)), ("else", len(else_ops))]
-                + then_ops
-                + else_ops
-            )
+            return self.expr(cond) + [("if  ", len(then_ops)), ("else", len(else_ops))] + then_ops + else_ops
         if op == "interp":
             return self._interp(kids[0], node.meta["xp"], node.meta["fp"])
         if op == "arctan2":
@@ -366,9 +361,7 @@ def _channels_of(node: Node, width: int, expand=None):
         return [node]
     if node.op in ELEMENTWISE_OPS:
         expanded = [expand(a, width) if (a.width or 1) == width else [a] * width for a in node.args]
-        return [
-            Node(node.op, tuple(e[i] for e in expanded), node.meta, width=1) for i in range(width)
-        ]
+        return [Node(node.op, tuple(e[i] for e in expanded), node.meta, width=1) for i in range(width)]
     raise TraceAbort(f"cannot expand op {node.op!r} into {width} channels for calc compilation")
 
 

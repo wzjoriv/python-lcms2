@@ -104,6 +104,13 @@ def _transform(src: Profile, dst: Profile, options: dict[str, Any]) -> Transform
     return t
 
 
+def _is_color_text(data: Any) -> bool:
+    """A CSS colour string, or a non-empty list/tuple of them."""
+    if isinstance(data, str):
+        return True
+    return isinstance(data, (list, tuple)) and len(data) > 0 and all(isinstance(x, str) for x in data)
+
+
 def _xyz_profile() -> Profile:
     return _builtin("XYZ")
 
@@ -125,8 +132,9 @@ def convert(
 
     Parameters
     ----------
-    data : array-like
-        ``(..., channels)`` pixels.
+    data : array-like or str
+        ``(..., channels)`` pixels, or CSS colours (``"#ff8000"``, ``"rebeccapurple"``,
+        ``"rgb(255 128 0)"``, or a list of them), which become sRGB floats in 0..1.
     src, dst : Profile, str, path or colour space
         Source and destination.
     out, out_dtype
@@ -138,6 +146,9 @@ def convert(
     Returns
     -------
     numpy.ndarray
+        Between two profiles the dtype follows the input (see :meth:`Transform.apply`); when a
+        colour space object is involved the result is ``float64``, since analytic spaces work in
+        floats. Pass ``out_dtype`` to choose.
 
     Examples
     --------
@@ -146,7 +157,13 @@ def convert(
     array([100.,   0.,   0.])
     >>> lcms2.convert([[1.0, 0.0, 0.0]], "sRGB", "Display P3").round(3)
     array([[0.917, 0.2  , 0.139]])
+    >>> lcms2.convert("#ffffff", "sRGB", "Lab").round(2) + 0.0
+    array([100.,   0.,   0.])
     """
+    if _is_color_text(data):
+        from ._parse import parse_color, parse_colors
+
+        data = parse_color(data) if isinstance(data, str) else parse_colors(data)
     s, d = _resolve_space(src), _resolve_space(dst)
     s_profile, d_profile = isinstance(s, Profile), isinstance(d, Profile)
     if s_profile and d_profile:

@@ -125,9 +125,7 @@ def eval_chain(chain, x: np.ndarray) -> np.ndarray:
 def chains(ctx: Context):
     """Verified forward and backward matrix/curve chains of the space, each possibly None."""
     fwd_chain = decompose_chain(ctx.fwd_root, ctx.n, 3) if ctx.fwd_root is not None else None
-    if fwd_chain is not None and not agrees(
-        ctx.xyz_samples, eval_chain(fwd_chain, ctx.device_samples)
-    ):
+    if fwd_chain is not None and not agrees(ctx.xyz_samples, eval_chain(fwd_chain, ctx.device_samples)):
         fwd_chain = None
     bwd_chain = decompose_chain(ctx.bwd_root, 3, ctx.n) if ctx.bwd_root is not None else None
     if bwd_chain is not None and not ctx.backward_agrees(

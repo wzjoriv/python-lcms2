@@ -270,9 +270,7 @@ class ICCProfile:
 
         total_size = data_start + len(body)
 
-        version_word = (
-            (version[0] & 0xFF) << 24 | (version[1] & 0xF) << 20 | (version[2] & 0xF) << 16
-        )
+        version_word = (version[0] & 0xFF) << 24 | (version[1] & 0xF) << 20 | (version[2] & 0xF) << 16
 
         header = bytearray(HEADER_SIZE)
         struct.pack_into(">I", header, 0, total_size)

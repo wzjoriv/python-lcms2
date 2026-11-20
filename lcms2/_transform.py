@@ -115,7 +115,9 @@ class Transform:
         self.profiles: tuple[Profile, ...] = tuple(profiles)
         n = len(profiles)
 
-        per_profile = not isinstance(intent, (str, int)) or not isinstance(bpc, bool) or adaptation is not None
+        per_profile = (
+            not isinstance(intent, (str, int)) or not isinstance(bpc, bool) or adaptation is not None
+        )
         if per_profile:
             self._intents = _per(intent, n, "intent", Intent.parse)
             self._bpc = _per(bpc, n, "bpc", bool)
@@ -137,7 +139,9 @@ class Transform:
         self.proof = None if proof is None else as_profile(proof)
         self.proof_intent = Intent.parse(proof_intent)
         if self.proof_intent > 3:
-            raise ValueError("proof_intent must be an ICC intent (perceptual, relative, saturation, absolute)")
+            raise ValueError(
+                "proof_intent must be an ICC intent (perceptual, relative, saturation, absolute)"
+            )
         if gamut_check:
             if self.proof is None:
                 raise ValueError("gamut_check=True needs a proof= profile to check against")
@@ -163,8 +167,15 @@ class Transform:
         if self._per_profile:
             gamut = self.proof if self.flags & Flag.GAMUTCHECK else None
             return _lcms2.transform_create_extended(
-                list(p), self._bpc, [int(i) for i in self._intents], self._adaptation,
-                gamut, len(p) - 1 if gamut else 0, in_fmt, out_fmt, flags,
+                list(p),
+                self._bpc,
+                [int(i) for i in self._intents],
+                self._adaptation,
+                gamut,
+                len(p) - 1 if gamut else 0,
+                in_fmt,
+                out_fmt,
+                flags,
             )
         if self.proof is not None:
             return _lcms2.transform_create_proofing(
@@ -264,7 +275,9 @@ class Transform:
         """
         if self._formats is not None:
             if out_dtype is not None:
-                raise ValueError("out_dtype cannot be used with explicit formats; pick the output format instead")
+                raise ValueError(
+                    "out_dtype cannot be used with explicit formats; pick the output format instead"
+                )
             in_fmt, out_fmt = self._formats
             in_info = format_info(in_fmt)
             arr = as_array(data, None if isinstance(data, np.ndarray) else in_info.dtype)
@@ -311,7 +324,9 @@ class Transform:
                 _lcms2.format_for_profile(first, 2, False),
                 _lcms2.format_for_profile(last, 2, False, 0, _output_side_is_pcs(last)),
             )
-        return Profile._from_handle(_lcms2.transform_to_device_link(h, float(version), int(Flag.parse(flags))))
+        return Profile._from_handle(
+            _lcms2.transform_to_device_link(h, float(version), int(Flag.parse(flags)))
+        )
 
     def __repr__(self) -> str:
         chain = " -> ".join(repr(p.description) for p in self.profiles)
@@ -336,8 +351,10 @@ def _out_shape(arr: np.ndarray, fin: Any, fout: Any) -> tuple[int, ...]:
         elif not fin.planar and arr.ndim and arr.shape[-1] == fin.channels:
             lead = arr.shape[:-1]
         else:
-            raise ValueError(f"expected {fin.channels} channels ({'first' if fin.planar else 'last'} axis), "
-                             f"got shape {arr.shape}")
+            raise ValueError(
+                f"expected {fin.channels} channels ({'first' if fin.planar else 'last'} axis), "
+                f"got shape {arr.shape}"
+            )
         return (fout.channels, *lead) if fout.planar else (*lead, fout.channels)
     keep = False
     if fin.channels == 1:

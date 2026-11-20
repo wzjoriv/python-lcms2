@@ -87,9 +87,11 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
             ``lch``, ``hsv``) interpolate hue along the shorter arc.
         n : int, default 256
             Number of samples.
-        positions : sequence of float, optional
+        positions : sequence of float or "uniform", optional
             Increasing positions of the control colours; rescaled to span 0..1.
-            Default: evenly spaced.
+            Default: evenly spaced (stops at 0, 1/(k-1), ..., 1). ``"uniform"`` places
+            each stop at its cumulative OKLab distance from the first, so the perceived
+            colour change per step is the same along the whole map.
         name : str, optional
         gamut : {"chroma", "clip", "none"}, default "chroma"
             ``"chroma"`` reduces OKLCh chroma at constant lightness and hue until the
@@ -110,6 +112,7 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
         >>> cm = Colormap.from_colors(["#000", "#f80", "#fff"], n=3)
         >>> cm.hex()
         ['#000000', '#ff8800', '#ffffff']
+        >>> cm = Colormap.from_colors(["#000", "#f80", "#fff"], positions="uniform")
         """
         ctrl = parse_colors(colors)[:, :3]
         if len(ctrl) < 2:
@@ -118,6 +121,15 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
             raise ValueError(f"n must be at least 2, got {n}")
         if positions is None:
             pos = np.linspace(0.0, 1.0, len(ctrl))
+        elif isinstance(positions, str):
+            if positions != "uniform":
+                raise ValueError(f'positions must be a sequence or "uniform", got {positions!r}')
+            from ..spaces import oklab, srgb
+
+            steps = np.linalg.norm(np.diff(srgb.to(oklab, ctrl), axis=0), axis=1)
+            if np.any(steps <= 0):
+                raise ValueError('positions="uniform" needs consecutive colours to differ')
+            pos = np.concatenate([[0.0], np.cumsum(steps)]) / steps.sum()
         else:
             pos = np.asarray(positions, dtype=np.float64)
             if pos.shape != (len(ctrl),):

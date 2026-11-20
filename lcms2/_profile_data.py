@@ -114,7 +114,9 @@ class ProfileData:
 
     def is_intent_supported(self, intent: Any, direction: str = "input") -> bool:
         """Whether the profile implements ``intent`` in ``direction`` (input/output/proof)."""
-        return _lcms2.profile_is_intent_supported(self._handle, int(Intent.parse(intent)), _direction(direction))
+        return _lcms2.profile_is_intent_supported(
+            self._handle, int(Intent.parse(intent)), _direction(direction)
+        )
 
     @property
     def supported_intents(self) -> list[Intent]:
@@ -123,7 +125,8 @@ class ProfileData:
         return [
             i
             for i in list(Intent)[:4]
-            if _lcms2.profile_is_intent_supported(h, int(i), 0) or _lcms2.profile_is_intent_supported(h, int(i), 1)
+            if _lcms2.profile_is_intent_supported(h, int(i), 0)
+            or _lcms2.profile_is_intent_supported(h, int(i), 1)
         ]
 
     @property

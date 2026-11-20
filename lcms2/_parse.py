@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import warnings
 from typing import Any
 
 import numpy as np
@@ -97,6 +98,13 @@ def _parse_numeric(value: Any) -> np.ndarray:
     if arr.dtype.kind in "iu":
         if arr.min() < 0 or arr.max() > 255:
             raise ValueError(f"cannot parse colour {value!r}: integer components must be in 0..255")
+        if arr.max() == 1 and not isinstance(value, np.ndarray):
+            warnings.warn(
+                f"integer colour {tuple(value)!r} is read as 0..255 (nearly black); "
+                "write floats such as (1.0, 0.0, 0.0) for 0..1",
+                UserWarning,
+                stacklevel=4,
+            )
         return arr.astype(np.float64) / 255.0
     if arr.min() < 0 or arr.max() > 1:
         raise ValueError(

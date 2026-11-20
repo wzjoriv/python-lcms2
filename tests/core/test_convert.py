@@ -13,9 +13,13 @@ from lcms2 import _convert
 class FakeLinearSRGB:
     """Linear sRGB adapted to D50 (Bradford), as a ColorSpace would define it."""
 
-    M = np.array([[0.4360747, 0.3850649, 0.1430804],
-                  [0.2225045, 0.7168786, 0.0606169],
-                  [0.0139322, 0.0971045, 0.7141733]])
+    M = np.array(
+        [
+            [0.4360747, 0.3850649, 0.1430804],
+            [0.2225045, 0.7168786, 0.0606169],
+            [0.0139322, 0.0971045, 0.7141733],
+        ]
+    )
 
     def to_xyz(self, x):
         return np.asarray(x) @ self.M.T
@@ -66,7 +70,10 @@ def test_intent_and_flag_parsing():
     assert lcms2.Intent.parse(3) is lcms2.Intent.ABSOLUTE_COLORIMETRIC
     with pytest.raises(ValueError, match="perceptual"):
         lcms2.Intent.parse(7)
-    assert lcms2.Flag.parse("8BITS_DEVICELINK|bpc") == lcms2.Flag.EIGHTBITS_DEVICELINK | lcms2.Flag.BLACKPOINTCOMPENSATION
+    assert (
+        lcms2.Flag.parse("8BITS_DEVICELINK|bpc")
+        == lcms2.Flag.EIGHTBITS_DEVICELINK | lcms2.Flag.BLACKPOINTCOMPENSATION
+    )
     assert lcms2.Flag.parse("NONE") == 0 and lcms2.Flag.parse(None) == 0
     assert int(lcms2.Flag.grid_points(17)) == 17 << 16
     with pytest.raises(TypeError):
@@ -87,13 +94,17 @@ def test_data_tables():
 
 def test_format_table_generator_matches_header():
     root = Path(__file__).resolve().parents[2]
+    if not (root / "scripts" / "lcms2_tools").exists():
+        pytest.skip("scripts/ not available (installed-package run)")
     sys.path.insert(0, str(root / "scripts"))
     try:
         from lcms2_tools import _header, newest_stable_tag
     finally:
         sys.path.pop(0)
     text = (root / "vendor" / "Little-CMS" / "include" / "lcms2.h").read_text(encoding="utf-8")
-    assert (root / "lcms2" / "_ext" / "formats_table.h").read_text(encoding="utf-8") == _header.render_table(text)
+    assert (root / "lcms2" / "_ext" / "formats_table.h").read_text(encoding="utf-8") == _header.render_table(
+        text
+    )
     assert set(_header.format_names(text)) == set(lcms2.FORMATS)
     assert "cmsCreateTransform" in _header.cmsapi_functions(text)
     assert newest_stable_tag(["lcms2.9", "lcms2.20", "lcms2.21rc1", "lcms2.20.1", "foo"]) == "lcms2.20.1"

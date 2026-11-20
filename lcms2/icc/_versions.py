@@ -31,15 +31,11 @@ def normalize_icc_version(version: int | tuple) -> tuple:
         return _DEFAULT_REVISION[int(version)]
     version = tuple(version)  # type: ignore[arg-type]
     if len(version) != 3 or not all(isinstance(v, (int, np.integer)) for v in version):
-        raise ICCWriteError(
-            f"version must be 2, 4, 5 or a (major, minor, bugfix) tuple; got {version!r}"
-        )
+        raise ICCWriteError(f"version must be 2, 4, 5 or a (major, minor, bugfix) tuple; got {version!r}")
     version = tuple(int(v) for v in version)
     if version[0] not in _KNOWN_REVISIONS:
         raise ICCWriteError(f"unsupported ICC major version {version[0]!r}; use 2, 4 or 5")
     if version not in _KNOWN_REVISIONS[version[0]]:
         known = ", ".join(".".join(map(str, r)) for r in sorted(_KNOWN_REVISIONS[version[0]]))
-        raise ICCWriteError(
-            f"unknown ICC revision {'.'.join(map(str, version))}; known revisions: {known}"
-        )
+        raise ICCWriteError(f"unknown ICC revision {'.'.join(map(str, version))}; known revisions: {known}")
     return version

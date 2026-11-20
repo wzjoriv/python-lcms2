@@ -105,9 +105,7 @@ def _guarded(fn):
 def _build(profile) -> BuiltTransform:
     if _first_tag(profile, _A2B_PREFERENCE + _B2A_PREFERENCE) is not None:
         return _build_lut(profile)
-    if all(
-        profile.has_tag(t) for t in (TAG_RXYZ, TAG_GXYZ, TAG_BXYZ, TAG_RTRC, TAG_GTRC, TAG_BTRC)
-    ):
+    if all(profile.has_tag(t) for t in (TAG_RXYZ, TAG_GXYZ, TAG_BXYZ, TAG_RTRC, TAG_GTRC, TAG_BTRC)):
         return _build_matrix_trc(profile)
     if profile.has_tag(TAG_KTRC) and profile.header.data_colour_space == CS_GRAY:
         return _build_gray_trc(profile)
@@ -151,9 +149,7 @@ def _build_matrix_trc(profile) -> BuiltTransform:
 
     def from_xyz(xyz: np.ndarray) -> np.ndarray:
         lin = np.asarray(xyz, dtype=np.float64) @ matrix_inv.T
-        return np.stack(
-            [tt.invert_curve_numeric(c, lin[..., i]) for i, c in enumerate(curves)], axis=-1
-        )
+        return np.stack([tt.invert_curve_numeric(c, lin[..., i]) for i, c in enumerate(curves)], axis=-1)
 
     return BuiltTransform(to_xyz, from_xyz, kind="matrix_trc", n_channels=3)
 
@@ -177,9 +173,7 @@ def _classic_lut_apply(d, x: np.ndarray, use_matrix: bool, circular) -> np.ndarr
     if use_matrix:
         x = np.clip(x @ d["matrix"].T, 0.0, 1.0)
     grid_in = np.linspace(0.0, 1.0, d["in_tables"].shape[1])
-    stage = np.stack(
-        [np.interp(x[..., i], grid_in, d["in_tables"][i]) for i in range(d["in_ch"])], axis=-1
-    )
+    stage = np.stack([np.interp(x[..., i], grid_in, d["in_tables"][i]) for i in range(d["in_ch"])], axis=-1)
     out = sample_clut(d["clut"], stage, circular_channels=circular)
     grid_out = np.linspace(0.0, 1.0, d["out_tables"].shape[1])
     return np.stack(
@@ -214,10 +208,7 @@ def _mpet_apply(d, x: np.ndarray, circular) -> np.ndarray:
             cur = cur @ elem["matrix"].T + elem["offset"]
         elif kind == "curveset":
             cur = np.stack(
-                [
-                    mpe.eval_curveset_channel(elem["curves"][i], cur[..., i])
-                    for i in range(cur.shape[-1])
-                ],
+                [mpe.eval_curveset_channel(elem["curves"][i], cur[..., i]) for i in range(cur.shape[-1])],
                 axis=-1,
             )
         elif kind == "clut":
@@ -281,9 +272,7 @@ class LutStage:
             return pcs_values if self.real_valued else pcs_values * XYZ_U1F15_SCALE
         if self.pcs == CS_LAB:
             lab = (
-                pcs_values
-                if self.real_valued
-                else _pcs.decode_lab_pcs(pcs_values, legacy16=self.legacy_lab)
+                pcs_values if self.real_valued else _pcs.decode_lab_pcs(pcs_values, legacy16=self.legacy_lab)
             )
             return col.lab_to_xyz(lab, white=col.D50)
         raise ICCParseError(f"unsupported PCS signature {self.pcs!r}")

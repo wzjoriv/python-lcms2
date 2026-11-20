@@ -37,7 +37,8 @@ def decode_matrix_element(buf: bytes) -> dict:
     """Decode a matrixElement ('matf') body into ``matrix`` (out x in) and ``offset``."""
     in_ch, out_ch = struct.unpack_from(">HH", buf, 8)
     values = np.frombuffer(buf, dtype=">f4", count=in_ch * out_ch + out_ch, offset=12)
-    values = values.astype(np.float64)
+    with np.errstate(invalid="ignore"):  # corrupt bytes may hold signalling NaNs
+        values = values.astype(np.float64)
     return {
         "kind": "matrix",
         "in_ch": in_ch,

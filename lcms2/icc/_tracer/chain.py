@@ -303,9 +303,7 @@ def _compile_scalar_expr(node: Node, select_node: Node):
         return name
 
     result = emit(node)
-    source = "def f(x):\n" + "\n".join(
-        lines + [f"    return np.broadcast_to({result}, np.shape(x))"]
-    )
+    source = "def f(x):\n" + "\n".join(lines + [f"    return np.broadcast_to({result}, np.shape(x))"])
     scope: dict = {"np": np, "c": consts}
     exec(compile(source, "<curve>", "exec"), scope)
     return scope["f"]

@@ -59,7 +59,9 @@ class Intent(IntEnum):
             except ValueError:
                 pass
         names = ", ".join(m.name.lower() for m in cls)
-        raise ValueError(f"unknown rendering intent {value!r}; use one of: {names} (or 'relative'/'absolute')")
+        raise ValueError(
+            f"unknown rendering intent {value!r}; use one of: {names} (or 'relative'/'absolute')"
+        )
 
 
 _INTENT_ALIASES = {

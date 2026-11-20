@@ -7,9 +7,7 @@ from collections.abc import Iterable
 import numpy as np
 
 
-def resolve_channels_and_domain(
-    n_channels: int | None, domain
-) -> tuple[int, list[tuple[float, float]]]:
+def resolve_channels_and_domain(n_channels: int | None, domain) -> tuple[int, list[tuple[float, float]]]:
     """Combine a declared channel count with a device range.
 
     Parameters
@@ -47,9 +45,7 @@ def resolve_channels_and_domain(
         if n_channels is None:
             n_channels = arr.shape[0]
         elif arr.shape[0] != n_channels:
-            raise ValueError(
-                f"device_domain lists {arr.shape[0]} channels but n_channels is {n_channels}"
-            )
+            raise ValueError(f"device_domain lists {arr.shape[0]} channels but n_channels is {n_channels}")
         pairs = [(float(lo), float(hi)) for lo, hi in arr]
     else:
         if n_channels is None:

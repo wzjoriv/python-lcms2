@@ -131,8 +131,7 @@ class ColorSpace:
             overridden = getattr(cls, direction) is not getattr(ColorSpace, direction)
             if overridden and given is not None:
                 raise TypeError(
-                    f"{cls.__name__} overrides {direction}() and was also given a "
-                    f"{direction}= callable"
+                    f"{cls.__name__} overrides {direction}() and was also given a {direction}= callable"
                 )
             if not overridden and given is None:
                 raise TypeError(f"{cls.__name__} has no {direction} implementation")
@@ -214,9 +213,7 @@ class ColorSpace:
             try:
                 target = target_cls()
             except TypeError as e:
-                raise TypeError(
-                    f"{target_cls.__name__} needs constructor arguments; pass an instance"
-                ) from e
+                raise TypeError(f"{target_cls.__name__} needs constructor arguments; pass an instance") from e
         return target.from_xyz(self.to_xyz(array))
 
     def to_xyz(self, values: Any) -> np.ndarray:

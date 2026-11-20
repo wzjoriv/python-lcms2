@@ -50,9 +50,7 @@ def test_to_by_name_roundtrips_srgb_to_hsv_to_srgb():
     rgb = np.array([[0.8, 0.3, 0.1], [0.1, 0.9, 0.4]])
     srgb = SRGBSpace()
     hsv = srgb.to("hsv", rgb)
-    back = ColorSpace(n_channels=3, to_xyz=HSVSpace().to_xyz, from_xyz=HSVSpace().from_xyz).to(
-        "srgb", hsv
-    )
+    back = ColorSpace(n_channels=3, to_xyz=HSVSpace().to_xyz, from_xyz=HSVSpace().from_xyz).to("srgb", hsv)
     assert np.allclose(rgb, back, atol=1e-6)
 
 

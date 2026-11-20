@@ -210,7 +210,9 @@ class Profile(ProfileData):
         if len(prims) != 3:
             raise ValueError(f"primaries must be (red, green, blue), got {len(prims)} entries")
         is_parametric = (
-            isinstance(gamma, tuple) and len(gamma) == 2 and isinstance(gamma[0], int)
+            isinstance(gamma, tuple)
+            and len(gamma) == 2
+            and isinstance(gamma[0], int)
             and not isinstance(gamma[1], (int, float))
         )
         curves = list(gamma) if isinstance(gamma, (list, tuple)) and not is_parametric else [gamma]
@@ -386,7 +388,9 @@ def _open_source(source: Any, white_point: Any, degrees: int, temperature: float
     if (white_point is not None or temperature is not None) and not (
         isinstance(source, str) and lookup_builtin(source) in ("Lab", "Lab v2")
     ):
-        raise ValueError("white_point/temperature only apply to Profile('Lab'); use Profile.rgb/gray otherwise")
+        raise ValueError(
+            "white_point/temperature only apply to Profile('Lab'); use Profile.rgb/gray otherwise"
+        )
     if source is None:
         return _lcms2.profile_create_null()
     if isinstance(source, Profile):

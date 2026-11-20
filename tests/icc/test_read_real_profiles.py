@@ -41,9 +41,7 @@ def test_builds_transform_when_possible(path):
     try:
         built = build_transform(prof)
     except ICCParseError:
-        pytest.skip(
-            f"{name}: no matrix/TRC, gray, or LUT model found (e.g. a link/abstract profile)"
-        )
+        pytest.skip(f"{name}: no matrix/TRC, gray, or LUT model found (e.g. a link/abstract profile)")
         return
 
     n = built.n_channels

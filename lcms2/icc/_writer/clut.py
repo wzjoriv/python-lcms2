@@ -43,9 +43,7 @@ def write_clut(ctx: Context, tags: dict, notes: list) -> None:
     keep = np.all(np.isfinite(truth), axis=-1)
     err_linear = np.abs(sample_clut(linear, probe) - truth)[keep]
     err_shaped = np.abs(cube(sample_clut(shaped, probe)) - truth)[keep]
-    use_shaping = err_shaped.size == 0 or np.percentile(err_shaped, 99) <= np.percentile(
-        err_linear, 99
-    )
+    use_shaping = err_shaped.size == 0 or np.percentile(err_shaped, 99) <= np.percentile(err_linear, 99)
     a2b = shaped if use_shaping else linear
     out_curve = cube if use_shaping else identity
 
@@ -76,11 +74,7 @@ def write_clut(ctx: Context, tags: dict, notes: list) -> None:
         pcs_max = cube_root(XYZ_U1F15_SCALE) if use_shaping else XYZ_U1F15_SCALE
         a2b_enc = np.clip(a2b / pcs_max, 0.0, 1.0)
         b2a_enc = np.clip(np.nan_to_num(b2a), 0.0, 1.0)
-        tags[b"A2B0"] = encode_lut_tag(
-            ctx, False, None, a2b_enc, [out_curve] * 3 if use_shaping else None
-        )
+        tags[b"A2B0"] = encode_lut_tag(ctx, False, None, a2b_enc, [out_curve] * 3 if use_shaping else None)
         tags[b"B2A0"] = encode_lut_tag(ctx, True, [cube_root] * 3, b2a_enc, None)
     shaping = "cube-root-shaped " if use_shaping else ""
-    notes.append(
-        f"sampled onto a {shaping}{a2b_grid}^{ctx.n} A2B0 grid and a {b2a_grid}^3 B2A0 grid"
-    )
+    notes.append(f"sampled onto a {shaping}{a2b_grid}^{ctx.n} A2B0 grid and a {b2a_grid}^3 B2A0 grid")

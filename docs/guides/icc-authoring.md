@@ -25,6 +25,13 @@ When a function cannot be traced (Python `if` on array values, `float(x)`, itera
 libraries), the writer falls back to a CLUT and says why in `notes`. Pass `strict=True` to get an
 `ICCWriteError` instead.
 
+:::{note}
+Spaces with a circular hue channel (HSV, HSL, HWB, LCh, OKLCh) are sampled into a CLUT. ICC
+interpolation is linear and does not wrap hue, so colours whose hue lies between the last grid point
+and 360° are interpolated through the whole hue range. Expect small errors near hue 0/360 in such
+profiles. Converting with the space itself (`lcms2.convert(x, "sRGB", "oklch")`) is exact.
+:::
+
 ## Versions
 
 `version=4` (default) writes v4.4; `version=2` writes v2.4 for older software; `version=5` allows the exact

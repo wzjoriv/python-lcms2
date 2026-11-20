@@ -38,15 +38,11 @@ def test_rec2100_linear_matches_rec2020_linear_stage():
     assert np.allclose(lin.to_xyz([0.0, 0.0, 0.0]), rec2020.to_xyz([0.0, 0.0, 0.0]), atol=1e-9)
 
 
-def test_rec2100_linear_write_tier():
+def test_rec2100_linear_write_tier(tmp_path):
     sp = Rec2100LinearSpace()
-    assert (
-        sp.to_icc_profile("/tmp/rec2100_linear_v2.icc", version=2)["method"] == "exact_matrix_trc"
-    )
-    assert (
-        sp.to_icc_profile("/tmp/rec2100_linear_v4.icc", version=4)["method"] == "exact_matrix_trc"
-    )
-    assert sp.to_icc_profile("/tmp/rec2100_linear_v5.icc", version=5)["method"] == "exact_mpet"
+    assert sp.to_icc_profile(tmp_path / "rec2100_linear_v2.icc", version=2)["method"] == "exact_matrix_trc"
+    assert sp.to_icc_profile(tmp_path / "rec2100_linear_v4.icc", version=4)["method"] == "exact_matrix_trc"
+    assert sp.to_icc_profile(tmp_path / "rec2100_linear_v5.icc", version=5)["method"] == "exact_mpet"
 
 
 def test_rec2100_pq_roundtrip_single_and_batch():
@@ -75,11 +71,11 @@ def test_rec2100_pq_white_matches_relative_pcs_white():
     assert np.allclose(xyz_pq, xyz_2020, atol=1e-6)
 
 
-def test_rec2100_pq_write_tier():
+def test_rec2100_pq_write_tier(tmp_path):
     sp = Rec2100PQSpace()
-    assert sp.to_icc_profile("/tmp/rec2100_pq_v2.icc", version=2)["method"] == "exact_matrix_trc"
-    assert sp.to_icc_profile("/tmp/rec2100_pq_v4.icc", version=4)["method"] == "exact_matrix_trc"
-    assert sp.to_icc_profile("/tmp/rec2100_pq_v5.icc", version=5)["method"] == "exact_mpet"
+    assert sp.to_icc_profile(tmp_path / "rec2100_pq_v2.icc", version=2)["method"] == "exact_matrix_trc"
+    assert sp.to_icc_profile(tmp_path / "rec2100_pq_v4.icc", version=4)["method"] == "exact_matrix_trc"
+    assert sp.to_icc_profile(tmp_path / "rec2100_pq_v5.icc", version=5)["method"] == "exact_mpet"
 
 
 def test_rec2100_hlg_roundtrip_single_and_batch():
@@ -125,8 +121,8 @@ def test_rec2100hlg_encode_matches_inverse_across_boundary():
     assert np.allclose(hlg_decode(E), L, atol=1e-9)
 
 
-def test_rec2100_hlg_write_tier():
+def test_rec2100_hlg_write_tier(tmp_path):
     sp = Rec2100HLGSpace()
-    assert sp.to_icc_profile("/tmp/rec2100_hlg_v2.icc", version=2)["method"] == "exact_matrix_trc"
-    assert sp.to_icc_profile("/tmp/rec2100_hlg_v4.icc", version=4)["method"] == "exact_matrix_trc"
-    assert sp.to_icc_profile("/tmp/rec2100_hlg_v5.icc", version=5)["method"] == "exact_mpet"
+    assert sp.to_icc_profile(tmp_path / "rec2100_hlg_v2.icc", version=2)["method"] == "exact_matrix_trc"
+    assert sp.to_icc_profile(tmp_path / "rec2100_hlg_v4.icc", version=4)["method"] == "exact_matrix_trc"
+    assert sp.to_icc_profile(tmp_path / "rec2100_hlg_v5.icc", version=5)["method"] == "exact_mpet"

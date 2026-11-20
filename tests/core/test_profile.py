@@ -29,8 +29,14 @@ def test_every_builtin(name):
 
 @pytest.mark.parametrize(
     "alias,canonical",
-    [("adobe rgb", "Adobe RGB (1998)"), ("display p3", "Display P3"), ("prophoto", "ProPhoto RGB"),
-     ("SRGB", "sRGB built-in"), ("rec2020", "Rec.2020"), ("bt.709", "Rec.709")],
+    [
+        ("adobe rgb", "Adobe RGB (1998)"),
+        ("display p3", "Display P3"),
+        ("prophoto", "ProPhoto RGB"),
+        ("SRGB", "sRGB built-in"),
+        ("rec2020", "Rec.2020"),
+        ("bt.709", "Rec.709"),
+    ],
 )
 def test_lenient_names(alias, canonical):
     assert lcms2.Profile(alias).description == canonical
@@ -44,7 +50,8 @@ def test_srgb_curve_table_matches_builtin():
     np.testing.assert_allclose(a, b, atol=2)
     np.testing.assert_allclose(
         lcms2.convert([0.2, 0.5, 0.8], "sRGB", "Display P3"),
-        lcms2.convert([0.2, 0.5, 0.8], "_sRGB", "Display P3"), atol=2e-3,
+        lcms2.convert([0.2, 0.5, 0.8], "_sRGB", "Display P3"),
+        atol=2e-3,
     )
 
 
@@ -86,9 +93,15 @@ def test_save_and_bytes_round_trip(tmp_path):
 def test_lab_white_points():
     from lcms2._builtins import white_point_from_temperature
 
-    np.testing.assert_allclose(white_point_from_temperature(6504), lcms2.WHITE_POINTS[2]["D65"]["xyY"], atol=1e-4)
-    for p in (lcms2.Profile("Lab", white_point="D65"), lcms2.Profile("Lab", temperature=6504),
-              lcms2.Profile("Lab", white_point=[0.3127, 0.3290, 1.0]), lcms2.Profile.lab("D65", version=2)):
+    np.testing.assert_allclose(
+        white_point_from_temperature(6504), lcms2.WHITE_POINTS[2]["D65"]["xyY"], atol=1e-4
+    )
+    for p in (
+        lcms2.Profile("Lab", white_point="D65"),
+        lcms2.Profile("Lab", temperature=6504),
+        lcms2.Profile("Lab", white_point=[0.3127, 0.3290, 1.0]),
+        lcms2.Profile.lab("D65", version=2),
+    ):
         assert "Lab" in p.description and p.color_space == "Lab"
     with pytest.raises(ValueError, match="illuminant"):
         lcms2.Profile.lab("D66")
@@ -150,8 +163,11 @@ def test_repr_and_constructors():
     assert str(lcms2.Profile.abstract(contrast=1.2).device_class) == "abstract"
     lin = lcms2.Profile.linearization([1.0, 2.0, (1, [1.8])], "RGB")
     assert str(lin.device_class) == "link"
-    p3 = lcms2.Profile.rgb("D65", ((0.68, 0.32), (0.265, 0.69), (0.15, 0.06)), (4, [2.4, 1 / 1.055, 0.055 / 1.055,
-                                                                                    1 / 12.92, 0.04045]))
+    p3 = lcms2.Profile.rgb(
+        "D65",
+        ((0.68, 0.32), (0.265, 0.69), (0.15, 0.06)),
+        (4, [2.4, 1 / 1.055, 0.055 / 1.055, 1 / 12.92, 0.04045]),
+    )
     np.testing.assert_allclose(lcms2.convert([0.3, 0.6, 0.9], p3, "Display P3"), [0.3, 0.6, 0.9], atol=2e-3)
     with pytest.raises(ValueError, match="parameters"):
         lcms2.Profile.rgb(gamma=(4, [2.4]))

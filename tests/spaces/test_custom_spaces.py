@@ -343,9 +343,7 @@ def test_calc_reference_semantics():
     assert np.allclose(div, [0.0, -3.5, -1.0])
     mod = _run_calc([("in  ", (0, 1)), ("mod ", (0, 0)), ("out ", (0, 0))], x, 2, 1)[:, 0]
     assert np.allclose(mod, [0.0, np.fmod(-7.0, 2.0), 0.0])
-    atan = _run_calc(
-        [("in  ", (1, 0)), ("in  ", (0, 0)), ("atn2", (0, 0)), ("out ", (0, 0))], x, 2, 1
-    )[:, 0]
+    atan = _run_calc([("in  ", (1, 0)), ("in  ", (0, 0)), ("atn2", (0, 0)), ("out ", (0, 0))], x, 2, 1)[:, 0]
     assert np.allclose(atan, np.arctan2(x[:, 0], x[:, 1]))
 
 

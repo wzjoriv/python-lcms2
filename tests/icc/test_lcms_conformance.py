@@ -127,9 +127,7 @@ def test_real_profile_forward_matches_lcms(path, cs, mode):
 @pytest.mark.parametrize("path,cs,mode", _real_profiles())
 def test_real_profile_inverse_matches_lcms(path, cs, mode):
     rng = np.random.default_rng(1)
-    lab = np.stack(
-        [rng.uniform(10, 90, 300), rng.uniform(-40, 40, 300), rng.uniform(-40, 40, 300)], -1
-    )
+    lab = np.stack([rng.uniform(10, 90, 300), rng.uniform(-40, 40, 300), rng.uniform(-40, 40, 300)], -1)
     lab_q = _decode_lab(_encode_lab(lab))
     try:
         expected = _lcms_lab_to_device(path, mode, lab_q[None])[0]

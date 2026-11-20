@@ -65,8 +65,7 @@ class ICCSpace(ColorSpace):
                 n_channels=built.n_channels,
                 to_xyz=to_xyz,
                 from_xyz=from_xyz,
-                name=self.description
-                or header.data_colour_space.decode("ascii", errors="replace").strip(),
+                name=self.description or header.data_colour_space.decode("ascii", errors="replace").strip(),
                 device_domain=domain,
             )
         except ValueError as e:

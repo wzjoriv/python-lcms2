@@ -31,11 +31,7 @@ def test_garbage_bytes_rejected():
 def _generated_profiles():
     from lcms2.spaces import cmyk, gray, hsv, oklab, srgb
 
-    return [
-        cs.to_icc_profile(version=v)["bytes"]
-        for cs in (srgb, hsv, oklab, gray, cmyk)
-        for v in (2, 4, 5)
-    ]
+    return [cs.to_icc_profile(version=v)["bytes"] for cs in (srgb, hsv, oklab, gray, cmyk) for v in (2, 4, 5)]
 
 
 @pytest.mark.parametrize("tag_index", range(4))

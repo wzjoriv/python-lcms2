@@ -205,7 +205,8 @@ class ToneCurve:
         """Join two curves: ``x -> other.inverse()(self(x))``, sampled at ``n`` points.
 
         This is the curve that, applied after ``other``, reproduces ``self``; joining a
-        curve with itself gives the identity.
+        curve with itself gives the identity. To apply one curve after another, use
+        :meth:`then`.
 
         Examples
         --------
@@ -214,6 +215,20 @@ class ToneCurve:
         0.3
         """
         return ToneCurve(_lcms2.curve_join(self._handle, other, int(n)))
+
+    def then(self, other: ToneCurve, n: int = 4096) -> ToneCurve:
+        """Compose two curves: ``x -> other(self(x))``, sampled at ``n`` points.
+
+        Examples
+        --------
+        >>> from lcms2._curves import ToneCurve
+        >>> c = ToneCurve.gamma(2.0).then(ToneCurve.gamma(1.5))
+        >>> round(float(c(0.5)), 3)
+        0.125
+        """
+        if not isinstance(other, ToneCurve):
+            raise TypeError(f"expected a ToneCurve, got {type(other).__name__}")
+        return self.join(other.inverse(n), n)
 
     def smooth(self, lam: float) -> ToneCurve:
         """Smoothed copy of the curve, for noisy tabulated curves (raises ``CMSError`` if the result

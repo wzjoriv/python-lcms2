@@ -7,7 +7,9 @@ import lcms2
 
 
 def test_neutral_grey():
-    t = lcms2.Transform(lcms2.Profile("Lab"), "Lab_DBL", lcms2.Profile("sRGB"), "RGB_16", "PERCEPTUAL", "NONE")
+    t = lcms2.Transform(
+        lcms2.Profile("Lab"), "Lab_DBL", lcms2.Profile("sRGB"), "RGB_16", "PERCEPTUAL", "NONE"
+    )
     np.testing.assert_allclose(t.apply([50, 0, 0]), [30561, 30561, 30561])
 
 
@@ -62,8 +64,14 @@ def test_unknown_intent_and_flag():
 
 
 def test_flags_string_form():
-    t = lcms2.Transform(lcms2.Profile("Lab"), "Lab_DBL", lcms2.Profile("sRGB"), "RGB_16",
-                        intent="PERCEPTUAL", flags="NOOPTIMIZE,BLACKPOINTCOMPENSATION")
+    t = lcms2.Transform(
+        lcms2.Profile("Lab"),
+        "Lab_DBL",
+        lcms2.Profile("sRGB"),
+        "RGB_16",
+        intent="PERCEPTUAL",
+        flags="NOOPTIMIZE,BLACKPOINTCOMPENSATION",
+    )
     assert t.flags & lcms2.Flag.NOOPTIMIZE
     with pytest.raises(ValueError, match="out_dtype"):
         t.apply([50.0, 0, 0], out_dtype=np.uint8)
