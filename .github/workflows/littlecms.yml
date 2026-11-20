@@ -1,0 +1,62 @@
+# Monthly: move vendor/Little-CMS to the newest stable LittleCMS release (never an unreleased commit)
+# and open a pull request with the CMSAPI functions added or removed.
+# Manual equivalent: python scripts/dev.py lcms2 update
+
+name: LittleCMS release
+
+on:
+  schedule:
+    - cron: "17 6 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Move to the newest release
+        id: update
+        run: |
+          python -m pip install typer
+          python scripts/dev.py lcms2 update | tee report.txt
+          tag=$(git -C vendor/Little-CMS describe --tags --exact-match)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if git diff --quiet; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Open a pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.update.outputs.tag }}
+        run: |
+          branch="chore/littlecms-${TAG#lcms2.}"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
+            echo "$branch already exists"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git commit -am "Update LittleCMS to ${TAG#lcms2.}"
+          git push origin "$branch"
+          {
+            echo "Moves vendor/Little-CMS to the LittleCMS ${TAG#lcms2.} release and regenerates the pixel format table."
+            echo
+            echo '```'
+            cat report.txt
+            echo '```'
+            echo
+            echo "Pull requests opened by this workflow don't start CI on their own: close and reopen this PR (or push to it) to run the tests. Bind any added CMSAPI functions before merging."
+          } > body.md
+          gh pr create --base main --head "$branch" --title "Update LittleCMS to ${TAG#lcms2.}" --body-file body.md --assignee wzjoriv
