@@ -100,6 +100,11 @@ tools = ["lcms2_tools:app"]
 [tool.devkit.check]
 lint = ["lcms2", "scripts", "tests"]
 tests = ["-q", "-p", "no:cacheprovider"]
+docs = "docs"
+
+[tool.devkit.docs]
+source = "docs"
+out = "docs/_build/html"
 
 [tool.devkit.version]
 file = "lcms2/__init__.py"
