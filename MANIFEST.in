@@ -1,0 +1,9 @@
+include LICENSE README.md setup.py
+recursive-include lcms2 *.py *.pyi *.c *.h py.typed *.csv *.json *.icc *.icm
+recursive-include vendor/Little-CMS/src *.c *.h
+recursive-include vendor/Little-CMS/include *.h
+include vendor/Little-CMS/LICENSE vendor/Little-CMS/COPYING
+recursive-include tests *.py *.icm *.icc
+prune vendor/Little-CMS/testbed
+prune vendor/Little-CMS/utils
+global-exclude *.pyd *.so __pycache__ *.pyc

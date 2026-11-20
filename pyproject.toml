@@ -1,36 +1,137 @@
 [build-system]
-requires = ["setuptools>=61.0", "numpy>=2.0"]
+requires = ["setuptools>=77", "wheel", "numpy>=2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "python-lcms2"
-version = "0.1.2"
+dynamic = ["version"]
 authors = [
     { name = "Josue N Rivera", email = "josuevaldez1.com@gmail.com" },
 ]
-description = "Python binding for LittleCMS2 library"
+description = "Color management for NumPy: LittleCMS2 bindings, color spaces, ICC profile authoring and colormaps"
 readme = "README.md"
 requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE", "vendor/Little-CMS/LICENSE"]
 classifiers = [
-    "Programming Language :: Python :: 3",
-    'Programming Language :: C',
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    "Operating System :: OS Independent",
     "Development Status :: 4 - Beta",
-'Topic :: Multimedia :: Graphics :: Graphics Conversion'
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: C",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Typing :: Typed",
 ]
-keywords = ["color management", "lcms2", "icc", "color profile", "colorspace"]
+keywords = ["color management", "lcms2", "littlecms", "icc", "color profile", "colorspace",
+            "oklab", "colormap", "delta e", "ciecam02"]
 dependencies = ["numpy>=2.0"]
 
+[project.optional-dependencies]
+plot = ["matplotlib>=3.7"]
+test = ["pytest>=7.0", "pillow>=10", "typer>=0.12"]
+docs = [
+    "sphinx>=7.0",
+    "furo>=2024.1.29",
+    "myst-parser>=2.0",
+]
+dev = [
+    "python-lcms2[docs,test,plot]",
+    "pytest-cov",
+    "ruff>=0.6",
+    "typer>=0.12",
+    "stubpy>=0.8.2",
+    "build",
+    "tomli; python_version < '3.11'",
+]
+
 [project.urls]
-"Homepage" = "https://github.com/wzjoriv/python-lcms2"
+Homepage = "https://github.com/wzjoriv/python-lcms2"
+Repository = "https://github.com/wzjoriv/python-lcms2"
 "Bug Tracker" = "https://github.com/wzjoriv/python-lcms2/issues"
 
+[tool.setuptools.dynamic]
+version = { attr = "lcms2.__version__" }
+
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
+include = ["lcms2*"]
+
+[tool.setuptools.package-data]
+lcms2 = ["py.typed", "*.pyi", "**/*.pyi", "_data/*", "**/_data/*"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["*.c", "*.h"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--tb=short"
+
+[tool.coverage.run]
+source = ["lcms2"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+include = ["lcms2/**/*.py", "lcms2/**/*.pyi", "tests/**/*.py", "scripts/**/*.py", "examples/**/*.py"]
+extend-exclude = ["build", "*.egg-info", "scripts/devkit", ".venv", ".venvs", "vendor"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/**/*.py" = ["B008"]
+"tests/**/*.py" = ["UP006", "UP007", "UP035", "UP037", "UP045", "E701", "E702", "E741"]
+
+[tool.devkit]
+tools = ["lcms2_tools:app"]
+
+[tool.devkit.check]
+lint = ["lcms2", "scripts", "tests"]
+tests = ["-q", "-p", "no:cacheprovider"]
+docs = "docs"
+
+[tool.devkit.docs]
+source = "docs"
+out = "docs/_build/html"
+
+[tool.devkit.version]
+file = "lcms2/__init__.py"
+tag = "{version}"
+
+[tool.devkit.stub]
+# Only the C extension has a stub (hand-written; `dev.py stub docstrings sync` copies the C docstrings in).
+# Pure-Python modules use inline hints + py.typed.
+targets = ["lcms2"]
+output = "build/stubs"
+docstring_args = ["lcms2/_lcms2.pyi"]
+
+[tool.devkit.tiers]
+default = "quick"
+log_dir = "build/test-logs"
+
+[tool.devkit.tiers.quick]
+help = "The whole suite, quiet."
+args = ["tests", "-q", "-p", "no:cacheprovider"]
+
+[tool.devkit.tiers.cov]
+help = "The whole suite with a coverage report."
+args = ["tests", "-q", "--cov=lcms2", "--cov-report=term-missing"]
 
 [tool.cibuildwheel]
 build = "cp310-* cp311-* cp312-* cp313-* cp314-*"
-skip = ["cp310-win_arm64"]
+skip = ["cp310-win_arm64", "*-musllinux_i686", "*-manylinux_i686"]
 build-frontend = "build"
-
+test-requires = ["pytest"]
+test-command = "python -c \"import lcms2, numpy as np; t = lcms2.Transform(lcms2.Profile('sRGB'), 'RGB_8', lcms2.Profile('Lab'), 'Lab_DBL'); print(t.apply(np.array([255, 255, 255], np.uint8)))\""

@@ -1,0 +1,53 @@
+name,x2,y2,x10,y10,cct,description
+A,0.44758,0.40745,0.45117,0.40594,2856,incandescent / tungsten
+B,0.34842,0.35161,0.34980,0.35270,4874,"obsolete, direct sunlight at noon"
+C,0.31006,0.31616,0.31039,0.31905,6774,"obsolete, average / North sky daylight NTSC 1953, PAL-M"
+D50,0.34567,0.35850,0.34773,0.35952,5003,"horizon light, ICC profile PCS"
+D55,0.33242,0.34743,0.33411,0.34877,5503,mid-morning / mid-afternoon daylight
+D65,0.31272,0.32903,0.31382,0.33100,6504,"noon daylight: television, sRGB color space"
+D75,0.29902,0.31485,0.29968,0.31740,7504,North sky daylight
+D93,0.28315,0.29711,0.28327,0.30043,9305,"high-efficiency blue phosphor monitors, BT.2035, NTSC-J"
+E,0.33333,0.33333,0.33333,0.33333,5454,equal energy
+F1,0.31310,0.33727,0.31811,0.33559,6430,daylight fluorescent
+F2,0.37208,0.37529,0.37925,0.36733,4230,cool white fluorescent
+F3,0.40910,0.39430,0.41761,0.38324,3450,white fluorescent
+F4,0.44018,0.40329,0.44920,0.39074,2940,warm white fluorescent
+F5,0.31379,0.34531,0.31975,0.34246,6350,daylight fluorescent
+F6,0.37790,0.38835,0.38660,0.37847,4150,light white fluorescent
+F7,0.31292,0.32933,0.31569,0.32960,6500,"D65 simulator, daylight simulator"
+F8,0.34588,0.35875,0.34902,0.35939,5000,"D50 simulator, Sylvania F40 Design 50"
+F9,0.37417,0.37281,0.37829,0.37045,4150,cool white deluxe fluorescent
+F10,0.34609,0.35986,0.35090,0.35444,5000,"Philips TL85, Ultralume 50"
+F11,0.38052,0.37713,0.38541,0.37123,4000,"Philips TL84, Ultralume 40"
+F12,0.43695,0.40441,0.44256,0.39717,3000,"Philips TL83, Ultralume 30"
+FL3.1,0.4407,0.4033,,,2932,standard halophosphate
+FL3.2,0.3808,0.3734,,,3965,standard halophosphate
+FL3.3,0.3153,0.3439,,,6280,standard halophosphate
+FL3.4,0.4429,0.4043,,,2904,DeLuxe type
+FL3.5,0.3749,0.3672,,,4086,DeLuxe type
+FL3.6,0.3488,0.3600,,,4894,DeLuxe type
+FL3.7,0.4384,0.4045,,,2979,Three-band
+FL3.8,0.3820,0.3832,,,4006,Three-band
+FL3.9,0.3499,0.3591,,,4853,Three-band
+FL3.10,0.3455,0.3560,,,5000,Three-band
+FL3.11,0.3245,0.3434,,,5854,Three-band
+FL3.12,0.4377,0.4037,,,2984,Multi-band
+FL3.13,0.3830,0.3724,,,3896,Multi-band
+FL3.14,0.3447,0.3609,,,5045,Multi-band
+FL3.15,0.3127,0.3288,,,6509,D65 Simulator
+HP1,0.533,0.415,,,1959,Standard high pressure sodium lamp
+HP2,0.4778,0.4158,,,2506,Color-enhanced high-pressure sodium lamp
+HP3,0.4302,0.4075,,,3144,High pressure metal halide lamp
+HP4,0.3812,0.3797,,,4002,High pressure metal halide lamp
+HP5,0.3776,0.3713,,,4039,High pressure metal halide lamp
+LED-B1,0.4560,0.4078,,,2733,phosphor-converted blue
+LED-B2,0.4357,0.4012,,,2998,phosphor-converted blue
+LED-B3,0.3756,0.3723,,,4103,phosphor-converted blue
+LED-B4,0.3422,0.3502,,,5109,phosphor-converted blue
+LED-B5,0.3118,0.3236,,,6598,phosphor-converted blue
+LED-BH1,0.4474,0.4066,,,2851,mixing of phosphor-converted blue LED and red LED (blue-hybrid)
+LED-RGB1,0.4557,0.4211,,,2840,"mixing of red, green, and blue LEDs"
+LED-V1,0.4548,0.4044,,,2724,phosphor-converted violet
+LED-V2,0.3781,0.3775,,,4070,phosphor-converted violet
+ID50,0.3432,0.3602,,,5098,natural indoor daylight
+ID65,0.3107,0.3307,,,6603,natural indoor daylight

@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Opens a PR when the LittleCMS submodule (vendor/Little-CMS) moves to a new commit.
+  # Manual equivalent: python scripts/dev.py lcms2 update
+  - package-ecosystem: gitsubmodule
+    directory: /
+    schedule:
+      interval: monthly
