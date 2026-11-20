@@ -1,4 +1,6 @@
-"""Linear-light sRGB."""
+"""
+Linear-light sRGB.
+"""
 
 from __future__ import annotations
 

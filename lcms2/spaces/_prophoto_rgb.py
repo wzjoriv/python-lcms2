@@ -1,4 +1,6 @@
-"""ProPhoto RGB (ROMM RGB)."""
+"""
+ProPhoto RGB (ROMM RGB).
+"""
 
 from __future__ import annotations
 

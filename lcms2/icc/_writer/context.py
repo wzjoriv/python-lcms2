@@ -1,4 +1,6 @@
-"""Shared state for writing one color space: domain, samples and structure."""
+"""
+Shared state for writing one color space: domain, samples and structure.
+"""
 
 from __future__ import annotations
 

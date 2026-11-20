@@ -1,4 +1,6 @@
-"""Constant folding, subexpression sharing and algebraic simplification of traced graphs."""
+"""
+Constant folding, subexpression sharing and algebraic simplification of traced graphs.
+"""
 
 from __future__ import annotations
 

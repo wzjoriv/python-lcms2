@@ -1,4 +1,5 @@
-"""Machado, Oliveira and Fernandes (2009) CVD matrices, severity 0.0 to 1.0 in steps of 0.1.
+"""
+Machado, Oliveira and Fernandes (2009) CVD matrices, severity 0.0 to 1.0 in steps of 0.1.
 
 G. M. Machado, M. M. Oliveira and L. A. F. Fernandes, "A Physiologically-based Model for
 Simulation of Color Vision Deficiency", IEEE TVCG 15(6), 2009, doi:10.1109/TVCG.2009.113.

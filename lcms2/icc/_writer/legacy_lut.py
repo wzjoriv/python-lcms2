@@ -1,4 +1,6 @@
-"""Encode matrix/curve chains exactly as v2/v4 lookup-table tags."""
+"""
+Encode matrix/curve chains exactly as v2/v4 lookup-table tags.
+"""
 
 from __future__ import annotations
 

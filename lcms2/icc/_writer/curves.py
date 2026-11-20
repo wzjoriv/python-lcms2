@@ -1,4 +1,6 @@
-"""Encode one-dimensional curves as ICC curve tags and curve segments."""
+"""
+Encode one-dimensional curves as ICC curve tags and curve segments.
+"""
 
 from __future__ import annotations
 

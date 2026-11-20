@@ -1,4 +1,6 @@
-"""Generators for sequential, diverging, cyclic and qualitative colormaps."""
+"""
+Generators for sequential, diverging, cyclic and qualitative colormaps.
+"""
 
 from __future__ import annotations
 

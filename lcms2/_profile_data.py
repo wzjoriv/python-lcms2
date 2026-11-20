@@ -1,4 +1,6 @@
-"""Tag access, tag readers and capability queries of :class:`lcms2.Profile`."""
+"""
+Tag access, tag readers and capability queries of :class:`lcms2.Profile`.
+"""
 
 from __future__ import annotations
 

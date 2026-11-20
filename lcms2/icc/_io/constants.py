@@ -1,4 +1,6 @@
-"""ICC signatures and enumerations."""
+"""
+ICC signatures and enumerations.
+"""
 
 TAG_DESC = b"desc"
 TAG_CPRT = b"cprt"

@@ -1,4 +1,6 @@
-"""Nodes of a traced expression graph and the operation tables."""
+"""
+Nodes of a traced expression graph and the operation tables.
+"""
 
 from __future__ import annotations
 

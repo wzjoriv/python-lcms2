@@ -1,4 +1,6 @@
-"""NumPy functions recorded on traced arrays, registered in `FUNCTIONS`."""
+"""
+NumPy functions recorded on traced arrays, registered in `FUNCTIONS`.
+"""
 
 from __future__ import annotations
 

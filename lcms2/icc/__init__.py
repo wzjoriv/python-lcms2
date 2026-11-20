@@ -1,4 +1,5 @@
-"""Reading and writing ICC profiles (v2, v4 and v5) in pure NumPy.
+"""
+Reading and writing ICC profiles (v2, v4 and v5) in pure NumPy.
 
 - `ICCProfile`: a profile's header and raw tags.
 - `ICCSpace`: a `~lcms2.spaces.ColorSpace` read from a profile.

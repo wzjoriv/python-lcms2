@@ -1,4 +1,6 @@
-"""A small set of named colormaps made by this package's own generators."""
+"""
+A small set of named colormaps made by this package's own generators.
+"""
 
 from __future__ import annotations
 

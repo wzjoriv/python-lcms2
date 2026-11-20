@@ -1,4 +1,6 @@
-"""ICC Lab PCS encodings (private)."""
+"""
+ICC Lab PCS encodings (private).
+"""
 
 from __future__ import annotations
 

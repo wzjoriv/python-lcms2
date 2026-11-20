@@ -1,4 +1,5 @@
-"""Colorimetry: color differences, white points, CIECAM02 and basic color space conversions.
+"""
+Colorimetry: color differences, white points, CIECAM02 and basic color space conversions.
 
 Every function works on NumPy arrays whose last axis holds the three color components,
 broadcasts between operands, and never modifies its inputs. XYZ values use the scale where

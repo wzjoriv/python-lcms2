@@ -1,4 +1,6 @@
-"""Tag types holding XYZ numbers, fixed-point arrays and text."""
+"""
+Tag types holding XYZ numbers, fixed-point arrays and text.
+"""
 
 from __future__ import annotations
 

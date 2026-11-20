@@ -1,4 +1,5 @@
-"""Color management for NumPy, built on LittleCMS2.
+"""
+Color management for NumPy, built on LittleCMS2.
 
 Examples
 --------

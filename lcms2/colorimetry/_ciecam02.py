@@ -1,4 +1,6 @@
-"""The CIECAM02 color appearance model."""
+"""
+The CIECAM02 color appearance model.
+"""
 
 from __future__ import annotations
 

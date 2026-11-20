@@ -1,4 +1,6 @@
-"""ITU-R BT.2020."""
+"""
+ITU-R BT.2020.
+"""
 
 from __future__ import annotations
 

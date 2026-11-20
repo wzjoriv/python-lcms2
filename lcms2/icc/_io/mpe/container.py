@@ -1,4 +1,6 @@
-"""The multiProcessElements container and its element dispatch."""
+"""
+The multiProcessElements container and its element dispatch.
+"""
 
 from __future__ import annotations
 

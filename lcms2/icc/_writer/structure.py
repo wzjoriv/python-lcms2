@@ -1,4 +1,6 @@
-"""Matrix/curve chain shapes of a space's conversions."""
+"""
+Matrix/curve chain shapes of a space's conversions.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""Evaluating calculator programs."""
+"""
+Evaluating calculator programs.
+"""
 
 from __future__ import annotations
 

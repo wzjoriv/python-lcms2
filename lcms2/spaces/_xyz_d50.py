@@ -1,4 +1,6 @@
-"""CIE XYZ relative to D50."""
+"""
+CIE XYZ relative to D50.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""Linear-light BT.2100."""
+"""
+Linear-light BT.2100.
+"""
 
 from __future__ import annotations
 

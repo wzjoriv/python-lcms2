@@ -1,4 +1,6 @@
-"""Numerically detect curve/matrix structure by evaluating a function."""
+"""
+Numerically detect curve/matrix structure by evaluating a function.
+"""
 
 from __future__ import annotations
 

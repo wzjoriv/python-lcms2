@@ -1,4 +1,6 @@
-"""Build ``to_xyz``/``from_xyz`` callables from a parsed ICC profile."""
+"""
+Build ``to_xyz``/``from_xyz`` callables from a parsed ICC profile.
+"""
 
 from __future__ import annotations
 

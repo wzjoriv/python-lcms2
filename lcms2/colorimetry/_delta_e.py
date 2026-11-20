@@ -1,4 +1,6 @@
-"""CIELAB color differences."""
+"""
+CIELAB color differences.
+"""
 
 from __future__ import annotations
 

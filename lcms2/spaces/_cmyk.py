@@ -1,4 +1,6 @@
-"""Formula CMYK over sRGB."""
+"""
+Formula CMYK over sRGB.
+"""
 
 from __future__ import annotations
 

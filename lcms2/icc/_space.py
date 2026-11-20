@@ -1,4 +1,6 @@
-"""`ICCSpace`: a color space read from an ICC profile."""
+"""
+`ICCSpace`: a color space read from an ICC profile.
+"""
 
 from __future__ import annotations
 

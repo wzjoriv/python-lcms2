@@ -1,4 +1,6 @@
-"""Sampled lookup-table tags for spaces without an exact representation."""
+"""
+Sampled lookup-table tags for spaces without an exact representation.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""Colour transforms between profiles."""
+"""
+Colour transforms between profiles.
+"""
 
 from __future__ import annotations
 

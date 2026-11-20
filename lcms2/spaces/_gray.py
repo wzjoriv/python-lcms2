@@ -1,4 +1,6 @@
-"""Gamma-encoded grayscale."""
+"""
+Gamma-encoded grayscale.
+"""
 
 from __future__ import annotations
 

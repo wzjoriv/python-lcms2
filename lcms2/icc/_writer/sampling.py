@@ -1,4 +1,6 @@
-"""Sample functions on regular grids for CLUT tags."""
+"""
+Sample functions on regular grids for CLUT tags.
+"""
 
 from __future__ import annotations
 

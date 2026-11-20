@@ -1,4 +1,6 @@
-"""ICC revision numbers accepted when writing profiles."""
+"""
+ICC revision numbers accepted when writing profiles.
+"""
 
 from __future__ import annotations
 

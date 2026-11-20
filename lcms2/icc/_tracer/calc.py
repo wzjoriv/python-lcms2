@@ -1,4 +1,6 @@
-"""Compile traced graphs into ICC.2 calculator operations."""
+"""
+Compile traced graphs into ICC.2 calculator operations.
+"""
 
 from __future__ import annotations
 

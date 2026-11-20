@@ -1,4 +1,6 @@
-"""Record NumPy expressions on a placeholder array as a node graph."""
+"""
+Record NumPy expressions on a placeholder array as a node graph.
+"""
 
 from .array import TracedArray
 from .functions import stack_channels

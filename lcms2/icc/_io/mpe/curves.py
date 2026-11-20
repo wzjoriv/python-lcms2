@@ -1,4 +1,6 @@
-"""Segmented curves ('curf') and curve-set elements ('cvst')."""
+"""
+Segmented curves ('curf') and curve-set elements ('cvst').
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""Conversions between XYZ, Lab, LCh and xyY, and chromatic adaptation."""
+"""
+Conversions between XYZ, Lab, LCh and xyY, and chromatic adaptation.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""Multilinear interpolation over regular-grid lookup tables."""
+"""
+Multilinear interpolation over regular-grid lookup tables.
+"""
 
 from __future__ import annotations
 

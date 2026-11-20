@@ -1,4 +1,6 @@
-"""Decompose traced graphs into chains of matrix and per-channel curve stages."""
+"""
+Decompose traced graphs into chains of matrix and per-channel curve stages.
+"""
 
 from __future__ import annotations
 

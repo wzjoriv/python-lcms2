@@ -1,4 +1,6 @@
-"""Reference tables: CIE illuminants and RGB colour spaces (CSV files next to this module)."""
+"""
+Reference tables: CIE illuminants and RGB colour spaces (CSV files next to this module).
+"""
 
 from __future__ import annotations
 

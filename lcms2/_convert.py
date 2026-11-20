@@ -1,4 +1,6 @@
-"""``lcms2.convert``: one-call conversions between profiles and colour spaces."""
+"""
+``lcms2.convert``: one-call conversions between profiles and colour spaces.
+"""
 
 from __future__ import annotations
 

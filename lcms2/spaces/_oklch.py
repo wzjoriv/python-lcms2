@@ -1,4 +1,6 @@
-"""OKLCh."""
+"""
+OKLCh.
+"""
 
 from __future__ import annotations
 

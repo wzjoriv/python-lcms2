@@ -1,4 +1,6 @@
-"""`TracedArray`, the placeholder whose operations are recorded as a graph."""
+"""
+`TracedArray`, the placeholder whose operations are recorded as a graph.
+"""
 
 from __future__ import annotations
 

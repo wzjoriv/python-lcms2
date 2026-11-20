@@ -1,4 +1,6 @@
-"""Tracing a function on a placeholder, with NumPy temporarily patched."""
+"""
+Tracing a function on a placeholder, with NumPy temporarily patched.
+"""
 
 from __future__ import annotations
 

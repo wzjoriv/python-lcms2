@@ -1,4 +1,6 @@
-"""Adobe RGB (1998)."""
+"""
+Adobe RGB (1998).
+"""
 
 from __future__ import annotations
 

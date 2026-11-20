@@ -1,4 +1,5 @@
-"""Perceptually designed colormaps, gamut-mapped to sRGB.
+"""
+Perceptually designed colormaps, gamut-mapped to sRGB.
 
 Get a map in one line and use it in matplotlib in two::
 

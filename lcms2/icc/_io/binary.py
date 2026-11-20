@@ -1,4 +1,6 @@
-"""Big-endian encoders and decoders for ICC number types."""
+"""
+Big-endian encoders and decoders for ICC number types.
+"""
 
 from __future__ import annotations
 

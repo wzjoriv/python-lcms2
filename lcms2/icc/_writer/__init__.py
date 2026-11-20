@@ -1,4 +1,6 @@
-"""Serialize a ColorSpace into ICC profile bytes."""
+"""
+Serialize a ColorSpace into ICC profile bytes.
+"""
 
 from __future__ import annotations
 

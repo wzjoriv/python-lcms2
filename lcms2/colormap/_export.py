@@ -1,4 +1,6 @@
-"""Export to matplotlib, images, notebooks and files; load from files."""
+"""
+Export to matplotlib, images, notebooks and files; load from files.
+"""
 
 from __future__ import annotations
 

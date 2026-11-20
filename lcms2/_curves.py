@@ -1,4 +1,6 @@
-"""One-dimensional tone curves (gamma, parametric and tabulated)."""
+"""
+One-dimensional tone curves (gamma, parametric and tabulated).
+"""
 
 from __future__ import annotations
 

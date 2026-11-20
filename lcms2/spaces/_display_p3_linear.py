@@ -1,4 +1,6 @@
-"""Linear-light Display P3."""
+"""
+Linear-light Display P3.
+"""
 
 from __future__ import annotations
 

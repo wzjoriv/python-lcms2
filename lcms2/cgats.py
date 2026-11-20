@@ -1,4 +1,6 @@
-"""Reading and writing CGATS.17 / IT8 measurement files (targets, characterisation data)."""
+"""
+Reading and writing CGATS.17 / IT8 measurement files (targets, characterisation data).
+"""
 
 from __future__ import annotations
 

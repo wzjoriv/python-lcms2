@@ -1,4 +1,6 @@
-"""Built-in profile names, aliases and white point resolution."""
+"""
+Built-in profile names, aliases and white point resolution.
+"""
 
 from __future__ import annotations
 

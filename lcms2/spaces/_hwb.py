@@ -1,4 +1,6 @@
-"""HWB over sRGB."""
+"""
+HWB over sRGB.
+"""
 
 from __future__ import annotations
 

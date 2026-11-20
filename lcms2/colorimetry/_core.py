@@ -1,4 +1,6 @@
-"""Reference whites and argument checking shared by the colorimetry modules."""
+"""
+Reference whites and argument checking shared by the colorimetry modules.
+"""
 
 from __future__ import annotations
 

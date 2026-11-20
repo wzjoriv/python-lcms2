@@ -1,4 +1,6 @@
-"""CIE LCh(ab)."""
+"""
+CIE LCh(ab).
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""BT.2100 with the HLG transfer function."""
+"""
+BT.2100 with the HLG transfer function.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""White points and correlated color temperature."""
+"""
+White points and correlated color temperature.
+"""
 
 from __future__ import annotations
 

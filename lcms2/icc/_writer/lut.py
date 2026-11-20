@@ -1,4 +1,6 @@
-"""v2/v4 lookup-table tags that hold matrix/curve chains exactly."""
+"""
+v2/v4 lookup-table tags that hold matrix/curve chains exactly.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""The immutable `Colormap` class: construction, sampling and slicing."""
+"""
+The immutable `Colormap` class: construction, sampling and slicing.
+"""
 
 from __future__ import annotations
 

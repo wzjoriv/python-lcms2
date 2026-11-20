@@ -1,4 +1,6 @@
-"""Interpolation and gamut mapping behind `Colormap.from_colors`."""
+"""
+Interpolation and gamut mapping behind `Colormap.from_colors`.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""ICC profiles."""
+"""
+ICC profiles.
+"""
 
 from __future__ import annotations
 

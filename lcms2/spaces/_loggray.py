@@ -1,4 +1,6 @@
-"""Logarithmic grayscale."""
+"""
+Logarithmic grayscale.
+"""
 
 from __future__ import annotations
 

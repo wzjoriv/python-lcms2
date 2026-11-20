@@ -1,4 +1,6 @@
-"""The `ColorSpace` base class and its registry."""
+"""
+The `ColorSpace` base class and its registry.
+"""
 
 from __future__ import annotations
 

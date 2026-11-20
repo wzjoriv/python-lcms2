@@ -1,4 +1,6 @@
-"""Matrix and CLUT elements, and the element position table."""
+"""
+Matrix and CLUT elements, and the element position table.
+"""
 
 from __future__ import annotations
 

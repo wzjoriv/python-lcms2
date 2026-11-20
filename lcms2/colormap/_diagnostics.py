@@ -1,4 +1,6 @@
-"""Perceptual diagnostics and colour-vision-deficiency simulation."""
+"""
+Perceptual diagnostics and colour-vision-deficiency simulation.
+"""
 
 from __future__ import annotations
 

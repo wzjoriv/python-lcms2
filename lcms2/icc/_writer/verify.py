@@ -1,4 +1,6 @@
-"""Sample-based checks that a written representation reproduces a space."""
+"""
+Sample-based checks that a written representation reproduces a space.
+"""
 
 from __future__ import annotations
 

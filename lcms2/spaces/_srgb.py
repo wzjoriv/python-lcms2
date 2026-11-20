@@ -1,4 +1,6 @@
-"""sRGB (IEC 61966-2-1)."""
+"""
+sRGB (IEC 61966-2-1).
+"""
 
 from __future__ import annotations
 

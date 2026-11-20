@@ -1,4 +1,6 @@
-"""BT.2100 with the PQ transfer function."""
+"""
+BT.2100 with the PQ transfer function.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,6 @@
-"""HSV over sRGB."""
+"""
+HSV over sRGB.
+"""
 
 from __future__ import annotations
 

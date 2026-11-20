@@ -1,4 +1,6 @@
-"""Low-level LittleCMS2 bindings (lcms2._lcms2). Use the lcms2 package instead."""
+"""
+Low-level LittleCMS2 bindings (lcms2._lcms2). Use the lcms2 package instead.
+"""
 
 from typing import Any
 

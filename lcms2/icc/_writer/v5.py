@@ -1,4 +1,6 @@
-"""v5 multiProcessElements tags: matrix/curve chains and calculator programs."""
+"""
+v5 multiProcessElements tags: matrix/curve chains and calculator programs.
+"""
 
 from __future__ import annotations
 

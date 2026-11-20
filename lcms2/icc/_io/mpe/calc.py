@@ -1,4 +1,6 @@
-"""Calculator elements ('calc'): encoding, decoding and validation."""
+"""
+Calculator elements ('calc'): encoding, decoding and validation.
+"""
 
 from __future__ import annotations
 

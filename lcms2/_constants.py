@@ -1,4 +1,6 @@
-"""Rendering intents, transform flags and profile header enums."""
+"""
+Rendering intents, transform flags and profile header enums.
+"""
 
 from __future__ import annotations
 

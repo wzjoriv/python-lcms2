@@ -1,4 +1,6 @@
-"""ICC profile container: 128-byte header, tag table and raw tag data."""
+"""
+ICC profile container: 128-byte header, tag table and raw tag data.
+"""
 
 from __future__ import annotations
 

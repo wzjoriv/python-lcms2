@@ -1,4 +1,6 @@
-"""Pixel formats: explicit format strings and inference from NumPy arrays."""
+"""
+Pixel formats: explicit format strings and inference from NumPy arrays.
+"""
 
 from __future__ import annotations
 

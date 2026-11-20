@@ -1,4 +1,5 @@
-"""Encoders and decoders for lut8Type, lut16Type, lutAtoBType and lutBtoAType.
+"""
+Encoders and decoders for lut8Type, lut16Type, lutAtoBType and lutBtoAType.
 
 The curve, text and XYZ tag types live in sibling modules and are re-exported
 here, so ``tagtypes`` stays the one namespace of tag codecs.

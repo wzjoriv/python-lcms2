@@ -1,4 +1,6 @@
-"""Exceptions raised by lcms2."""
+"""
+Exceptions raised by lcms2.
+"""
 
 from ._lcms2 import LCMSError
 

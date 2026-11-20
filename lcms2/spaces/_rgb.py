@@ -1,4 +1,6 @@
-"""Base class for RGB spaces defined by a transfer function and primaries."""
+"""
+Base class for RGB spaces defined by a transfer function and primaries.
+"""
 
 from __future__ import annotations
 

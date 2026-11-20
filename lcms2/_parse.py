@@ -1,4 +1,6 @@
-"""Parse colours written in any common form into sRGB floats in 0..1."""
+"""
+Parse colours written in any common form into sRGB floats in 0..1.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,5 @@
-"""Encoders, decoders and evaluators for the ICC.2 multiProcessElementsType ('mpet').
+"""
+Encoders, decoders and evaluators for the ICC.2 multiProcessElementsType ('mpet').
 
 Elements: matrixElement ('matf'), curveSetElement ('cvst') of segmented
 curves ('curf') with formula ('parf') and sampled ('samf') segments,

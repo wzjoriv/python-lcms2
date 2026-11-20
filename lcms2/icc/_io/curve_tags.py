@@ -1,4 +1,6 @@
-"""Tag types holding curves: curveType and parametricCurveType."""
+"""
+Tag types holding curves: curveType and parametricCurveType.
+"""
 
 from __future__ import annotations
 

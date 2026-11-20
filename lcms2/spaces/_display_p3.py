@@ -1,4 +1,6 @@
-"""Display P3."""
+"""
+Display P3.
+"""
 
 from __future__ import annotations
 

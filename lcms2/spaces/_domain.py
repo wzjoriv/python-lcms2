@@ -1,4 +1,6 @@
-"""Channel count and device range of a color space."""
+"""
+Channel count and device range of a color space.
+"""
 
 from __future__ import annotations
 

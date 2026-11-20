@@ -1,4 +1,6 @@
-"""v2/v4 matrix/TRC and gray TRC tags."""
+"""
+v2/v4 matrix/TRC and gray TRC tags.
+"""
 
 from __future__ import annotations
 

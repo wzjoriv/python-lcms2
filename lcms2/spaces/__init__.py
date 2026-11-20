@@ -1,4 +1,5 @@
-"""Color spaces defined by conversions to and from CIE XYZ (D50).
+"""
+Color spaces defined by conversions to and from CIE XYZ (D50).
 
 Every space is a `ColorSpace` subclass with a ready-to-use instance named in
 lower case (``srgb``, ``oklab``, ...). Convert with `ColorSpace.to`::
