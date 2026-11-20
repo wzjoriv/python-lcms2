@@ -111,10 +111,9 @@ file = "lcms2/__init__.py"
 tag = "{version}"
 
 [tool.devkit.stub]
-# Only the C extension has a stub (hand-written; `dev.py stub docstrings sync` copies the C docstrings in).
-# Pure-Python modules use inline hints + py.typed.
+# Generated stubs land beside the sources (git-ignored) and ship in wheels; lcms2/_lcms2.pyi is hand-written.
 targets = ["lcms2"]
-output = "build/stubs"
+output = ""
 docstring_args = ["lcms2/_lcms2.pyi"]
 
 [tool.devkit.tiers]
