@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel", "numpy>=2.0"]
+requires = ["setuptools>=77", "wheel", "numpy>=2.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,12 +11,12 @@ authors = [
 description = "Color management for NumPy: LittleCMS2 bindings, color spaces, ICC profile authoring and colormaps"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "GPL-3.0-or-later" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE", "vendor/Little-CMS/LICENSE"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Operating System :: OS Independent",
     "Programming Language :: C",
     "Programming Language :: Python :: 3",
@@ -67,7 +67,7 @@ include = ["lcms2*"]
 lcms2 = ["py.typed", "*.pyi", "**/*.pyi", "_data/*", "**/_data/*"]
 
 [tool.setuptools.exclude-package-data]
-lcms2 = ["_ext/*"]
+"*" = ["*.c", "*.h"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
