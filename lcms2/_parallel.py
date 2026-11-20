@@ -1,5 +1,5 @@
 """
-Thread pool shared by the large-array operations (transforms, colour differences).
+Thread pool shared by the large-array operations (transforms, colour differences, built-in spaces).
 """
 
 from __future__ import annotations
@@ -23,7 +23,8 @@ _pool_lock = threading.Lock()
 def set_threads(n: int | None) -> None:
     """Set how many threads large transforms use.
 
-    Transforms and colour differences over 262,144 pixels or more are split into chunks run in
+    Transforms, colour differences and built-in colour space conversions over 262,144 pixels or
+    more are split into chunks run in
     parallel (LittleCMS runs without the GIL). Pass 1 to work on the calling thread only.
 
     Parameters

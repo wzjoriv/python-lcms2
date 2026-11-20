@@ -50,7 +50,8 @@ t = lcms2.Transform(srgb, "RGB_8", prophoto, "RGB_16")
 The GIL is released while pixels are converted and transforms keep no per-call state, so one `Transform` can
 be called from several threads at once.
 
-Large inputs are also split for you: a transform or `lcms2.delta_e` over 262,144 pixels or more runs in
+Large inputs are also split for you: a transform, `lcms2.delta_e` or a conversion between built-in color
+spaces (`ColorSpace.to`) over 262,144 pixels or more runs in
 parallel chunks on a shared pool of `min(os.cpu_count(), 16)` threads. The result is identical to a
 single-threaded run; on a 20-core machine a 4-megapixel float64 sRGB → Display P3 conversion drops from about
 730 ms to 110 ms. Use `lcms2.set_threads(1)` when you already parallelise at a higher level, and
