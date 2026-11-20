@@ -5,11 +5,8 @@ import pytest
 
 from lcms2.colorimetry import D50
 from lcms2.icc._tracer.chain import decompose_chain
-from lcms2.icc._tracer.tracing import (
-    TracedArray,
-    _PatchArrayConstructors,
-    trace_function,
-)
+from lcms2.icc._tracer.tracing import TracedArray, trace_function
+from lcms2.icc._tracer.tracing.session import _PatchArrayConstructors
 from lcms2.spaces import ColorSpace
 
 
