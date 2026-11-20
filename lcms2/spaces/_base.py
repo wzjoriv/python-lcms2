@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from numpy.typing import DTypeLike
 
-from .._parallel import parallel_worthwhile, run_chunks
 from ._domain import check_circular_channels, resolve_channels_and_domain
 
 if TYPE_CHECKING:
@@ -269,11 +268,6 @@ class ColorSpace:
                 target = get(target)
             except TypeError as e:
                 raise TypeError(f"{target_cls.__name__} needs constructor arguments; pass an instance") from e
-        if _builtin(self) and _builtin(target):
-            values = np.asarray(array, dtype=np.float64)
-            n = values.size // max(self.n_channels, 1)
-            if values.ndim and values.shape[-1] == self.n_channels and parallel_worthwhile(n):
-                return _parallel_to(self, target, values, n)
         return target.from_xyz(self.to_xyz(array))
 
     def to_xyz(self, values: Any) -> np.ndarray:
@@ -411,22 +405,6 @@ class ColorSpace:
 
 
 _INSTANCES: dict[type, ColorSpace] = {}
-
-
-def _builtin(space: Any) -> bool:
-    """Whether `space` is one of the library's own spaces (pure NumPy, safe to run in threads)."""
-    return type(space).__module__.startswith("lcms2.spaces.")
-
-
-def _parallel_to(source: ColorSpace, target: ColorSpace, values: np.ndarray, n: int) -> np.ndarray:
-    src = np.ascontiguousarray(values).reshape(n, source.n_channels)
-    out = np.empty((n, target.n_channels))
-
-    def work(start: int, stop: int) -> None:
-        out[start:stop] = target.from_xyz(source.to_xyz(src[start:stop]))
-
-    run_chunks(n, work)
-    return out.reshape(values.shape[:-1] + (target.n_channels,))
 
 
 def get(name: str) -> ColorSpace:
