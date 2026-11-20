@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from lcms2.colorimetry import D50
-from lcms2.icc._io.profile import ICCProfile
+from lcms2.icc import ICCProfile
 from lcms2.icc._tracer.tracing import TraceAbort, trace_function
 from lcms2.spaces import ColorSpace, ICCSpace, RGBSpace, srgb
 from lcms2.spaces._srgb import SRGBSpace, srgb_decode, srgb_encode

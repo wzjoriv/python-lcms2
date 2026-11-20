@@ -6,8 +6,7 @@ import os
 import numpy as np
 import pytest
 
-from lcms2.icc import ICCParseError
-from lcms2.icc._io.profile import ICCProfile
+from lcms2.icc import ICCParseError, ICCProfile
 from lcms2.icc._reader import build_transform
 
 PROFILES_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "profiles")

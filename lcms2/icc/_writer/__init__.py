@@ -143,15 +143,11 @@ def write_icc_bytes(
     lo = [d[0] for d in ctx.domain]
     hi = [d[1] for d in ctx.domain]
     if not (np.allclose(lo, 0.0) and np.allclose(hi, 1.0)):
-        tags[b"crsD"] = struct.pack(">I", ctx.n) + b"".join(
-            struct.pack(">ff", a, b) for a, b in ctx.domain
-        )
+        tags[b"crsD"] = struct.pack(">I", ctx.n) + b"".join(struct.pack(">ff", a, b) for a, b in ctx.domain)
         notes.append(f"device_domain {ctx.domain} mapped onto [0, 1] and stored in a 'crsD' tag")
     circular = sorted(colorspace.circular_device_channels)
     if circular:
-        tags[b"crsC"] = struct.pack(">I", len(circular)) + b"".join(
-            struct.pack(">I", i) for i in circular
-        )
+        tags[b"crsC"] = struct.pack(">I", len(circular)) + b"".join(struct.pack(">I", i) for i in circular)
         notes.append(f"circular device channel(s) {circular} stored in a 'crsC' tag")
 
     raw = ICCProfile.build_bytes(

@@ -332,8 +332,7 @@ class ColorSpace:
             fails on every input, or with ``strict=True`` if there is no exact
             representation.
         """
-        from ..icc._versions import normalize_icc_version
-        from ..icc._writer import write_icc_bytes
+        from ..icc import normalize_icc_version, write_icc_bytes
 
         result = write_icc_bytes(
             self,

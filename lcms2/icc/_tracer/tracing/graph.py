@@ -202,9 +202,7 @@ def select_node(node: Node, index: int) -> Node:
     if (node.width or 1) == 1:
         return node
     if node.op in ELEMENTWISE_OPS:
-        args = tuple(
-            select_node(a, index) if (a.width or 1) == node.width else a for a in node.args
-        )
+        args = tuple(select_node(a, index) if (a.width or 1) == node.width else a for a in node.args)
         return Node(node.op, args, node.meta, width=1)
     return Node("select", (node,), {"index": index}, width=1)
 

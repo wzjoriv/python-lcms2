@@ -3,8 +3,7 @@ import os
 import numpy as np
 import pytest
 
-from lcms2.icc import ICCParseError
-from lcms2.icc._io.profile import ICCProfile
+from lcms2.icc import ICCParseError, ICCProfile
 
 PROFILES_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "profiles")
 
@@ -41,8 +40,7 @@ def _generated_profiles():
 
 @pytest.mark.parametrize("tag_index", range(4))
 def test_truncated_tags_raise_parse_error(tag_index):
-    from lcms2.icc import ICCSpace
-    from lcms2.icc._io.profile import ICCProfile
+    from lcms2.icc import ICCProfile, ICCSpace
 
     for raw in _generated_profiles():
         prof = ICCProfile.from_bytes(raw)

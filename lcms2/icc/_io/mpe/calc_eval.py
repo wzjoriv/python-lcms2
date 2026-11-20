@@ -158,9 +158,7 @@ def _run(ops, x, state):
                 n = v1 + 1
                 shift = (v2 + 1) % n
                 vals = stack[-n:]
-                stack[-n:] = (
-                    vals[shift:] + vals[:shift] if sig == "rotl" else vals[-shift:] + vals[:-shift]
-                )
+                stack[-n:] = vals[shift:] + vals[:shift] if sig == "rotl" else vals[-shift:] + vals[:-shift]
             elif sig == "flip":
                 n = v1 + 2
                 stack[-n:] = stack[-n:][::-1]

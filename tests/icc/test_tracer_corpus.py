@@ -22,8 +22,7 @@ import pytest
 
 import lcms2
 from lcms2.icc import ICCSpace
-from lcms2.spaces import ColorSpace
-from lcms2.spaces._srgb import SRGBSpace
+from lcms2.spaces import ColorSpace, SRGBSpace
 
 pytestmark = pytest.mark.filterwarnings("ignore::RuntimeWarning")
 

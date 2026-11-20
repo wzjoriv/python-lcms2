@@ -84,12 +84,7 @@ def _encode_segment(seg) -> bytes:
         )
     if seg[0] == "sampled":
         samples = np.asarray(seg[1], dtype=np.float64)
-        return (
-            b"samf"
-            + b"\x00" * 4
-            + struct.pack(">I", samples.size)
-            + samples.astype(">f4").tobytes()
-        )
+        return b"samf" + b"\x00" * 4 + struct.pack(">I", samples.size) + samples.astype(">f4").tobytes()
     raise ICCWriteError(f"unknown curve segment kind {seg[0]}")
 
 

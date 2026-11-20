@@ -69,7 +69,9 @@ def _tensordot(a, b, axes=2):
         pair = (list(np.atleast_1d(axes[0])), list(np.atleast_1d(axes[1])))
     if pair is None or len(pair[0]) != 1 or len(pair[1]) != 1:
         raise TraceAbort(f"np.tensordot with axes={axes!r} is not a channel contraction")
-    t_axis, m_axis = (int(pair[0][0]), int(pair[1][0])) if traced_first else (int(pair[1][0]), int(pair[0][0]))
+    t_axis, m_axis = (
+        (int(pair[0][0]), int(pair[1][0])) if traced_first else (int(pair[1][0]), int(pair[0][0]))
+    )
     if t_axis != -1 or m_axis not in (0, 1, -1, -2):
         raise TraceAbort(f"np.tensordot with axes={axes!r} is not a channel contraction")
     x = _as_traced(a if traced_first else b)
@@ -214,7 +216,9 @@ def _repeat(a, repeats, axis=None):
     if axis not in (-1,) or not isinstance(repeats, (int, np.integer)):
         raise TraceAbort("np.repeat is only traceable with an integer count along axis=-1")
     x = _as_traced(a)
-    return TracedArray(stack_node([select_node(x.node, i) for i in range(x.n_channels) for _ in range(int(repeats))]))
+    return TracedArray(
+        stack_node([select_node(x.node, i) for i in range(x.n_channels) for _ in range(int(repeats))])
+    )
 
 
 def _tile(a, reps):
@@ -222,7 +226,9 @@ def _tile(a, reps):
     if count is None:
         raise TraceAbort("np.tile is only traceable along the channel axis")
     x = _as_traced(a)
-    return TracedArray(stack_node([select_node(x.node, i) for _ in range(int(count)) for i in range(x.n_channels)]))
+    return TracedArray(
+        stack_node([select_node(x.node, i) for _ in range(int(count)) for i in range(x.n_channels)])
+    )
 
 
 def _is_channel_axis_pair(a, b) -> bool:

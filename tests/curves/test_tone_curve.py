@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from lcms2._curves import ToneCurve
+from lcms2 import ToneCurve
 
 X = np.linspace(0, 1, 101)
 
