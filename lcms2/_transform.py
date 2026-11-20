@@ -168,6 +168,7 @@ class Transform:
         self._per_profile = per_profile
         self.flags = f
         self._cache: dict[tuple[int, int], Any] = {}
+        self._formats_for: dict[tuple[str, int | None, str | None], tuple[int, int, np.dtype]] = {}
         self._lock = threading.Lock()
         if self._formats is not None:
             self._get(*self._formats)
@@ -235,6 +236,17 @@ class Transform:
         return last.pcs if _output_side_is_pcs(last) else last.color_space
 
     def _infer(self, arr: np.ndarray, out_dtype: DTypeLike) -> tuple[int, int, np.dtype]:
+        key = (
+            arr.dtype.str,
+            arr.shape[-1] if arr.ndim and arr.shape[-1] <= 16 else None,
+            None if out_dtype is None else np.dtype(out_dtype).str,
+        )
+        hit = self._formats_for.get(key)
+        if hit is None:
+            hit = self._formats_for[key] = self._resolve(arr, out_dtype)
+        return hit
+
+    def _resolve(self, arr: np.ndarray, out_dtype: DTypeLike) -> tuple[int, int, np.dtype]:
         nbytes, is_float = dtype_spec(arr.dtype)
         first, last = self.profiles[0], self.profiles[-1]
         base = format_info(_lcms2.format_for_profile(first, nbytes, is_float, 0)).channels

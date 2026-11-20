@@ -404,8 +404,14 @@ class ColorSpace:
         return f"<{type(self).__name__} name={self.name!r} n_channels={self.n_channels}>"
 
 
+_INSTANCES: dict[type, ColorSpace] = {}
+
+
 def get(name: str) -> ColorSpace:
     """The registered color space called `name` (case-insensitive), as an instance.
+
+    The instance is shared: repeated calls return the same object until another class is
+    registered under that name.
 
     Raises
     ------
@@ -421,4 +427,7 @@ def get(name: str) -> ColorSpace:
     cls = _REGISTRY.get(str(name).lower())
     if cls is None:
         raise KeyError(f"no color space registered as {name!r}; registered: {ColorSpace.list()}")
-    return cls()
+    space = _INSTANCES.get(cls)
+    if space is None:
+        space = _INSTANCES[cls] = cls()
+    return space
