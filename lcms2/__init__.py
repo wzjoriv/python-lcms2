@@ -18,9 +18,15 @@ from ._curves import ToneCurve
 from ._data import RGB_SPACES, WHITE_POINTS
 from ._errors import CMSError, ICCParseError, ICCWriteError
 from ._formats import FORMATS
+from ._parallel import get_threads, set_threads
 from ._parse import parse_color, parse_colors, to_hex
 from ._profile import Profile
-from ._transform import Transform, get_alarm_codes, set_adaptation_state, set_alarm_codes
+from ._transform import (
+    Transform,
+    get_alarm_codes,
+    set_adaptation_state,
+    set_alarm_codes,
+)
 from .cgats import CGATS
 from .colorimetry import CIECAM02, delta_e
 from .colormap import Colormap
@@ -65,4 +71,6 @@ __all__ = [
     "get_version",
     "set_adaptation_state",
     "set_alarm_codes",
+    "set_threads",
+    "get_threads",
 ]

@@ -8,6 +8,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 
 from .. import _lcms2
+from .._parallel import parallel_worthwhile, run_chunks
 from ._core import _triple
 
 __all__ = ["delta_e"]
@@ -62,5 +63,17 @@ def delta_e(lab1: ArrayLike, lab2: ArrayLike, method: str = "2000", **params: fl
         raise TypeError(f"delta E method {key!r} {accepted}; got {', '.join(sorted(extra))}")
     values = [params.get(n, d) for n, d in zip(names, _DE_DEFAULTS.get(code, ()), strict=False)]
     a, b = np.broadcast_arrays(_triple(lab1, "lab1"), _triple(lab2, "lab2"))
-    out = _lcms2.delta_e(np.ascontiguousarray(a), np.ascontiguousarray(b), code, *map(float, values))
-    return out[()] if out.ndim == 0 else out
+    a, b = np.ascontiguousarray(a, dtype=np.float64), np.ascontiguousarray(b, dtype=np.float64)
+    params_f = [float(v) for v in values]
+    n = a.size // 3
+    if not parallel_worthwhile(n):
+        out = _lcms2.delta_e(a, b, code, *params_f)
+        return out[()] if out.ndim == 0 else out
+    flat_a, flat_b = a.reshape(n, 3), b.reshape(n, 3)
+    out = np.empty(n)
+
+    def work(start: int, stop: int) -> None:
+        out[start:stop] = _lcms2.delta_e(flat_a[start:stop], flat_b[start:stop], code, *params_f)
+
+    run_chunks(n, work)
+    return out.reshape(a.shape[:-1])
