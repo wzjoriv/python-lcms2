@@ -88,7 +88,6 @@ __all__ = [
 
 
 def __getattr__(name: str) -> Any:
-    # ICCSpace lives in `lcms2.icc`, which imports this package; resolve lazily.
     if name == "ICCSpace":
         from ..icc import ICCSpace
 

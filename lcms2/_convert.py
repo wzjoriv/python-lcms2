@@ -100,7 +100,6 @@ def _transform(src: Profile, dst: Profile, options: dict[str, Any]) -> Transform
             return hit[1]
     t = Transform(src, dst, **options)
     with _lock:
-        # keep the profiles (and proof) alive so their ids stay unique while cached
         _cache[key] = ((src, dst, options.get("proof")), t)
         while len(_cache) > _CACHE_SIZE:
             _cache.popitem(last=False)

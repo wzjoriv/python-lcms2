@@ -162,8 +162,7 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
 
         return _builtin.get(name, cls)
 
-    # -- basic protocol --------------------------------------------------------------
-
+    # ---- Basic protocol ----
     @property
     def colors(self) -> np.ndarray:
         """Read-only ``(n, 3)`` array of sRGB colours."""
@@ -239,8 +238,7 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
             raise ValueError("slice selects no colours")
         return Colormap(sub, name=self._name, space=self._space)
 
-    # -- sampling --------------------------------------------------------------------
-
+    # ---- Sampling ----
     def __call__(
         self,
         values: Any,

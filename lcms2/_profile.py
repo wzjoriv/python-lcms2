@@ -79,8 +79,7 @@ class Profile(ProfileData):
     ) -> None:
         self._handle = _open_source(source, white_point, degrees, temperature)
 
-    # Construction -------------------------------------------------------------------------------
-
+    # ---- Construction ----
     @classmethod
     def _from_handle(cls, handle: Any, description: str | None = None) -> Profile:
         self = cls.__new__(cls)
@@ -253,8 +252,7 @@ class Profile(ProfileData):
         """Device link applying one curve (gamma, ToneCurve or (type, params)) per channel."""
         return cls._from_handle(_lcms2.profile_create_linearization(color_space, list(curves)))
 
-    # Serialisation ---------------------------------------------------------------------------------
-
+    # ---- Serialisation ----
     @property
     def space(self):
         """A :class:`lcms2.spaces.ColorSpace` view of this profile (pure NumPy evaluation).
@@ -285,8 +283,7 @@ class Profile(ProfileData):
     def __copy__(self) -> Profile:
         return Profile.from_bytes(self.to_bytes())
 
-    # Text and header -------------------------------------------------------------------------------
-
+    # ---- Text and header ----
     description = _info_property("description", "Profile description text (settable).")
     manufacturer = _info_property("manufacturer", "Device manufacturer text (settable).")
     model = _info_property("model", "Device model text (settable).")
@@ -367,8 +364,7 @@ class Profile(ProfileData):
         """Compute the MD5 profile ID, store it in the header and return it."""
         return _lcms2.profile_compute_id(self._handle)
 
-    # Conversion -------------------------------------------------------------------------------------
-
+    # ---- Conversion ----
     def transform(
         self,
         data: Any,

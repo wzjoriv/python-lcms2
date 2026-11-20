@@ -256,7 +256,6 @@ class ColorSpace:
         if (isinstance(target, str) and target.lower() not in _REGISTRY) or (
             not isinstance(target, (str, ColorSpace))
         ):
-            # Profiles, built-in profile names and ICC files go through LittleCMS.
             from .._convert import convert
 
             return convert(array, self, target)

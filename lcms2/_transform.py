@@ -160,8 +160,7 @@ class Transform:
         if self._formats is not None:
             self._get(*self._formats)
 
-    # Creation ------------------------------------------------------------------------------------------
-
+    # ---- Creation ----
     def _create(self, in_fmt: int, out_fmt: int) -> Any:
         flags = int(self.flags)
         if format_info(in_fmt).extra:
@@ -198,8 +197,7 @@ class Transform:
                     h = self._cache[key] = self._create(in_fmt, out_fmt)
         return h
 
-    # Format resolution --------------------------------------------------------------------------------
-
+    # ---- Format resolution ----
     @property
     def input_profile(self) -> Profile:
         """The first profile."""
@@ -248,8 +246,7 @@ class Transform:
         out_fmt = _lcms2.format_for_profile(last, obytes, ofloat, extra, _output_side_is_pcs(last))
         return in_fmt, out_fmt, out_dtype
 
-    # Apply ------------------------------------------------------------------------------------------------
-
+    # ---- Apply ----
     def apply(self, data: Any, out: np.ndarray | None = None, *, out_dtype: DTypeLike = None) -> np.ndarray:
         """Transform pixel data; the last axis holds the channels.
 

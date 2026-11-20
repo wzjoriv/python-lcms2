@@ -116,8 +116,7 @@ class ExportMixin:
         rgba = np.asarray(cmap(np.linspace(0.0, 1.0, n)))
         return cls(rgba[:, :3], name=getattr(cmap, "name", "matplotlib"), space="srgb")
 
-    # -- images and notebooks --------------------------------------------------------
-
+    # ---- Images and notebooks ----
     def to_image(self, width: int = 256, height: int = 32, vertical: bool = False) -> np.ndarray:
         """Render a swatch as a ``(height, width, 3)`` uint8 array.
 
@@ -152,8 +151,7 @@ class ExportMixin:
             f'background:linear-gradient(to right, {stops})"></div></div>'
         )
 
-    # -- files -----------------------------------------------------------------------
-
+    # ---- Files ----
     def save(self, path: Any) -> Path:
         """Write to ``.png`` (swatch), ``.csv`` (r,g,b floats), ``.json`` or ``.txt`` (hex lines).
 

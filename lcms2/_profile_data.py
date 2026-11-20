@@ -43,8 +43,7 @@ class ProfileData:
     __slots__ = ()
     _handle: Any
 
-    # Tags ---------------------------------------------------------------------------------------------
-
+    # ---- Tags ----
     @property
     def tags(self) -> list[str]:
         """Tag signatures present in the profile (4-character strings)."""
@@ -103,8 +102,7 @@ class ProfileData:
         """Named colours ``(name, prefix, suffix, pcs, colorants)`` or None."""
         return _lcms2.profile_named_colors(self._handle)
 
-    # Capabilities ----------------------------------------------------------------------------------
-
+    # ---- Capabilities ----
     @property
     def is_matrix_shaper(self) -> bool:
         """Whether the profile is a matrix-shaper."""

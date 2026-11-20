@@ -50,8 +50,7 @@ class ToneCurve:
         self._handle = handle
         return self
 
-    # -- construction -------------------------------------------------------------------------
-
+    # ---- Construction ----
     @classmethod
     def gamma(cls, gamma: float) -> ToneCurve:
         """Pure power-law curve ``y = x ** gamma``.
@@ -161,8 +160,7 @@ class ToneCurve:
         """
         return cls.gamma(1.0)
 
-    # -- evaluation ---------------------------------------------------------------------------
-
+    # ---- Evaluation ----
     def __call__(self, x):
         """Evaluate the curve over an array (or scalar) of any shape.
 
@@ -190,8 +188,7 @@ class ToneCurve:
             out = _lcms2.curve_eval(self._handle, arr)
         return out[()] if out.ndim == 0 else out
 
-    # -- derived curves -----------------------------------------------------------------------
-
+    # ---- Derived curves ----
     def inverse(self, n: int = 4096) -> ToneCurve:
         """Inverse curve, analytic when possible, otherwise sampled at ``n`` points.
 
@@ -279,8 +276,7 @@ class ToneCurve:
         """
         return _lcms2.curve_estimate_gamma(self._handle, float(precision))
 
-    # -- properties ---------------------------------------------------------------------------
-
+    # ---- Properties ----
     @property
     def is_linear(self) -> bool:
         """True when the curve is the identity."""

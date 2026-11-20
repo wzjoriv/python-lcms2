@@ -73,8 +73,7 @@ class CGATS:
         self._table = 0
         self.properties = _Properties(self)
 
-    # -- construction / persistence -----------------------------------------------------------
-
+    # ---- Construction / persistence ----
     @classmethod
     def from_bytes(cls, data: bytes) -> CGATS:
         """Parse CGATS text.
@@ -136,8 +135,7 @@ class CGATS:
         with open(path, "wb") as fh:
             fh.write(data)
 
-    # -- tables -------------------------------------------------------------------------------
-
+    # ---- Tables ----
     def _sel(self):
         _lcms2.it8_set_table(self._handle, self._table)
         return self._handle
@@ -185,8 +183,7 @@ class CGATS:
     def sheet_type(self, value: str) -> None:
         _lcms2.it8_set_sheet_type(self._sel(), str(value))
 
-    # -- columns and rows -----------------------------------------------------------------------
-
+    # ---- Columns and rows ----
     def define_table(self, columns, n_rows: int) -> None:
         """Declare the column names and row count of the (empty) current table.
 
