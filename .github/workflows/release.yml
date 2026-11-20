@@ -24,12 +24,12 @@ jobs:
           - macos-latest         # macOS Apple Silicon ARM64
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
           persist-credentials: false
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.x"
 
@@ -55,7 +55,7 @@ jobs:
           print("\n".join(bad) or "every module has a stub")
           sys.exit(1 if bad else 0)
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
@@ -64,12 +64,12 @@ jobs:
     name: Build Pyodide wheels
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
           persist-credentials: false
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.x"
 
@@ -86,7 +86,7 @@ jobs:
         env:
           CIBW_BUILD: "cp312-* cp313-*"
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: pyodide-wheels
           path: ./wheelhouse/*.whl
@@ -95,12 +95,12 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
           persist-credentials: false
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.x"
 
@@ -112,7 +112,7 @@ jobs:
       - name: Build sdist
         run: pipx run build --sdist
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: sdist
           path: dist/*.tar.gz
@@ -125,24 +125,24 @@ jobs:
     if: ${{ always() && needs.build_sdist.result == 'success' && needs.build_wheels.result == 'success' }}
 
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           pattern: cibw-wheels-*
           path: dist
           merge-multiple: true
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: sdist
           path: dist
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           name: pyodide-wheels
           path: dist/pyodide
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -157,7 +157,7 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
