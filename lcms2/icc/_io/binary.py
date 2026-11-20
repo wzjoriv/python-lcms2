@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import struct
+from collections.abc import Sequence
 
 
 def read_s15Fixed16(buf: bytes, off: int) -> float:
@@ -53,39 +54,39 @@ def write_u8Fixed8(x: float) -> bytes:
     return struct.pack(">H", v)
 
 
-def read_u8(buf, off):
+def read_u8(buf: bytes, off: int) -> int:
     return buf[off]
 
 
-def read_u16(buf, off):
+def read_u16(buf: bytes, off: int) -> int:
     return struct.unpack_from(">H", buf, off)[0]
 
 
-def read_u32(buf, off):
+def read_u32(buf: bytes, off: int) -> int:
     return struct.unpack_from(">I", buf, off)[0]
 
 
-def read_u64(buf, off):
+def read_u64(buf: bytes, off: int) -> int:
     return struct.unpack_from(">Q", buf, off)[0]
 
 
-def read_s32(buf, off):
+def read_s32(buf: bytes, off: int) -> int:
     return struct.unpack_from(">i", buf, off)[0]
 
 
-def write_u16(v):
+def write_u16(v: int) -> bytes:
     return struct.pack(">H", v & 0xFFFF)
 
 
-def write_u32(v):
+def write_u32(v: int) -> bytes:
     return struct.pack(">I", v & 0xFFFFFFFF)
 
 
-def write_u64(v):
+def write_u64(v: int) -> bytes:
     return struct.pack(">Q", v & 0xFFFFFFFFFFFFFFFF)
 
 
-def write_s32(v):
+def write_s32(v: int) -> bytes:
     return struct.pack(">i", v)
 
 
@@ -101,14 +102,14 @@ def write_dateTime(dt: _dt.datetime) -> bytes:
     return struct.pack(">HHHHHH", dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
 
-def read_XYZNumber(buf: bytes, off: int):
+def read_XYZNumber(buf: bytes, off: int) -> tuple[float, float, float]:
     x = read_s15Fixed16(buf, off)
     y = read_s15Fixed16(buf, off + 4)
     z = read_s15Fixed16(buf, off + 8)
     return (x, y, z)
 
 
-def write_XYZNumber(xyz) -> bytes:
+def write_XYZNumber(xyz: Sequence[float]) -> bytes:
     x, y, z = xyz
     return write_s15Fixed16(x) + write_s15Fixed16(y) + write_s15Fixed16(z)
 

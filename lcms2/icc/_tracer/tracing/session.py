@@ -7,12 +7,14 @@ from __future__ import annotations
 import os
 import threading
 import traceback
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 
 from .array import TracedArray, _check_float_dtype
 from .functions import _stack
-from .graph import TraceAbort, per_channel
+from .graph import Node, TraceAbort, per_channel
 
 _TRACE_LOCK = threading.Lock()
 
@@ -42,15 +44,15 @@ _RANDOM_FUNCTIONS = (
 _PYTHON_PER_ELEMENT = ("vectorize", "frompyfunc")
 
 
-def _forbidden_python_loop(name):
-    def forbidden(*args, **kwargs):
+def _forbidden_python_loop(name: str) -> Callable[..., Any]:
+    def forbidden(*args: Any, **kwargs: Any) -> Any:
         raise TraceAbort(f"np.{name} calls a Python function for every element")
 
     return forbidden
 
 
-def _forbidden_random(name):
-    def forbidden(*args, **kwargs):
+def _forbidden_random(name: str) -> Callable[..., Any]:
+    def forbidden(*args: Any, **kwargs: Any) -> Any:
         raise TraceAbort(f"np.random.{name}: random numbers make the transform non-deterministic")
 
     return forbidden
@@ -59,18 +61,18 @@ def _forbidden_random(name):
 class _PatchArrayConstructors:
     """Make ``np.asarray``/``np.array`` pass traced values through while tracing."""
 
-    def __enter__(self):
+    def __enter__(self) -> _PatchArrayConstructors:
         _TRACE_LOCK.acquire()
         self._asarray, self._array = np.asarray, np.array
         orig_asarray, orig_array = self._asarray, self._array
 
-        def asarray(a, *args, **kwargs):
+        def asarray(a: Any, *args: Any, **kwargs: Any) -> Any:
             if isinstance(a, TracedArray):
                 _check_float_dtype(kwargs.get("dtype", args[0] if args else None), "np.asarray")
                 return a
             return orig_asarray(a, *args, **kwargs)
 
-        def array(a, *args, **kwargs):
+        def array(a: Any, *args: Any, **kwargs: Any) -> Any:
             if isinstance(a, TracedArray):
                 _check_float_dtype(kwargs.get("dtype", args[0] if args else None), "np.array")
                 return a if kwargs.get("copy") is False else TracedArray(a.node)
@@ -90,7 +92,7 @@ class _PatchArrayConstructors:
             setattr(np, name, _forbidden_python_loop(name))
         return self
 
-    def __exit__(self, *exc):
+    def __exit__(self, *exc: object) -> bool:
         np.asarray, np.array = self._asarray, self._array
         for name, original in self._random.items():
             if name.startswith("np."):
@@ -101,7 +103,7 @@ class _PatchArrayConstructors:
         return False
 
 
-def _numpy_frame(error) -> str:
+def _numpy_frame(error: BaseException) -> str:
     """`` (inside numpy's <function>)`` for the first NumPy function an exception passed through."""
     for frame, _ in traceback.walk_tb(error.__traceback__):
         if f"{os.sep}numpy{os.sep}" in frame.f_code.co_filename:
@@ -109,7 +111,7 @@ def _numpy_frame(error) -> str:
     return ""
 
 
-def trace_function(fn, n_channels: int):
+def trace_function(fn: Callable[[Any], Any], n_channels: int) -> tuple[Node, int]:
     """Trace ``fn`` on an `n_channels` placeholder.
 
     Returns

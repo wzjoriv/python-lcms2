@@ -5,6 +5,7 @@ Matrix and CLUT elements, and the element position table.
 from __future__ import annotations
 
 import struct
+from collections.abc import Sequence
 
 import numpy as np
 
@@ -12,7 +13,7 @@ from ...._errors import ICCParseError
 from .. import binary as bn
 
 
-def _position_table(blobs, base: int) -> tuple:
+def _position_table(blobs: Sequence[bytes], base: int) -> tuple[bytes, bytes]:
     positions, body, cursor = [], bytearray(), base
     for blob in blobs:
         positions.append((cursor, len(blob)))

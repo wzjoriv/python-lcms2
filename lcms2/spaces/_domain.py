@@ -5,11 +5,12 @@ Channel count and device range of a color space.
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import Any
 
 import numpy as np
 
 
-def resolve_channels_and_domain(n_channels: int | None, domain) -> tuple[int, list[tuple[float, float]]]:
+def resolve_channels_and_domain(n_channels: int | None, domain: Any) -> tuple[int, list[tuple[float, float]]]:
     """Combine a declared channel count with a device range.
 
     Parameters

@@ -4,17 +4,19 @@ v5 multiProcessElements tags: matrix/curve chains and calculator programs.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from ..._errors import ICCWriteError
 from .._io import mpe
 from .._tracer.calc import compile_calc_program
 from .._tracer.tracing import TraceAbort
 from . import curves as cv
 from .context import Context
-from .structure import chains, stage_ranges
+from .structure import Chain, chains, stage_ranges
 from .verify import agrees, call
 
 
-def chain_bytes(chain, ranges) -> list:
+def chain_bytes(chain: Chain, ranges: Sequence[list[tuple[float, float]] | None]) -> list:
     """Encode a matrix/curve chain as mpet element bodies."""
     elems = []
     for stage, rng in zip(chain, ranges, strict=False):

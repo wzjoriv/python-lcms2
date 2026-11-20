@@ -5,6 +5,7 @@ CIELAB color differences.
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .. import _lcms2
 from ._core import _triple
@@ -16,7 +17,7 @@ _DE_PARAMS = {2: ("Kl", "Kc", "Kh"), 3: ("l", "c")}
 _DE_DEFAULTS = {2: (1.0, 1.0, 1.0), 3: (2.0, 1.0)}
 
 
-def delta_e(lab1, lab2, method: str = "2000", **params) -> np.ndarray:
+def delta_e(lab1: ArrayLike, lab2: ArrayLike, method: str = "2000", **params: float) -> np.ndarray:
     """Color difference between CIELAB colors.
 
     Parameters

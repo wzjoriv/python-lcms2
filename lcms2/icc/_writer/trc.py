@@ -4,6 +4,8 @@ v2/v4 matrix/TRC and gray TRC tags.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import numpy as np
 
 from ...colorimetry import D50
@@ -12,7 +14,9 @@ from . import curves as cv
 from .context import Context
 
 
-def _unit_curves(curves, matrix):
+def _unit_curves(
+    curves: Sequence[cv.CurveFn], matrix: np.ndarray
+) -> tuple[list[cv.CurveFn], np.ndarray] | None:
     """Rescale curves to peak at 1 on [0, 1], folding the scale into `matrix`."""
     t = np.linspace(0.0, 1.0, cv.TRC_SAMPLES)
     scaled_curves, scaled_rows = [], []

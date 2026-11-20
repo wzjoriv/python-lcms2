@@ -16,11 +16,14 @@ __all__ = [
 ]
 
 import struct
+from collections.abc import Sequence
 
 import numpy as np
 
 from ..._errors import ICCParseError
 from . import binary as bn
+
+CurveDescriptor = tuple[str, np.ndarray | tuple[int, Sequence[float]]]
 
 
 def decode_curv(body: bytes) -> np.ndarray:
@@ -46,7 +49,7 @@ def encode_curv(samples: np.ndarray) -> bytes:
     return b"curv" + b"\x00" * 4 + struct.pack(">I", q.size) + q.tobytes()
 
 
-def decode_para(body: bytes):
+def decode_para(body: bytes) -> tuple[int, list[float]]:
     """Decode a parametricCurveType tag body into (func_type, params)."""
     func_type = bn.read_u16(body, 8)
     nparams = {0: 1, 1: 3, 2: 4, 3: 5, 4: 7}.get(func_type)
@@ -56,7 +59,7 @@ def decode_para(body: bytes):
     return func_type, params
 
 
-def encode_para(func_type: int, params) -> bytes:
+def encode_para(func_type: int, params: Sequence[float]) -> bytes:
     """Encode (func_type, params) as a parametricCurveType tag body."""
     out = b"para" + b"\x00" * 4 + struct.pack(">H", func_type) + b"\x00\x00"
     for p in params:
@@ -64,7 +67,7 @@ def encode_para(func_type: int, params) -> bytes:
     return out
 
 
-def eval_para(func_type: int, params, x: np.ndarray) -> np.ndarray:
+def eval_para(func_type: int, params: Sequence[float], x: np.ndarray) -> np.ndarray:
     """Evaluate a parametricCurveType function (ICC.1:2010 Table 65) at `x`."""
     x = np.asarray(x, dtype=np.float64)
     if func_type == 0:
@@ -93,7 +96,7 @@ def eval_para(func_type: int, params, x: np.ndarray) -> np.ndarray:
     raise ICCParseError(f"unknown parametricCurveType function type {func_type}")
 
 
-def invert_para(func_type: int, params, y: np.ndarray) -> np.ndarray:
+def invert_para(func_type: int, params: Sequence[float], y: np.ndarray) -> np.ndarray:
     """Invert `eval_para` at `y`."""
     y = np.asarray(y, dtype=np.float64)
     if func_type == 0:
@@ -120,7 +123,7 @@ def invert_para(func_type: int, params, y: np.ndarray) -> np.ndarray:
     raise ICCParseError(f"unknown parametricCurveType function type {func_type}")
 
 
-def eval_curve(curve, x: np.ndarray) -> np.ndarray:
+def eval_curve(curve: CurveDescriptor, x: np.ndarray) -> np.ndarray:
     """Evaluate a ``('curv', samples)`` or ``('para', (func_type, params))`` curve at `x`."""
     kind, payload = curve
     if kind == "curv":
@@ -141,7 +144,9 @@ def eval_curve(curve, x: np.ndarray) -> np.ndarray:
     raise ICCParseError(f"unknown curve kind {kind}")
 
 
-def invert_curve_numeric(curve, y: np.ndarray, lo=0.0, hi=1.0, iters=40) -> np.ndarray:
+def invert_curve_numeric(
+    curve: CurveDescriptor, y: np.ndarray, lo: float = 0.0, hi: float = 1.0, iters: int = 40
+) -> np.ndarray:
     """Invert a monotonic curve at `y` (analytically for 'para', by bisection for 'curv')."""
     kind, payload = curve
     if kind == "para":

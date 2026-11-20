@@ -7,7 +7,9 @@ from __future__ import annotations
 import datetime as _dt
 import hashlib
 import struct
+from collections.abc import Sequence
 from dataclasses import dataclass
+from os import PathLike
 
 from ..._errors import ICCParseError
 from . import binary as bn
@@ -68,7 +70,7 @@ class ICCProfile:
         self.raw = raw
 
     @classmethod
-    def load(cls, path_or_bytes) -> ICCProfile:
+    def load(cls, path_or_bytes: str | PathLike[str] | bytes | bytearray) -> ICCProfile:
         """Load an ICC profile from a file path or raw bytes.
 
         Parameters
@@ -210,7 +212,7 @@ class ICCProfile:
         """
         return sig4 in self.tags
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         h = self.header
         return (
             f"<ICCProfile v{h.version_tuple_str} class={h.device_class!r} "
@@ -220,21 +222,21 @@ class ICCProfile:
     @staticmethod
     def build_bytes(
         *,
-        version=(4, 4, 0),
-        device_class=b"spac",
-        data_colour_space=b"RGB ",
-        pcs=b"XYZ ",
-        rendering_intent=1,
-        pcs_illuminant=(0.9642, 1.0, 0.8249),
-        cmm=b"\x00\x00\x00\x00",
-        primary_platform=b"\x00\x00\x00\x00",
-        manufacturer=b"\x00\x00\x00\x00",
-        model=b"\x00\x00\x00\x00",
-        attributes=0,
-        flags=0,
-        creator=b"lcms",
+        version: Sequence[int] = (4, 4, 0),
+        device_class: bytes = b"spac",
+        data_colour_space: bytes = b"RGB ",
+        pcs: bytes = b"XYZ ",
+        rendering_intent: int = 1,
+        pcs_illuminant: Sequence[float] = (0.9642, 1.0, 0.8249),
+        cmm: bytes = b"\x00\x00\x00\x00",
+        primary_platform: bytes = b"\x00\x00\x00\x00",
+        manufacturer: bytes = b"\x00\x00\x00\x00",
+        model: bytes = b"\x00\x00\x00\x00",
+        attributes: int = 0,
+        flags: int = 0,
+        creator: bytes = b"lcms",
         created: _dt.datetime | None = None,
-        tags: dict[bytes, bytes] = None,
+        tags: dict[bytes, bytes] | None = None,
     ) -> bytes:
         """Serialize a profile from header fields and raw tag data.
 

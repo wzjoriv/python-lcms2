@@ -4,7 +4,10 @@ v2/v4 lookup-table tags that hold matrix/curve chains exactly.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .._io import tagtypes as tt
 from .._io.constants import CS_XYZ, TYPE_MAB, TYPE_MBA
@@ -17,13 +20,19 @@ from .structure import chain_as_matrix_curves, chains
 from .verify import agrees, call
 
 
-def encode_lut_tag(ctx: Context, is_b2a: bool, in_curves, clut, out_curves) -> bytes:
+def encode_lut_tag(
+    ctx: Context,
+    is_b2a: bool,
+    in_curves: Sequence[cv.CurveFn] | None,
+    clut: np.ndarray,
+    out_curves: Sequence[cv.CurveFn] | None,
+) -> bytes:
     """Encode a v2 lut16 or v4 mAB/mBA tag from input curves, a CLUT and output curves."""
     in_ch = 3 if is_b2a else ctx.n
     out_ch = ctx.n if is_b2a else 3
     if ctx.major == 2:
 
-        def table(curves, count):
+        def table(curves: Sequence[cv.CurveFn] | None, count: int) -> np.ndarray:
             if curves is None:
                 return np.tile(np.array([0.0, 1.0]), (count, 1))
             return np.array([cv.evaluate(c, np.linspace(0, 1, cv.TRC_SAMPLES)) for c in curves])
@@ -38,7 +47,7 @@ def encode_lut_tag(ctx: Context, is_b2a: bool, in_curves, clut, out_curves) -> b
             np.clip(table(out_curves, out_ch), 0.0, 1.0),
         )
 
-    def descriptors(curves, count):
+    def descriptors(curves: Sequence[cv.CurveFn] | None, count: int) -> list[tt.CurveDescriptor]:
         if curves is None:
             return [cv.identity_curve() for _ in range(count)]
         return [cv.sampled_curve(c) for c in curves]
@@ -115,7 +124,7 @@ _WARPS = (
 )
 
 
-def _best_warp(g):
+def _best_warp(g: cv.CurveFn) -> tuple[cv.CurveFn, cv.CurveFn]:
     """The warp whose sampled M/A curve pair reproduces `g` on [0, 1] most closely."""
     grid = np.linspace(0.0, 1.0, cv.TRC_SAMPLES)
     test = np.unique(np.concatenate([np.linspace(0, 1, 20001), np.geomspace(1e-9, 1, 2000)]))
@@ -132,7 +141,13 @@ def _best_warp(g):
     return best
 
 
-def _matrix_b2a(ctx: Context, w, b, h_curves, ranges):
+def _matrix_b2a(
+    ctx: Context,
+    w: np.ndarray,
+    b: np.ndarray,
+    h_curves: Sequence[cv.CurveFn],
+    ranges: Sequence[tuple[float, float]],
+) -> bytes | None:
     matrix = np.zeros((3, 3))
     offset = np.zeros(3)
     m_curves, a_curves = [], []
@@ -146,7 +161,7 @@ def _matrix_b2a(ctx: Context, w, b, h_curves, ranges):
         matrix[j] = w[:, j] * XYZ_U1F15_SCALE / span
         offset[j] = (b[j] - lo) / span
 
-        def g(v, h=h, lo=lo, span=span):
+        def g(v: ArrayLike, h: cv.CurveFn = h, lo: float = lo, span: float = span) -> np.ndarray:
             return np.nan_to_num(cv.evaluate(h, lo + np.asarray(v) * span))
 
         warp, unwarp = _best_warp(g)
@@ -168,7 +183,13 @@ def _matrix_b2a(ctx: Context, w, b, h_curves, ranges):
     )
 
 
-def _lut16_matrix_b2a(ctx: Context, w, b, h_curves, ranges):
+def _lut16_matrix_b2a(
+    ctx: Context,
+    w: np.ndarray,
+    b: np.ndarray,
+    h_curves: Sequence[cv.CurveFn],
+    ranges: Sequence[tuple[float, float]],
+) -> bytes | None:
     """lut16 B2A: scaled projection matrix, warping input tables, selecting CLUT, curve outputs."""
     if np.any(w < -1e-12):
         return None
@@ -190,7 +211,7 @@ def _lut16_matrix_b2a(ctx: Context, w, b, h_curves, ranges):
             return None
         matrix[j] = w[:, j] * XYZ_U1F15_SCALE / reach
 
-        def g(v, h=h, lo=lo, span=span):
+        def g(v: ArrayLike, h: cv.CurveFn = h, lo: float = lo, span: float = span) -> np.ndarray:
             return np.nan_to_num(cv.evaluate(h, lo + np.asarray(v) * span))
 
         warp, unwarp = _best_warp(g)

@@ -5,6 +5,7 @@ The CIECAM02 color appearance model.
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .. import _lcms2
 from ._core import _triple
@@ -40,12 +41,12 @@ class CIECAM02:
 
     def __init__(
         self,
-        white_point,
+        white_point: ArrayLike,
         adapting_luminance: float = 64.0,
         background: float = 20.0,
         surround: str = "average",
-        degree="auto",
-    ):
+        degree: float | str = "auto",
+    ) -> None:
         white = np.asarray(white_point, dtype=np.float64)
         if white.shape != (3,) or white[1] <= 0:
             raise ValueError(f"white_point must be an XYZ triple with Y > 0, got {white_point!r}")
@@ -73,12 +74,12 @@ class CIECAM02:
             d,
         )
 
-    def _run(self, values, name, reverse):
+    def _run(self, values: ArrayLike, name: str, reverse: bool) -> np.ndarray:
         arr = _triple(values, name)
         w, yb, la, surround, d = self._args
         return _lcms2.cam02(np.ascontiguousarray(arr), w, yb, la, surround, d, reverse)
 
-    def forward(self, xyz) -> np.ndarray:
+    def forward(self, xyz: ArrayLike) -> np.ndarray:
         """XYZ (``Y = 1`` scale) to JCh (lightness, chroma, hue in degrees).
 
         Examples
@@ -89,7 +90,7 @@ class CIECAM02:
         """
         return self._run(np.asarray(xyz, dtype=np.float64) * 100.0, "xyz", False)
 
-    def reverse(self, jch) -> np.ndarray:
+    def reverse(self, jch: ArrayLike) -> np.ndarray:
         """JCh back to XYZ (``Y = 1`` scale).
 
         Examples

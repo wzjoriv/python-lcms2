@@ -5,6 +5,7 @@ The multiProcessElements container and its element dispatch.
 from __future__ import annotations
 
 import struct
+from collections.abc import Sequence
 
 from ...._errors import ICCParseError
 from .. import binary as bn
@@ -13,7 +14,7 @@ from .curves import decode_curveset_element
 from .elements import _position_table, decode_clut_element, decode_matrix_element
 
 
-def encode_mpet(in_ch: int, out_ch: int, element_blobs) -> bytes:
+def encode_mpet(in_ch: int, out_ch: int, element_blobs: Sequence[bytes]) -> bytes:
     """Encode an 'mpet' tag body from encoded element bodies."""
     header = b"mpet" + b"\x00" * 4 + struct.pack(">HHI", in_ch, out_ch, len(element_blobs))
     table, body = _position_table(element_blobs, len(header) + 8 * len(element_blobs))

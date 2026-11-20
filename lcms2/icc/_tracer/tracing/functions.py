@@ -4,17 +4,21 @@ NumPy functions recorded on traced arrays, registered in `FUNCTIONS`.
 
 from __future__ import annotations
 
-import numpy as np
+from collections.abc import Callable, Iterable, Sequence
+from typing import Any
 
-from .array import TracedArray, _matmul_any, _operand, elementwise, matmul
+import numpy as np
+from numpy.typing import ArrayLike
+
+from .array import Operand, TracedArray, _matmul_any, _operand, elementwise, matmul
 from .graph import Node, TraceAbort, const_node, select_node, stack_node
 
 
-def _as_traced(x) -> TracedArray:
+def _as_traced(x: Operand) -> TracedArray:
     return x if isinstance(x, TracedArray) else TracedArray(_operand(x))
 
 
-def _check_channel_axis(axis):
+def _check_channel_axis(axis: int | None) -> None:
     if axis is None:
         raise TraceAbort(
             "a reduction over all axes (no axis= given) mixes different pixels; "
@@ -24,19 +28,19 @@ def _check_channel_axis(axis):
         raise TraceAbort(f"reduction over axis={axis!r} is not a channel-axis reduction")
 
 
-def _sum(x, axis=None, keepdims=False, **kwargs):
+def _sum(x: Operand, axis: int | None = None, keepdims: bool = False, **kwargs: Any) -> TracedArray:
     x = _as_traced(x)
     _check_channel_axis(axis)
     return matmul(x.node, np.ones((x.n_channels, 1))).channel(0)
 
 
-def _mean(x, axis=None, keepdims=False, **kwargs):
+def _mean(x: Operand, axis: int | None = None, keepdims: bool = False, **kwargs: Any) -> TracedArray:
     x = _as_traced(x)
     _check_channel_axis(axis)
     return matmul(x.node, np.full((x.n_channels, 1), 1.0 / x.n_channels)).channel(0)
 
 
-def _reduce(x, op, axis=None, *args, **kwargs):
+def _reduce(x: Operand, op: str, axis: int | None = None, *args: Any, **kwargs: Any) -> TracedArray:
     x = _as_traced(x)
     _check_channel_axis(axis)
     if x.n_channels == 1:
@@ -44,7 +48,9 @@ def _reduce(x, op, axis=None, *args, **kwargs):
     return TracedArray(Node(op, (x.node,), {"width": x.n_channels}, width=1))
 
 
-def _clip(x, a_min=None, a_max=None, **kwargs):
+def _clip(
+    x: Operand, a_min: Operand | None = None, a_max: Operand | None = None, **kwargs: Any
+) -> TracedArray:
     a_min = kwargs.pop("min", a_min)
     a_max = kwargs.pop("max", a_max)
     lo = -np.inf if a_min is None else a_min
@@ -52,7 +58,7 @@ def _clip(x, a_min=None, a_max=None, **kwargs):
     return elementwise("clip", x, lo, hi)
 
 
-def _norm(x, ord=None, axis=None, keepdims=False):
+def _norm(x: Operand, ord: int | None = None, axis: int | None = None, keepdims: bool = False) -> TracedArray:
     if ord not in (None, 2):
         raise TraceAbort("only the 2-norm over the channel axis is traceable")
     _check_channel_axis(axis)
@@ -60,7 +66,7 @@ def _norm(x, ord=None, axis=None, keepdims=False):
     return elementwise("sqrt", _sum(elementwise("square", x), axis=-1))
 
 
-def _tensordot(a, b, axes=2):
+def _tensordot(a: Operand, b: Operand, axes: int | Sequence[Any] = 2) -> TracedArray:
     traced_first = isinstance(a, TracedArray)
     matrix = np.asarray(b if traced_first else a, dtype=np.float64)
     if matrix.ndim != 2:
@@ -81,7 +87,9 @@ def _tensordot(a, b, axes=2):
     return matmul(x.node, matrix if m_axis in (0, -2) else matrix.T)
 
 
-def _average(x, axis=None, weights=None, **kwargs):
+def _average(
+    x: Operand, axis: int | None = None, weights: ArrayLike | None = None, **kwargs: Any
+) -> TracedArray:
     x = _as_traced(x)
     _check_channel_axis(axis)
     if weights is None:
@@ -92,11 +100,11 @@ def _average(x, axis=None, weights=None, **kwargs):
     return matmul(x.node, (w / w.sum()).reshape(-1, 1)).channel(0)
 
 
-def _dot(a, b, out=None):
+def _dot(a: Operand, b: Operand, out: Any = None) -> TracedArray:
     return _matmul_any(a, b)
 
 
-def _einsum(subscripts, *operands, **kwargs):
+def _einsum(subscripts: str, *operands: Operand, **kwargs: Any) -> TracedArray:
     if len(operands) != 2:
         raise TraceAbort("np.einsum is only traceable for two operands")
     spec = subscripts.replace(" ", "")
@@ -116,20 +124,22 @@ def _einsum(subscripts, *operands, **kwargs):
     raise TraceAbort(f"unsupported einsum {subscripts!r}")
 
 
-def _where(cond, a=None, b=None):
+def _where(cond: Operand, a: Operand | None = None, b: Operand | None = None) -> TracedArray:
     if a is None or b is None:
         raise TraceAbort("np.where with one argument is not traceable")
     return elementwise("where", cond, a, b)
 
 
-def _select(condlist, choicelist, default=0.0):
+def _select(
+    condlist: Iterable[Operand], choicelist: Iterable[Operand], default: Operand = 0.0
+) -> TracedArray:
     result = default
     for cond, choice in zip(reversed(list(condlist)), reversed(list(choicelist)), strict=False):
         result = elementwise("where", cond, choice, result)
     return _as_traced(result)
 
 
-def _stack(arrays, axis=-1, **kwargs):
+def _stack(arrays: Iterable[Operand], axis: int = -1, **kwargs: Any) -> TracedArray:
     arrays = list(arrays)
     nodes = []
     for a in arrays:
@@ -140,7 +150,7 @@ def _stack(arrays, axis=-1, **kwargs):
     return TracedArray(stack_node(nodes))
 
 
-def _concatenate(arrays, axis=-1, **kwargs):
+def _concatenate(arrays: Iterable[Operand], axis: int | None = -1, **kwargs: Any) -> TracedArray:
     if axis not in (-1, None):
         raise TraceAbort(f"np.concatenate along axis={axis!r} is not a channel concat")
     nodes = []
@@ -150,7 +160,7 @@ def _concatenate(arrays, axis=-1, **kwargs):
     return TracedArray(stack_node(nodes))
 
 
-def _split(x, sections, axis=-1):
+def _split(x: Operand, sections: int | Sequence[int], axis: int = -1) -> list[TracedArray]:
     x = _as_traced(x)
     if axis not in (-1, x.n_channels - 1):
         raise TraceAbort(f"np.split along axis={axis!r} is not a channel split")
@@ -164,21 +174,21 @@ def _split(x, sections, axis=-1):
     return [x._channels(range(a, b)) for a, b in zip(bounds[:-1], bounds[1:], strict=False)]
 
 
-def _unstack(x, axis=-1):
+def _unstack(x: Operand, axis: int = -1) -> tuple[TracedArray, ...]:
     x = _as_traced(x)
     return tuple(x.channel(i) for i in range(x.n_channels))
 
 
-def _identity_function(x, *args, **kwargs):
+def _identity_function(x: Operand, *args: Any, **kwargs: Any) -> TracedArray:
     return _as_traced(x)
 
 
-def _copy_function(x, *args, **kwargs):
+def _copy_function(x: Operand, *args: Any, **kwargs: Any) -> TracedArray:
     return TracedArray(_operand(x))
 
 
-def _like(fill):
-    def handler(x, *args, **kwargs):
+def _like(fill: float | None) -> Callable[..., TracedArray]:
+    def handler(x: Operand, *args: Any, **kwargs: Any) -> TracedArray:
         value = fill if fill is not None else (args[0] if args else kwargs["fill_value"])
         width = _operand(x).width or 1
         return TracedArray(const_node(np.full(width, float(value)) if width > 1 else float(value)))
@@ -186,15 +196,15 @@ def _like(fill):
     return handler
 
 
-def _full(shape, fill_value, *args, **kwargs):
+def _full(shape: Any, fill_value: float, *args: Any, **kwargs: Any) -> TracedArray:
     return TracedArray(const_node(float(fill_value)))
 
 
-def _column_stack(arrays):
+def _column_stack(arrays: Iterable[Operand]) -> TracedArray:
     return _concatenate(arrays)
 
 
-def _polyval(p, x):
+def _polyval(p: ArrayLike, x: Operand) -> TracedArray:
     if isinstance(p, TracedArray):
         raise TraceAbort("np.polyval with traced coefficients is not traceable")
     coeffs = np.asarray(p, dtype=np.float64).ravel()
@@ -204,7 +214,14 @@ def _polyval(p, x):
     return result
 
 
-def _interp(x, xp, fp, left=None, right=None, period=None):
+def _interp(
+    x: Operand,
+    xp: ArrayLike,
+    fp: ArrayLike,
+    left: float | None = None,
+    right: float | None = None,
+    period: float | None = None,
+) -> TracedArray:
     if isinstance(xp, TracedArray) or isinstance(fp, TracedArray):
         raise TraceAbort("np.interp with traced breakpoints is not traceable")
     if period is not None or left is not None or right is not None:
@@ -214,7 +231,7 @@ def _interp(x, xp, fp, left=None, right=None, period=None):
     return elementwise("interp", x, meta={"xp": xp, "fp": fp})
 
 
-def _repeat(a, repeats, axis=None):
+def _repeat(a: Operand, repeats: int, axis: int | None = None) -> TracedArray:
     if axis not in (-1,) or not isinstance(repeats, (int, np.integer)):
         raise TraceAbort("np.repeat is only traceable with an integer count along axis=-1")
     x = _as_traced(a)
@@ -223,7 +240,7 @@ def _repeat(a, repeats, axis=None):
     )
 
 
-def _tile(a, reps):
+def _tile(a: Operand, reps: int | Sequence[int]) -> TracedArray:
     count = reps if isinstance(reps, (int, np.integer)) else (reps[-1] if len(reps) == 1 else None)
     if count is None:
         raise TraceAbort("np.tile is only traceable along the channel axis")
@@ -233,29 +250,29 @@ def _tile(a, reps):
     )
 
 
-def _is_channel_axis_pair(a, b) -> bool:
+def _is_channel_axis_pair(a: int, b: int) -> bool:
     return {a, b} == {-1, 0}
 
 
-def _moveaxis(x, source, destination):
+def _moveaxis(x: Operand, source: int, destination: int) -> TracedArray:
     if not _is_channel_axis_pair(source, destination):
         raise TraceAbort(f"np.moveaxis({source}, {destination}) is not a channel-axis move")
     return TracedArray(_as_traced(x).node, moved=True)
 
 
-def _swapaxes(x, axis1, axis2):
+def _swapaxes(x: Operand, axis1: int, axis2: int) -> TracedArray:
     if not _is_channel_axis_pair(axis1, axis2):
         raise TraceAbort(f"np.swapaxes({axis1}, {axis2}) is not a channel-axis swap")
     return TracedArray(_as_traced(x).node, moved=True)
 
 
-def _transpose(x, axes=None):
+def _transpose(x: Operand, axes: Sequence[int] | None = None) -> TracedArray:
     if axes is not None:
         raise TraceAbort("np.transpose with explicit axes is not traceable")
     return TracedArray(_as_traced(x).node, moved=True)
 
 
-def stack_channels(traced_list) -> TracedArray:
+def stack_channels(traced_list: Iterable[Operand]) -> TracedArray:
     """Stack 1-channel traced values into one multi-channel value."""
     return _stack(traced_list)
 

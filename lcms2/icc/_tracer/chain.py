@@ -4,6 +4,9 @@ Decompose traced graphs into chains of matrix and per-channel curve stages.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import Any
+
 import numpy as np
 
 from .tracing import (
@@ -15,8 +18,10 @@ from .tracing import (
     TraceAbort,
 )
 
+_Curve = Callable[[np.ndarray], np.ndarray]
 
-def _peel_one_matmul(node: Node):
+
+def _peel_one_matmul(node: Node) -> tuple[Node, np.ndarray, np.ndarray] | None:
     """Split ``X @ M (+ offset)`` into ``(X, M, offset)``, or None."""
     n = node
     offset = None
@@ -39,7 +44,7 @@ def _peel_one_matmul(node: Node):
     return pre, matrix, offset
 
 
-def _peel_matrix(node: Node):
+def _peel_matrix(node: Node) -> tuple[Node, np.ndarray, np.ndarray] | None:
     """Split consecutive ``@ M (+ offset)`` layers into ``(X, M_total, offset_total)``, or None."""
     layers = []
     cur = node
@@ -60,7 +65,7 @@ def _peel_matrix(node: Node):
     return cur, total_matrix, total_offset
 
 
-def _linear_terms(node: Node):
+def _linear_terms(node: Node) -> tuple[float, dict[tuple[int, int], tuple[Node, float]]] | None:
     """Express `node` as ``const + sum(coeff * select(...))``.
 
 
@@ -142,7 +147,7 @@ def _linear_terms(node: Node):
     return None
 
 
-def _peel_implicit_linear_stack(node: Node, expected_ch: int):
+def _peel_implicit_linear_stack(node: Node, expected_ch: int) -> tuple[Node, np.ndarray, np.ndarray] | None:
     """Split a stack of affine channel combinations into ``(parent, M, offset)``, or None."""
     if node.op != "stack" or len(node.args) != expected_ch:
         return None
@@ -180,7 +185,7 @@ def _peel_implicit_linear_stack(node: Node, expected_ch: int):
     return shared_obj, matrix, offset
 
 
-def _peel_curveset(node: Node):
+def _peel_curveset(node: Node) -> tuple[Node, list[_Curve], list[int]] | None:
     """Split ``stack(curve_i(select(parent, idx_i)))`` into ``(parent, curves, idxs)``, or None."""
     if node.op != "stack":
         return None
@@ -204,7 +209,7 @@ def _peel_curveset(node: Node):
     return shared, curve_fns, idxs
 
 
-def _node_width(node: Node):
+def _node_width(node: Node) -> int | None:
     """Channel count of `node`, or None if unknown."""
     if node.width is not None:
         return node.width
@@ -221,7 +226,7 @@ def _node_width(node: Node):
     return None
 
 
-def _extract_single_channel_curve(node: Node):
+def _extract_single_channel_curve(node: Node) -> tuple[_Curve | None, Node | None]:
     """``(curve, select_node)`` if `node` reads one channel selection, else ``(None, None)``."""
     select_node = _find_unique_select(node)
     if select_node is None:
@@ -233,11 +238,11 @@ def _extract_single_channel_curve(node: Node):
     return fn, select_node
 
 
-def _find_unique_select(node: Node):
+def _find_unique_select(node: Node) -> Node | None:
     """The only 'select' node reachable from `node`, or None."""
     found = []
 
-    def walk(n: Node):
+    def walk(n: Node) -> None:
         if n.op == "select":
             found.append(n)
             return
@@ -254,13 +259,13 @@ def _find_unique_select(node: Node):
     return next(iter(uniq.values()))
 
 
-def _compile_scalar_expr(node: Node, select_node: Node):
+def _compile_scalar_expr(node: Node, select_node: Node) -> _Curve:
     """Compile the scalar graph at `node` into ``f(x)`` with `select_node` as ``x``."""
     consts: list = []
     lines: list = []
     names: dict = {}
 
-    def const(value) -> str:
+    def const(value: Any) -> str:
         consts.append(value)
         return f"c[{len(consts) - 1}]"
 
@@ -311,10 +316,10 @@ def _compile_scalar_expr(node: Node, select_node: Node):
     return scope["f"]
 
 
-def _peel_vectorized_curveset(node: Node, expected_ch: int):
+def _peel_vectorized_curveset(node: Node, expected_ch: int) -> tuple[Node, list[_Curve]] | None:
     """Split ``f(leaf)`` applied to every channel into ``(leaf, [f] * expected_ch)``, or None."""
 
-    def find_leaf(n: Node):
+    def find_leaf(n: Node) -> Node | None:
         if n.op == "const":
             return None
         if n.op not in ELEMENTWISE_OPS:
@@ -345,7 +350,7 @@ def _peel_vectorized_curveset(node: Node, expected_ch: int):
     return leaf, [fn] * expected_ch
 
 
-def decompose_chain(root: Node, n_in: int, n_out: int, max_stages: int = 6):
+def decompose_chain(root: Node, n_in: int, n_out: int, max_stages: int = 6) -> list[tuple[Any, ...]] | None:
     """Decompose a traced graph into matrix and curve-set stages.
 
 

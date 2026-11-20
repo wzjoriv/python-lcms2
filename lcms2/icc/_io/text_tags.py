@@ -18,19 +18,20 @@ __all__ = [
 ]
 
 import struct
+from collections.abc import Iterable, Sequence
 
 import numpy as np
 
 from . import binary as bn
 
 
-def decode_XYZType(body: bytes):
+def decode_XYZType(body: bytes) -> list[tuple[float, float, float]]:
     """Decode an XYZType tag body into a list of (X, Y, Z) tuples."""
     n = (len(body) - 8) // 12
     return [bn.read_XYZNumber(body, 8 + 12 * i) for i in range(n)]
 
 
-def encode_XYZType(xyz_list) -> bytes:
+def encode_XYZType(xyz_list: Iterable[Sequence[float]]) -> bytes:
     """Encode a list of (X, Y, Z) tuples as an XYZType tag body."""
     out = b"XYZ " + b"\x00" * 4
     for xyz in xyz_list:

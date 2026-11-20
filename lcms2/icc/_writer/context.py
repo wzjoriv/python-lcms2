@@ -4,29 +4,39 @@ Shared state for writing one color space: domain, samples and structure.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
+from typing import TYPE_CHECKING, Any
+
 import numpy as np
+from numpy.typing import ArrayLike
 
 from ..._errors import ICCWriteError
 from .._tracer.chain import decompose_chain
 from .._tracer.probe import probe_curves_then_matrix, probe_matrix_then_curves
-from .._tracer.tracing import TraceAbort, TracedArray, trace_function
+from .._tracer.tracing import Node, TraceAbort, TracedArray, trace_function
+from .curves import CurveFn
 from .structure import chain_as_curves_matrix, chain_as_matrix_curves
 from .verify import agrees, call
+
+if TYPE_CHECKING:
+    from ...spaces import ColorSpace
 
 N_VERIFY = 4096
 
 
-def normalized_functions(colorspace, domain):
+def normalized_functions(
+    colorspace: ColorSpace, domain: Sequence[tuple[float, float]]
+) -> tuple[Callable[[np.ndarray], np.ndarray], Callable[[np.ndarray], np.ndarray]]:
     """`to_xyz`/`from_xyz` of `colorspace` with device values mapped from `domain` to [0, 1]."""
     lo = np.array([d[0] for d in domain])
     span = np.array([d[1] - d[0] for d in domain])
     if np.allclose(lo, 0.0) and np.allclose(span, 1.0):
         return colorspace.to_xyz, colorspace.from_xyz
 
-    def fwd(d01):
+    def fwd(d01: np.ndarray) -> np.ndarray:
         return colorspace.to_xyz(d01 * span + lo)
 
-    def bwd(xyz):
+    def bwd(xyz: np.ndarray) -> np.ndarray:
         return (colorspace.from_xyz(xyz) - lo) / span
 
     return fwd, bwd
@@ -41,11 +51,11 @@ class _Pixelwise:
     pixels of the batch (``x / x.max()``). Traced placeholders pass through untouched.
     """
 
-    def __init__(self, fn, n_in: int, n_out: int, name: str):
+    def __init__(self, fn: Callable[[Any], Any], n_in: int, n_out: int, name: str):
         self.fn, self.n_in, self.n_out, self.name = fn, n_in, n_out, name
         self.rows = False
 
-    def __call__(self, x):
+    def __call__(self, x: np.ndarray | TracedArray) -> np.ndarray | TracedArray:
         if isinstance(x, TracedArray):
             return self.fn(x)
         x = np.asarray(x, dtype=np.float64)
@@ -65,7 +75,7 @@ class _Pixelwise:
             ) from first_error
         return out.reshape(shape)
 
-    def _by_rows(self, flat):
+    def _by_rows(self, flat: np.ndarray) -> tuple[np.ndarray, np.ndarray, Exception | None]:
         """``(values, failed mask, first error)``; pixels the function rejects are NaN."""
         rows, failed, first_error = [], [], None
         for r in flat:
@@ -79,7 +89,7 @@ class _Pixelwise:
         out = np.stack(rows) if rows else np.empty((0, self.n_out))
         return out, np.array(failed, dtype=bool), first_error
 
-    def depends_on_batch(self, sample) -> bool:
+    def depends_on_batch(self, sample: np.ndarray) -> bool:
         """Whether results for `sample` differ from those pixel by pixel; switches to pixels if so."""
         if self.rows:
             return False
@@ -94,7 +104,7 @@ class _Pixelwise:
         return True
 
 
-def _real(y) -> np.ndarray:
+def _real(y: ArrayLike) -> np.ndarray:
     """`y` as float64, complex values (a root of a negative number) becoming NaN."""
     y = np.asarray(y)
     if np.iscomplexobj(y):
@@ -111,7 +121,7 @@ _BATCH_REASON = (
 class Context:
     """Everything the tier writers share about one space being written."""
 
-    def __init__(self, colorspace, version_major: int, grid_size):
+    def __init__(self, colorspace: ColorSpace, version_major: int, grid_size: int | None):
         self.n = colorspace.n_channels
         self.major = version_major
         self.grid_size = grid_size
@@ -165,7 +175,7 @@ class Context:
                 )
         return unstable
 
-    def _trace(self):
+    def _trace(self) -> None:
         if self._traced:
             return
         self._traced = True
@@ -177,16 +187,16 @@ class Context:
             self._fwd_root = self._bwd_root = None
 
     @property
-    def fwd_root(self):
+    def fwd_root(self) -> Node | None:
         self._trace()
         return self._fwd_root
 
     @property
-    def bwd_root(self):
+    def bwd_root(self) -> Node | None:
         self._trace()
         return self._bwd_root
 
-    def forward_curves_matrix(self):
+    def forward_curves_matrix(self) -> tuple[list[CurveFn], np.ndarray, np.ndarray] | None:
         """``(curves, matrix, offset)`` with ``fwd(x) == c(x) @ matrix + offset``, or None."""
         found = None
         if self.fwd_root is not None:
@@ -198,12 +208,14 @@ class Context:
             return found
         return None
 
-    def _forward_ok(self, curves, matrix, offset) -> bool:
+    def _forward_ok(self, curves: Sequence[CurveFn], matrix: np.ndarray, offset: np.ndarray) -> bool:
         x = self.device_samples
         pred = np.stack([call(c, x[:, i]) for i, c in enumerate(curves)], axis=-1) @ matrix
         return agrees(self.xyz_samples, pred + offset)
 
-    def backward_matrix_curves(self, hint=None):
+    def backward_matrix_curves(
+        self, hint: ArrayLike | None = None
+    ) -> tuple[np.ndarray, np.ndarray, list[CurveFn], list[tuple[float, float]]] | None:
         """``(matrix, offset, curves, ranges)`` with ``bwd(x) == c(x @ matrix + offset)``."""
         if self.bwd_root is not None:
             chain = decompose_chain(self.bwd_root, 3, self.n)
@@ -222,7 +234,7 @@ class Context:
                 return matrix, offset, curves, ranges
         return None
 
-    def _backward_ok(self, matrix, offset, curves) -> bool:
+    def _backward_ok(self, matrix: np.ndarray, offset: np.ndarray, curves: Sequence[CurveFn]) -> bool:
         x = self.xyz_finite
         u = x @ matrix + offset
         pred = np.stack([call(c, u[:, j]) for j, c in enumerate(curves)], axis=-1)
@@ -241,7 +253,13 @@ class Context:
         return agrees(call(self.fwd, expected), call(self.fwd, actual))
 
 
-def trace_root(fn, n_in: int, n_out: int, name: str = "function", failures: dict | None = None):
+def trace_root(
+    fn: Callable[[Any], Any],
+    n_in: int,
+    n_out: int,
+    name: str = "function",
+    failures: dict[str, str] | None = None,
+) -> Node | None:
     """Traced graph of `fn` with `n_out` output channels, or None.
 
     The reason for a failure is stored in `failures` under `name`.
