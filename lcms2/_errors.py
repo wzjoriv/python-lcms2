@@ -6,4 +6,13 @@ from ._lcms2 import LCMSError
 #: A subclass of :class:`ValueError`.
 CMSError = LCMSError
 
-__all__ = ["CMSError"]
+
+class ICCParseError(CMSError):
+    """Raised when an ICC profile byte stream is malformed or unsupported."""
+
+
+class ICCWriteError(CMSError):
+    """Raised when a ColorSpace cannot be represented as a valid ICC profile."""
+
+
+__all__ = ["CMSError", "ICCParseError", "ICCWriteError"]

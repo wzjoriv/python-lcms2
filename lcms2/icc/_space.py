@@ -8,8 +8,8 @@ from typing import Any
 
 import numpy as np
 
+from .._errors import ICCParseError
 from ..spaces._base import ColorSpace
-from ._errors import ICCParseError
 from ._io import tagtypes as tt
 from ._io.profile import ICCProfile
 from ._reader import build_transform, read_circular_channels, read_device_domain

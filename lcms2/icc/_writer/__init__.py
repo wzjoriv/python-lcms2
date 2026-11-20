@@ -7,7 +7,7 @@ import struct
 import numpy as np
 
 from ...spaces._colorimetry import D50
-from .._errors import ICCWriteError
+from ..._errors import ICCWriteError
 from .._io import tagtypes as tt
 from .._io.constants import CLASS_COLORSPACE, CLASS_DISPLAY, CS_GRAY, CS_RGB, CS_XYZ
 from .._io.profile import ICCProfile

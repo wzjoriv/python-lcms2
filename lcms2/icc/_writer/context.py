@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from .._errors import ICCWriteError
+from ..._errors import ICCWriteError
 from .._tracer.chain import decompose_chain
 from .._tracer.probe import probe_curves_then_matrix, probe_matrix_then_curves
 from .._tracer.tracing import TraceAbort, trace_function

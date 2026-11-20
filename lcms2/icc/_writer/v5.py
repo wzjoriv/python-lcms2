@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .._errors import ICCWriteError
+from ..._errors import ICCWriteError
 from .._io import mpe
 from .._tracer.calc import compile_calc_program
 from .._tracer.tracing import TraceAbort

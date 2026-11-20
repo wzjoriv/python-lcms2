@@ -6,8 +6,8 @@ import struct
 
 import numpy as np
 
+from .._errors import ICCParseError
 from ..spaces import _colorimetry as col
-from ._errors import ICCParseError
 from ._interp import sample_clut
 from ._io import binary as bn
 from ._io import mpe

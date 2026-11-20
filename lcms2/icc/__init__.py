@@ -7,7 +7,7 @@
 - `ICCParseError`, `ICCWriteError`: reading and writing errors.
 """
 
-from ._errors import ICCParseError, ICCWriteError
+from .._errors import ICCParseError, ICCWriteError
 from ._io.profile import ICCProfile
 from ._space import ICCSpace
 from ._versions import normalize_icc_version

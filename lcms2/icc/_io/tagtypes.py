@@ -10,7 +10,7 @@ import struct
 
 import numpy as np
 
-from .._errors import ICCParseError, ICCWriteError
+from ..._errors import ICCParseError, ICCWriteError
 from . import binary as bn
 from .curve_tags import (  # noqa: F401
     decode_curv,

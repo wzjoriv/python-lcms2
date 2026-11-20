@@ -11,7 +11,7 @@ import struct
 
 import numpy as np
 
-from .._errors import ICCParseError, ICCWriteError
+from ..._errors import ICCParseError, ICCWriteError
 from . import binary as bn
 
 FLT_MIN = float(np.finfo(np.float32).tiny)

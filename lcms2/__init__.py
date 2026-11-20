@@ -15,7 +15,7 @@ from ._constants import ColorSpaceSignature, DeviceClass, Flag, Intent
 from ._convert import convert
 from ._curves import ToneCurve
 from ._data import RGB_SPACES, WHITE_POINTS
-from ._errors import CMSError
+from ._errors import CMSError, ICCParseError, ICCWriteError
 from ._formats import FORMATS
 from ._parse import parse_color, parse_colors, to_hex
 from ._profile import Profile
@@ -48,6 +48,8 @@ __all__ = [
     "spaces",
     "to_hex",
     "CMSError",
+    "ICCParseError",
+    "ICCWriteError",
     "ColorSpaceSignature",
     "DeviceClass",
     "FORMATS",
