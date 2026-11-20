@@ -56,8 +56,8 @@ def _builtin(name: str) -> Profile:
 def _resolve_space(obj: Any) -> Profile | Any:
     """A Profile, or a colour space object (``to_xyz``/``from_xyz``) for analytic conversions.
 
-    Built-in profile names win over registered colour space names; strings that are neither are
-    treated as file paths.
+    Built-in profile names win, then registered colour space names; other strings are treated as
+    file paths.
     """
     if isinstance(obj, Profile):
         return obj
@@ -65,10 +65,10 @@ def _resolve_space(obj: Any) -> Profile | Any:
         name = lookup_builtin(obj)
         if name is not None:
             return _builtin(name)
+        space = _lookup_space_name(obj)
+        if space is not None:
+            return space
         if not os.path.isfile(obj):
-            space = _lookup_space_name(obj)
-            if space is not None:
-                return space
             if not os.path.splitext(obj)[1] and not any(c in obj for c in "/\\"):
                 from .spaces import ColorSpace
 

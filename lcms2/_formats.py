@@ -4,6 +4,7 @@ Pixel formats: explicit format strings and inference from NumPy arrays.
 
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import Any, NamedTuple
 
 import numpy as np
@@ -36,6 +37,7 @@ class FormatInfo(NamedTuple):
     planar: bool
 
 
+@lru_cache(maxsize=512)
 def format_info(fmt: int) -> FormatInfo:
     """Decode a LittleCMS pixel format number."""
     dtype, channels, extra, planar = _lcms2.format_info(int(fmt))
