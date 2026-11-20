@@ -14,12 +14,24 @@ from numpy.typing import DTypeLike
 from . import _lcms2
 from ._constants import ColorSpaceSignature, DeviceClass, Flag, Intent
 from ._formats import as_array, dtype_spec, format_info, format_name, is_format_name, parse_format
+from ._parallel import parallel_worthwhile, run_chunks
 from ._profile import Profile
 
 __all__ = ["Transform", "get_alarm_codes", "set_adaptation_state", "set_alarm_codes"]
 
 _PRECISION = {"auto": Flag.NONE, "high": Flag.HIGHRESPRECALC, "low": Flag.LOWRESPRECALC}
 _FLOAT_SPACES = (ColorSpaceSignature.LAB, ColorSpaceSignature.XYZ)
+
+
+def _run(handle: Any, arr: np.ndarray, out: np.ndarray, fin: Any, fout: Any) -> None:
+    """Transform ``arr`` into ``out``, in parallel pixel chunks when the image is large."""
+    npix = arr.size // fin.channels
+    if fin.planar or fout.planar or not parallel_worthwhile(npix):
+        _lcms2.transform_apply(handle, arr, out)
+        return
+    src = arr.reshape(npix, fin.channels)
+    dst = out.reshape(npix, fout.channels)
+    run_chunks(npix, lambda a, b: _lcms2.transform_apply(handle, src[a:b], dst[a:b]))
 
 
 def as_profile(obj: Any) -> Profile:
@@ -301,7 +313,7 @@ class Transform:
             if not out.flags.c_contiguous or not out.flags.writeable:
                 raise ValueError("out must be C-contiguous and writable")
         if arr.size:
-            _lcms2.transform_apply(self._get(in_fmt, out_fmt), arr, out)
+            _run(self._get(in_fmt, out_fmt), arr, out, in_info, format_info(out_fmt))
         return out
 
     __call__ = apply
