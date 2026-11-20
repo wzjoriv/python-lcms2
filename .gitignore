@@ -23,4 +23,10 @@ DESIGN.md
 TODO.md
 LATER.md
 .claude/
+.notes/
+.idea/
+
+# generated stubs (the extension stub is hand-written)
+*.pyi
+!lcms2/_lcms2.pyi
 docs/reference/generated/
