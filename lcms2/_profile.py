@@ -7,7 +7,7 @@ from __future__ import annotations
 import datetime
 import os
 from collections.abc import Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import DTypeLike
@@ -16,6 +16,9 @@ from . import _lcms2
 from ._builtins import builtin_names, create_builtin, lookup_builtin, resolve_white_point
 from ._constants import ColorSpaceSignature, DeviceClass, Intent
 from ._profile_data import ProfileData
+
+if TYPE_CHECKING:
+    from .icc import ICCSpace
 
 __all__ = ["Profile"]
 
@@ -254,7 +257,7 @@ class Profile(ProfileData):
 
     # ---- Serialisation ----
     @property
-    def space(self):
+    def space(self) -> ICCSpace:
         """A :class:`lcms2.spaces.ColorSpace` view of this profile (pure NumPy evaluation).
 
         Examples

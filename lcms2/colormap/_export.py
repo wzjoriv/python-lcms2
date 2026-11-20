@@ -7,19 +7,24 @@ from __future__ import annotations
 import csv
 import html
 import json
+import os
 import struct
 import zlib
 from pathlib import Path
-from typing import Any
+from types import ModuleType
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from .._parse import parse_colors, to_hex
 
+if TYPE_CHECKING:
+    from ._colormap import Colormap
+
 _PLOT_HINT = "matplotlib is required for this: pip install python-lcms2[plot]"
 
 
-def _matplotlib():
+def _matplotlib() -> ModuleType:
     try:
         import matplotlib
     except ImportError as e:
@@ -62,7 +67,7 @@ class ExportMixin:
 
     __slots__ = ()
 
-    def to_matplotlib(self):
+    def to_matplotlib(self) -> Any:
         """Convert to a matplotlib ``ListedColormap``.
 
         Raises
@@ -82,7 +87,7 @@ class ExportMixin:
 
         return ListedColormap(np.clip(self.colors, 0.0, 1.0), name=self.name)
 
-    def register(self, name: str | None = None):
+    def register(self, name: str | None = None) -> Any:
         """Register with matplotlib so ``cmap="name"`` works (and ``"name_r"``).
 
         Parameters
@@ -102,7 +107,7 @@ class ExportMixin:
         return cmap
 
     @classmethod
-    def from_matplotlib(cls, name_or_cmap: Any, n: int = 256):
+    def from_matplotlib(cls, name_or_cmap: Any, n: int = 256) -> Colormap:
         """Sample a matplotlib colormap (by name or instance) into a `Colormap`.
 
         Examples
@@ -196,7 +201,7 @@ class ExportMixin:
         return p
 
     @classmethod
-    def load(cls, path: Any):
+    def load(cls, path: str | os.PathLike[str]) -> Colormap:
         """Read a colormap written by `save` (``.csv``, ``.json`` or ``.txt``).
 
         ``.txt`` holds one colour per line in any form `lcms2._parse.parse_color` accepts.

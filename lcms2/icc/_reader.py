@@ -5,6 +5,8 @@ Build ``to_xyz``/``from_xyz`` callables from a parsed ICC profile.
 from __future__ import annotations
 
 import struct
+from collections.abc import Callable, Collection, Sequence
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -35,6 +37,9 @@ from ._io.constants import (
     TYPE_PARA,
 )
 
+if TYPE_CHECKING:
+    from ._io.profile import ICCProfile
+
 XYZ_U1F15_SCALE = 65535.0 / 32768.0
 
 _A2B_PREFERENCE = (b"A2B1", b"A2B0", b"A2B2")
@@ -54,14 +59,20 @@ class BuiltTransform:
         Number of device channels.
     """
 
-    def __init__(self, to_xyz, from_xyz, kind: str, n_channels: int):
+    def __init__(
+        self,
+        to_xyz: Callable[[np.ndarray], np.ndarray],
+        from_xyz: Callable[[np.ndarray], np.ndarray],
+        kind: str,
+        n_channels: int,
+    ):
         self.to_xyz = to_xyz
         self.from_xyz = from_xyz
         self.kind = kind
         self.n_channels = n_channels
 
 
-def build_transform(profile) -> BuiltTransform:
+def build_transform(profile: ICCProfile) -> BuiltTransform:
     """Derive ``to_xyz``/``from_xyz`` from a parsed profile.
 
     Parameters
@@ -92,8 +103,8 @@ def build_transform(profile) -> BuiltTransform:
 _DECODE_ERRORS = (ValueError, IndexError, KeyError, struct.error, np.linalg.LinAlgError)
 
 
-def _guarded(fn):
-    def call(values):
+def _guarded(fn: Callable[[np.ndarray], np.ndarray]) -> Callable[[np.ndarray], np.ndarray]:
+    def call(values: np.ndarray) -> np.ndarray:
         try:
             return fn(values)
         except ICCParseError:
@@ -104,7 +115,7 @@ def _guarded(fn):
     return call
 
 
-def _build(profile) -> BuiltTransform:
+def _build(profile: ICCProfile) -> BuiltTransform:
     if _first_tag(profile, _A2B_PREFERENCE + _B2A_PREFERENCE) is not None:
         return _build_lut(profile)
     if all(profile.has_tag(t) for t in (TAG_RXYZ, TAG_GXYZ, TAG_BXYZ, TAG_RTRC, TAG_GTRC, TAG_BTRC)):
@@ -118,7 +129,7 @@ def _build(profile) -> BuiltTransform:
     )
 
 
-def _first_tag(profile, sigs):
+def _first_tag(profile: ICCProfile, sigs: Sequence[bytes]) -> bytes | None:
     for sig in sigs:
         raw = profile.get_tag(sig)
         if raw is not None:
@@ -126,7 +137,7 @@ def _first_tag(profile, sigs):
     return None
 
 
-def _curve_from_tag_bytes(raw: bytes):
+def _curve_from_tag_bytes(raw: bytes) -> tt.CurveDescriptor:
     tsig = raw[0:4]
     if tsig == TYPE_CURV:
         return ("curv", tt.decode_curv(raw))
@@ -135,11 +146,11 @@ def _curve_from_tag_bytes(raw: bytes):
     raise ICCParseError(f"unsupported TRC tag type {tsig!r}")
 
 
-def _apply_curves(curves, x: np.ndarray) -> np.ndarray:
+def _apply_curves(curves: Sequence[tt.CurveDescriptor], x: np.ndarray) -> np.ndarray:
     return np.stack([tt.eval_curve(c, x[..., i]) for i, c in enumerate(curves)], axis=-1)
 
 
-def _build_matrix_trc(profile) -> BuiltTransform:
+def _build_matrix_trc(profile: ICCProfile) -> BuiltTransform:
     columns = [tt.decode_XYZType(profile.get_tag(t))[0] for t in (TAG_RXYZ, TAG_GXYZ, TAG_BXYZ)]
     matrix = np.array(columns).T
     matrix_inv = np.linalg.inv(matrix)
@@ -156,7 +167,7 @@ def _build_matrix_trc(profile) -> BuiltTransform:
     return BuiltTransform(to_xyz, from_xyz, kind="matrix_trc", n_channels=3)
 
 
-def _build_gray_trc(profile) -> BuiltTransform:
+def _build_gray_trc(profile: ICCProfile) -> BuiltTransform:
     curve = _curve_from_tag_bytes(profile.get_tag(TAG_KTRC))
     white = np.asarray(col.D50)
 
@@ -171,7 +182,9 @@ def _build_gray_trc(profile) -> BuiltTransform:
     return BuiltTransform(to_xyz, from_xyz, kind="gray_trc", n_channels=1)
 
 
-def _classic_lut_apply(d, x: np.ndarray, use_matrix: bool, circular) -> np.ndarray:
+def _classic_lut_apply(
+    d: dict[str, Any], x: np.ndarray, use_matrix: bool, circular: Collection[int]
+) -> np.ndarray:
     if use_matrix:
         x = np.clip(x @ d["matrix"].T, 0.0, 1.0)
     grid_in = np.linspace(0.0, 1.0, d["in_tables"].shape[1])
@@ -184,7 +197,7 @@ def _classic_lut_apply(d, x: np.ndarray, use_matrix: bool, circular) -> np.ndarr
     )
 
 
-def _mab_apply(d, x: np.ndarray, is_b2a: bool, circular) -> np.ndarray:
+def _mab_apply(d: dict[str, Any], x: np.ndarray, is_b2a: bool, circular: Collection[int]) -> np.ndarray:
     order = ("B", "MATRIX", "M", "CLUT", "A") if is_b2a else ("A", "CLUT", "M", "MATRIX", "B")
     cur = x
     for stage in order:
@@ -201,7 +214,7 @@ def _mab_apply(d, x: np.ndarray, is_b2a: bool, circular) -> np.ndarray:
     return cur
 
 
-def _mpet_apply(d, x: np.ndarray, circular) -> np.ndarray:
+def _mpet_apply(d: dict[str, Any], x: np.ndarray, circular: Collection[int]) -> np.ndarray:
     cur = x
     elems = d["elements"]
     for idx, elem in enumerate(elems):
@@ -226,7 +239,7 @@ def _mpet_apply(d, x: np.ndarray, circular) -> np.ndarray:
 class LutStage:
     """One decoded A2B*/B2A* tag, evaluated in its own encoded value space."""
 
-    def __init__(self, raw: bytes, pcs: bytes, is_b2a: bool, circular):
+    def __init__(self, raw: bytes, pcs: bytes, is_b2a: bool, circular: Collection[int]):
         tsig = raw[0:4]
         self.is_b2a = is_b2a
         self.circular = circular if is_b2a else frozenset()
@@ -288,7 +301,7 @@ class LutStage:
         raise ICCParseError(f"unsupported PCS signature {self.pcs!r}")
 
 
-def read_circular_channels(profile) -> frozenset:
+def read_circular_channels(profile: ICCProfile) -> frozenset[int]:
     """Return the device channels listed in the profile's ``crsC`` tag.
 
     Parameters
@@ -315,7 +328,7 @@ def read_circular_channels(profile) -> frozenset:
     return frozenset(bn.read_u32(tag, 4 + 4 * i) for i in range(count))
 
 
-def read_device_domain(profile, n_channels: int):
+def read_device_domain(profile: ICCProfile, n_channels: int) -> list[tuple[float, float]] | None:
     """Return the ``(lo, hi)`` pairs of the profile's ``crsD`` tag.
 
     Parameters
@@ -344,7 +357,7 @@ def read_device_domain(profile, n_channels: int):
     return [struct.unpack_from(">ff", tag, 4 + 8 * i) for i in range(count)]
 
 
-def _build_lut(profile) -> BuiltTransform:
+def _build_lut(profile: ICCProfile) -> BuiltTransform:
     pcs = profile.header.pcs
     circular = read_circular_channels(profile)
     a2b_raw = _first_tag(profile, _A2B_PREFERENCE)

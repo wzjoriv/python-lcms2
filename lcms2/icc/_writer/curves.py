@@ -4,17 +4,23 @@ Encode one-dimensional curves as ICC curve tags and curve segments.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
+from typing import Any
+
 import numpy as np
 
 from .._io import mpe
 from .._io import tagtypes as tt
+from .._io.curve_tags import CurveDescriptor
+
+CurveFn = Callable[[np.ndarray], np.ndarray]
 
 TRC_SAMPLES = 4096
 _SEGMENT_SAMPLES = 256
 _MAX_SEGMENTS = 128
 
 
-def evaluate(fn, x: np.ndarray) -> np.ndarray:
+def evaluate(fn: CurveFn, x: np.ndarray) -> np.ndarray:
     """Evaluate `fn` at `x` as float64; NaN where `fn` raises."""
     x = np.asarray(x, dtype=np.float64)
     try:
@@ -26,7 +32,7 @@ def evaluate(fn, x: np.ndarray) -> np.ndarray:
         return np.array([evaluate(fn, v) for v in x.ravel()]).reshape(x.shape)
 
 
-def detect_power_law(fn, lo: float, hi: float):
+def detect_power_law(fn: CurveFn, lo: float, hi: float) -> float | None:
     """Return ``g`` if ``fn(x) == x**g`` on ``[lo, hi]`` (and 0 below 0), else None."""
     test_lo = max(lo, 1e-6)
     if hi <= test_lo:
@@ -45,7 +51,7 @@ def detect_power_law(fn, lo: float, hi: float):
     return g if rel_err < 1e-6 else None
 
 
-def detect_signed_power_law(fn, lo: float, hi: float):
+def detect_signed_power_law(fn: CurveFn, lo: float, hi: float) -> float | None:
     """Return ``g`` if ``fn(x) == sign(x) * |x|**g`` on ``[lo, hi]``, else None."""
     if lo >= 0 or hi <= 0:
         return None
@@ -65,7 +71,9 @@ def detect_signed_power_law(fn, lo: float, hi: float):
     return g if rel_err < 1e-6 else None
 
 
-def finite_range(fn, lo: float, hi: float, inner_lo: float, inner_hi: float):
+def finite_range(
+    fn: CurveFn, lo: float, hi: float, inner_lo: float, inner_hi: float
+) -> tuple[float, float] | None:
     """Shrink ``[lo, hi]`` toward ``[inner_lo, inner_hi]`` until `fn` is finite at both ends.
 
     Returns
@@ -78,7 +86,7 @@ def finite_range(fn, lo: float, hi: float, inner_lo: float, inner_hi: float):
     if not np.all(np.isfinite(probe)):
         return None
 
-    def shrink(outer, inner):
+    def shrink(outer: float, inner: float) -> float:
         if np.isfinite(evaluate(fn, np.array([outer]))[0]):
             return outer
         for _ in range(60):
@@ -92,7 +100,7 @@ def finite_range(fn, lo: float, hi: float, inner_lo: float, inner_hi: float):
     return shrink(lo, inner_lo), shrink(hi, inner_hi)
 
 
-def _midpoint_errors(fn, segments) -> list:
+def _midpoint_errors(fn: CurveFn, segments: Sequence[tuple[float, float, np.ndarray]]) -> list:
     mids = [a + (b - a) * (np.arange(v.size - 1) + 0.5) / (v.size - 1) for a, b, v in segments]
     exact = evaluate(fn, np.concatenate(mids))
     errors, start = [], 0
@@ -103,13 +111,15 @@ def _midpoint_errors(fn, segments) -> list:
     return errors
 
 
-def _sample_segments(fn, bounds) -> list:
+def _sample_segments(fn: CurveFn, bounds: Sequence[tuple[float, float]]) -> list:
     points = [np.linspace(a, b, _SEGMENT_SAMPLES) for a, b in bounds]
     values = evaluate(fn, np.concatenate(points)).reshape(len(bounds), _SEGMENT_SAMPLES)
     return [(a, b, v) for (a, b), v in zip(bounds, values, strict=False)]
 
 
-def adaptive_segments(fn, lo: float, hi: float, n_first: int = 4096, rel_tol: float = 1e-7):
+def adaptive_segments(
+    fn: CurveFn, lo: float, hi: float, n_first: int = 4096, rel_tol: float = 1e-7
+) -> list[tuple[float, float, np.ndarray]]:
     """Split ``[lo, hi]`` into uniformly sampled segments whose linear
     interpolation of `fn` stays within `rel_tol` of the curve's range.
 
@@ -139,7 +149,7 @@ def adaptive_segments(fn, lo: float, hi: float, n_first: int = 4096, rel_tol: fl
     return [(a, b, np.nan_to_num(v, nan=0.0, posinf=0.0, neginf=0.0)) for a, b, v in done]
 
 
-def _power_segments(g: float, signed: bool):
+def _power_segments(g: float, signed: bool) -> tuple[list[float], list[tuple[Any, ...]]]:
     power = ("formula", 0, [g, 1.0, 0.0, 0.0])
     if float(g).is_integer() and (not signed or int(g) % 2 == 1):
         return [], [power]
@@ -158,7 +168,7 @@ def identity_curf() -> bytes:
     return mpe.encode_segmented_curve([], [("formula", 0, [1.0, 1.0, 0.0, 0.0])])
 
 
-def v5_curve(fn, lo: float, hi: float) -> bytes:
+def v5_curve(fn: CurveFn, lo: float, hi: float) -> bytes:
     """Encode `fn` on ``[lo, hi]`` as a 'curf' curve, constant beyond both ends."""
     g = detect_power_law(fn, lo, hi)
     if g is not None:
@@ -181,7 +191,7 @@ def v5_curve(fn, lo: float, hi: float) -> bytes:
     return mpe.encode_segmented_curve(breakpoints, segments)
 
 
-def trc_tag(fn, version_major: int, n: int = TRC_SAMPLES) -> bytes:
+def trc_tag(fn: CurveFn, version_major: int, n: int = TRC_SAMPLES) -> bytes:
     """Encode `fn` on [0, 1] as a 'curv' tag, or as 'para' for a v4 power law."""
     g = detect_power_law(fn, 0.0, 1.0)
     if g is not None:
@@ -192,11 +202,11 @@ def trc_tag(fn, version_major: int, n: int = TRC_SAMPLES) -> bytes:
     return tt.encode_curv(evaluate(fn, np.linspace(0.0, 1.0, n)))
 
 
-def sampled_curve(fn, n: int = TRC_SAMPLES):
+def sampled_curve(fn: CurveFn, n: int = TRC_SAMPLES) -> CurveDescriptor:
     """Sample `fn` on [0, 1] into a ``('curv', samples)`` descriptor."""
     return ("curv", evaluate(fn, np.linspace(0.0, 1.0, n)))
 
 
-def identity_curve():
+def identity_curve() -> CurveDescriptor:
     """A ``('curv', [])`` identity curve descriptor."""
     return ("curv", np.array([]))

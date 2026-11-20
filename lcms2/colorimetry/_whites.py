@@ -5,6 +5,7 @@ White points and correlated color temperature.
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .. import _lcms2
 from ._core import _triple
@@ -12,7 +13,7 @@ from ._core import _triple
 __all__ = ["temperature_from_white_point", "white_point_from_temperature"]
 
 
-def white_point_from_temperature(kelvin) -> np.ndarray:
+def white_point_from_temperature(kelvin: ArrayLike) -> np.ndarray:
     """Chromaticity of the CIE daylight illuminant at a correlated color temperature.
 
     Parameters
@@ -39,7 +40,7 @@ def white_point_from_temperature(kelvin) -> np.ndarray:
     return _lcms2.white_from_temp(np.asarray(kelvin, dtype=np.float64))
 
 
-def temperature_from_white_point(xyy) -> np.ndarray:
+def temperature_from_white_point(xyy: ArrayLike) -> np.ndarray:
     """Correlated color temperature of a white point.
 
     Parameters

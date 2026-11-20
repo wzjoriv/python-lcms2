@@ -4,12 +4,17 @@ Evaluating calculator programs.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+from typing import Any
+
 import numpy as np
 
 from ...._errors import ICCParseError
 
+_State = tuple[list[np.ndarray], dict[int, np.ndarray], dict[int, np.ndarray]]
 
-def _round_half_away(a):
+
+def _round_half_away(a: np.ndarray) -> np.ndarray:
     return np.where(a >= 0, np.floor(a + 0.5), np.ceil(a - 0.5))
 
 
@@ -38,12 +43,12 @@ _UNARY = {
 }
 
 
-def _fmod(a, b):
+def _fmod(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     bad = ~np.isfinite(a) | ~np.isfinite(b) | (np.abs(b) < 1e-12)
     return np.where(bad, 0.0, np.fmod(a, np.where(bad, 1.0, b)))
 
 
-def _divide(a, b):
+def _divide(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     return np.where(b != 0, a / np.where(b != 0, b, 1.0), 0.0)
 
 
@@ -81,7 +86,7 @@ _VARIADIC = {
 _CONSTANTS = {"pi  ": np.pi, "+INF": np.inf, "-INF": -np.inf, "NaN ": np.nan}
 
 
-def _branch_layout(ops, i):
+def _branch_layout(ops: Sequence[tuple[str, Any]], i: int) -> tuple[int, int, int, bool]:
     has_else = i + 1 < len(ops) and ops[i + 1][0] == "else"
     then_n = int(ops[i][1])
     else_n = int(ops[i + 1][1]) if has_else else 0
@@ -89,12 +94,12 @@ def _branch_layout(ops, i):
     return start, then_n, else_n, has_else
 
 
-def _merge(cond, then_state, else_state):
+def _merge(cond: np.ndarray, then_state: _State, else_state: _State) -> _State:
     then_stack, then_temps, then_out = then_state
     else_stack, else_temps, else_out = else_state
     stack = [np.where(cond, a, b) for a, b in zip(then_stack, else_stack, strict=False)]
 
-    def merge_dict(a, b):
+    def merge_dict(a: dict[int, np.ndarray], b: dict[int, np.ndarray]) -> dict[int, np.ndarray]:
         out = dict(b)
         for k, v in a.items():
             out[k] = np.where(cond, v, b[k]) if k in b else v
@@ -103,7 +108,7 @@ def _merge(cond, then_state, else_state):
     return stack, merge_dict(then_temps, else_temps), merge_dict(then_out, else_out)
 
 
-def _run(ops, x, state):
+def _run(ops: Sequence[tuple[str, Any]], x: np.ndarray, state: _State) -> _State:
     stack, temps, outputs = state
     i = 0
     while i < len(ops):

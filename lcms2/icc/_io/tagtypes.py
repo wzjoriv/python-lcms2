@@ -8,12 +8,15 @@ here, so ``tagtypes`` stays the one namespace of tag codecs.
 from __future__ import annotations
 
 import struct
+from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 
 from ..._errors import ICCParseError, ICCWriteError
 from . import binary as bn
 from .curve_tags import (  # noqa: F401
+    CurveDescriptor,
     decode_curv,
     decode_para,
     encode_curv,
@@ -37,7 +40,7 @@ from .text_tags import (  # noqa: F401
 )
 
 
-def decode_lut8(body: bytes):
+def decode_lut8(body: bytes) -> dict[str, Any]:
     """Decode a lut8Type ('mft1') body into matrix, tables and CLUT."""
     in_ch = bn.read_u8(body, 8)
     out_ch = bn.read_u8(body, 9)
@@ -67,7 +70,7 @@ def decode_lut8(body: bytes):
     }
 
 
-def decode_lut16(body: bytes):
+def decode_lut16(body: bytes) -> dict[str, Any]:
     """Decode a lut16Type ('mft2') body into matrix, tables and CLUT."""
     in_ch = bn.read_u8(body, 8)
     out_ch = bn.read_u8(body, 9)
@@ -102,7 +105,15 @@ def decode_lut16(body: bytes):
     }
 
 
-def encode_lut16(in_ch, out_ch, grid, matrix, in_tables, clut, out_tables) -> bytes:
+def encode_lut16(
+    in_ch: int,
+    out_ch: int,
+    grid: int,
+    matrix: np.ndarray,
+    in_tables: np.ndarray,
+    clut: np.ndarray,
+    out_tables: np.ndarray,
+) -> bytes:
     """Encode a lut16Type ('mft2') tag body from its component parts."""
     n_in_entries = in_tables.shape[1]
     n_out_entries = out_tables.shape[1]
@@ -121,7 +132,7 @@ def encode_lut16(in_ch, out_ch, grid, matrix, in_tables, clut, out_tables) -> by
     return bytes(out)
 
 
-def _decode_subtag_curves(body: bytes, offset: int, n_curves: int):
+def _decode_subtag_curves(body: bytes, offset: int, n_curves: int) -> tuple[list[CurveDescriptor], int]:
     """Decode `n_curves` consecutive padded curve sub-tags starting at `offset`."""
     curves = []
     pos = offset
@@ -212,12 +223,12 @@ def encode_lutAtoB_or_BtoA(
     sig4: bytes,
     in_ch: int,
     out_ch: int,
-    A_curves=None,
-    clut=None,
-    M_curves=None,
-    matrix=None,
-    matrix_offset=None,
-    B_curves=None,
+    A_curves: Sequence[CurveDescriptor] | None = None,
+    clut: np.ndarray | None = None,
+    M_curves: Sequence[CurveDescriptor] | None = None,
+    matrix: np.ndarray | None = None,
+    matrix_offset: np.ndarray | None = None,
+    B_curves: Sequence[CurveDescriptor] | None = None,
 ) -> bytes:
     """Encode a lutAtoBType ('mAB ') or lutBtoAType ('mBA ') tag body.
 
@@ -248,7 +259,7 @@ def encode_lutAtoB_or_BtoA(
         if curves is not None and len(curves) != counts[name]:
             raise ICCWriteError(f"{sig4!r} needs {counts[name]} {name} curves, got {len(curves)}")
 
-    def enc_curve(kind, payload):
+    def enc_curve(kind: str, payload: Any) -> bytes:
         if kind == "curv":
             return encode_curv(payload)
         if kind == "para":

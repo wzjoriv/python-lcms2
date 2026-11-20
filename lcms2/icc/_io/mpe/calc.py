@@ -5,10 +5,13 @@ Calculator elements ('calc'): encoding, decoding and validation.
 from __future__ import annotations
 
 import struct
+from collections.abc import Sequence
 
 from ...._errors import ICCParseError, ICCWriteError
 from .calc_eval import _BINARY, _CONSTANTS, _UNARY, _VARIADIC, _branch_layout
 from .elements import _position_table
+
+CalcOps = Sequence[tuple[str, float | tuple[int, int]]]
 
 _FLOAT_OPS = frozenset({"data"})
 
@@ -16,7 +19,7 @@ _FLOAT_OPS = frozenset({"data"})
 _SIZE_OPS = frozenset({"if  ", "else"})
 
 
-def encode_calc_element(in_ch: int, out_ch: int, ops) -> bytes:
+def encode_calc_element(in_ch: int, out_ch: int, ops: CalcOps) -> bytes:
     """Encode a calculatorElement ('calc') with one main function.
 
     Parameters
@@ -75,7 +78,7 @@ def decode_calc_element(buf: bytes) -> dict:
     return {"kind": "calc", "in_ch": in_ch, "out_ch": out_ch, "ops": ops}
 
 
-def _stack_effect(sig: str, arg):
+def _stack_effect(sig: str, arg: float | tuple[int, int]) -> tuple[int, int] | None:
     if sig in _FLOAT_OPS or sig in _CONSTANTS:
         return 0, 1
     if sig in _SIZE_OPS:
@@ -104,7 +107,7 @@ def _stack_effect(sig: str, arg):
     return None
 
 
-def _check_ops(ops, in_ch, out_ch, written, depth):
+def _check_ops(ops: CalcOps, in_ch: int, out_ch: int, written: set[int], depth: int) -> int:
     i = 0
     while i < len(ops):
         sig, arg = ops[i]

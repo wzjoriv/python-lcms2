@@ -5,13 +5,17 @@ Encode matrix/curve chains exactly as v2/v4 lookup-table tags.
 from __future__ import annotations
 
 import itertools
+from collections.abc import Iterable, Sequence
+from typing import Any
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .._io import tagtypes as tt
 from .._io.constants import TYPE_MAB, TYPE_MBA
 from . import curves as cv
 from .sampling import grid_points
+from .structure import Chain, Stage
 
 XYZ_SCALE = 65535.0 / 32768.0
 
@@ -21,17 +25,17 @@ _LUT16_SLOTS = ("IN", "CLUT", "OUT")
 _KIND = {"A": "c", "B": "c", "M": "c", "IN": "c", "OUT": "c", "CLUT": "a", "MATRIX": "a"}
 
 
-def _identity(t):
+def _identity(t: ArrayLike) -> np.ndarray:
     return np.asarray(t, dtype=np.float64)
 
 
-def _stage_width(stage):
+def _stage_width(stage: Stage) -> tuple[int, ...]:
     if stage[0] == "curveset":
         return len(stage[1]), len(stage[1])
     return stage[1].shape
 
 
-def _slot_width(slot: str, is_b2a: bool, n: int, legacy: bool):
+def _slot_width(slot: str, is_b2a: bool, n: int, legacy: bool) -> tuple[int, int]:
     if legacy:
         dev, pcs = n, 3
         first, last = (pcs, dev) if is_b2a else (dev, pcs)
@@ -41,7 +45,9 @@ def _slot_width(slot: str, is_b2a: bool, n: int, legacy: bool):
     return {"A": (n, n), "CLUT": (n, 3), "M": (3, 3), "MATRIX": (3, 3), "B": (3, 3)}[slot]
 
 
-def _assign(chain, slots, is_b2a, n, legacy):
+def _assign(
+    chain: Chain, slots: Sequence[str], is_b2a: bool, n: int, legacy: bool
+) -> dict[str, Stage] | None:
     """Map chain stages onto slots in order, or None if they do not fit."""
     for chosen in itertools.combinations(range(len(slots)), len(chain)):
         ok = True
@@ -56,7 +62,9 @@ def _assign(chain, slots, is_b2a, n, legacy):
     return None
 
 
-def _full_pipeline(assigned, slots, is_b2a, n, legacy):
+def _full_pipeline(
+    assigned: dict[str, Stage], slots: Sequence[str], is_b2a: bool, n: int, legacy: bool
+) -> list[tuple[str, Stage, bool]] | None:
     """Every slot's stage, with identities filling unused slots, or None."""
     stages = []
     for slot in slots:
@@ -72,13 +80,13 @@ def _full_pipeline(assigned, slots, is_b2a, n, legacy):
     return stages
 
 
-def _apply(stage, x: np.ndarray) -> np.ndarray:
+def _apply(stage: Stage, x: np.ndarray) -> np.ndarray:
     if stage[0] == "matrix":
         return x @ stage[1] + stage[2]
     return np.stack([cv.evaluate(f, x[:, i]) for i, f in enumerate(stage[1])], axis=-1)
 
 
-def _range(values: np.ndarray, pad: float):
+def _range(values: np.ndarray, pad: float) -> tuple[np.ndarray, np.ndarray]:
     lo = np.nanmin(values, axis=0)
     hi = np.nanmax(values, axis=0)
     span = hi - lo
@@ -87,7 +95,12 @@ def _range(values: np.ndarray, pad: float):
     return lo, np.where(span > 1e-12, span, 1.0)
 
 
-def _encode(stages, in_box, out_box, samples):
+def _encode(
+    stages: list[tuple[str, Stage, bool]],
+    in_box: tuple[np.ndarray, np.ndarray],
+    out_box: tuple[np.ndarray, np.ndarray],
+    samples: np.ndarray,
+) -> dict[str, Any] | None:
     """Normalize every interface of `stages` into [0, 1] and encode each slot."""
     boxes = [in_box]
     cur = samples
@@ -125,21 +138,21 @@ def _encode(stages, in_box, out_box, samples):
     return encoded
 
 
-def _curves(fns):
+def _curves(fns: Iterable[cv.CurveFn]) -> list[tt.CurveDescriptor]:
     return [cv.sampled_curve(lambda t, f=f: np.nan_to_num(f(t))) for f in fns]
 
 
-def _is_identity(fns) -> bool:
+def _is_identity(fns: Iterable[cv.CurveFn]) -> bool:
     t = np.linspace(0.0, 1.0, 17)
     return all(np.allclose(cv.evaluate(f, t), t, atol=1e-9) for f in fns)
 
 
-def _clut_from_affine(m, off):
+def _clut_from_affine(m: np.ndarray, off: np.ndarray) -> np.ndarray:
     corners = grid_points([(0.0, 1.0)] * m.shape[0], 2)
     return np.clip(corners @ m + off, 0.0, 1.0)
 
 
-def encode_chain(chain, is_b2a: bool, n: int, version_major: int, samples: np.ndarray):
+def encode_chain(chain: Chain, is_b2a: bool, n: int, version_major: int, samples: np.ndarray) -> bytes | None:
     """Encode a matrix/curve `chain` as an A2B (device to PCS) or B2A tag.
 
     Parameters

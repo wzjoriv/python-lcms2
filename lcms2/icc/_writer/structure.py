@@ -4,9 +4,11 @@ Matrix/curve chain shapes of a space's conversions.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import Sequence
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .._tracer.chain import decompose_chain
 from . import curves as cv
@@ -15,13 +17,18 @@ from .verify import agrees, call
 if TYPE_CHECKING:
     from .context import Context
 
+Stage = tuple[Any, ...]
+Chain = Sequence[Stage]
 
-def identity(t):
+
+def identity(t: ArrayLike) -> np.ndarray:
     """Identity curve."""
     return np.asarray(t, dtype=np.float64)
 
 
-def chain_as_curves_matrix(chain, n: int):
+def chain_as_curves_matrix(
+    chain: Chain | None, n: int
+) -> tuple[list[cv.CurveFn], np.ndarray, np.ndarray] | None:
     """``(curves, matrix, offset)`` equivalent to a forward chain, or None."""
     if chain is None:
         return None
@@ -60,7 +67,9 @@ def chain_as_curves_matrix(chain, n: int):
     return new_curves, new_matrix, offset
 
 
-def chain_as_matrix_curves(chain, n: int):
+def chain_as_matrix_curves(
+    chain: Chain | None, n: int
+) -> tuple[np.ndarray, np.ndarray, list[cv.CurveFn]] | None:
     """``(matrix, offset, curves)`` equivalent to a backward chain, or None."""
     if chain is None:
         return None
@@ -88,7 +97,7 @@ def chain_as_matrix_curves(chain, n: int):
     return matrix, np.asarray(offset, dtype=np.float64).reshape(-1), curves
 
 
-def stage_ranges(chain, samples: np.ndarray):
+def stage_ranges(chain: Chain, samples: np.ndarray) -> list[list[tuple[float, float]] | None] | None:
     """Input ``(lo, hi)`` per channel of every curveset stage in `chain` over `samples`."""
     cur = samples
     out = []
@@ -113,7 +122,7 @@ def stage_ranges(chain, samples: np.ndarray):
     return out
 
 
-def eval_chain(chain, x: np.ndarray) -> np.ndarray:
+def eval_chain(chain: Chain, x: np.ndarray) -> np.ndarray:
     """Apply a matrix/curve chain to ``(k, n)`` samples."""
     cur = x
     for stage in chain:
@@ -124,7 +133,7 @@ def eval_chain(chain, x: np.ndarray) -> np.ndarray:
     return cur
 
 
-def chains(ctx: Context):
+def chains(ctx: Context) -> tuple[list[Stage] | None, list[Stage] | None]:
     """Verified forward and backward matrix/curve chains of the space, each possibly None."""
     fwd_chain = decompose_chain(ctx.fwd_root, ctx.n, 3) if ctx.fwd_root is not None else None
     if fwd_chain is not None and not agrees(ctx.xyz_samples, eval_chain(fwd_chain, ctx.device_samples)):

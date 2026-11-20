@@ -6,12 +6,15 @@ from __future__ import annotations
 
 import warnings
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import DTypeLike
 
 from ._domain import check_circular_channels, resolve_channels_and_domain
+
+if TYPE_CHECKING:
+    from .._profile import Profile
 
 __all__ = ["ColorSpace"]
 
@@ -306,7 +309,7 @@ class ColorSpace:
         raise NotImplementedError
 
     @property
-    def profile(self):
+    def profile(self) -> Profile:
         """This space as an :class:`lcms2.Profile` (built once, exactly when possible).
 
         Examples

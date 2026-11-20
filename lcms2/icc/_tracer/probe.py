@@ -4,13 +4,18 @@ Numerically detect curve/matrix structure by evaluating a function.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
+
 import numpy as np
+from numpy.typing import ArrayLike
+
+_Fn = Callable[[np.ndarray], np.ndarray]
 
 _N_LINE = 257
 _N_CHECK = 256
 
 
-def _evaluate(fn, x: np.ndarray, n_out: int):
+def _evaluate(fn: _Fn, x: np.ndarray, n_out: int) -> np.ndarray | None:
     try:
         with np.errstate(all="ignore"):
             y = np.asarray(fn(x), dtype=np.float64)
@@ -21,7 +26,7 @@ def _evaluate(fn, x: np.ndarray, n_out: int):
     return y
 
 
-def _rank1_direction(samples: np.ndarray, rtol: float):
+def _rank1_direction(samples: np.ndarray, rtol: float) -> np.ndarray | None:
     finite = np.all(np.isfinite(samples), axis=-1)
     samples = samples[finite]
     if samples.shape[0] < 2:
@@ -43,7 +48,13 @@ def _close(a: np.ndarray, b: np.ndarray, rtol: float) -> bool:
     return bool(np.max(np.abs(a[finite] - b[finite])) <= rtol * scale)
 
 
-def probe_curves_then_matrix(fn, n_in: int, n_out: int, domain=None, rtol: float = 1e-7):
+def probe_curves_then_matrix(
+    fn: _Fn,
+    n_in: int,
+    n_out: int,
+    domain: Sequence[tuple[float, float]] | None = None,
+    rtol: float = 1e-7,
+) -> tuple[list[_Fn], np.ndarray, np.ndarray] | None:
     """Detect ``fn(x) == stack(c_i(x_i)) @ M + offset`` over a device domain.
 
     Parameters
@@ -74,7 +85,15 @@ def probe_curves_then_matrix(fn, n_in: int, n_out: int, domain=None, rtol: float
     return None
 
 
-def _probe_curves_then_matrix_at(fn, n_in, n_out, lo, hi, base, rtol):
+def _probe_curves_then_matrix_at(
+    fn: _Fn,
+    n_in: int,
+    n_out: int,
+    lo: np.ndarray,
+    hi: np.ndarray,
+    base: np.ndarray,
+    rtol: float,
+) -> tuple[list[_Fn], np.ndarray, np.ndarray] | None:
     f0 = _evaluate(fn, base[None, :], n_out)
     if f0 is None or not np.all(np.isfinite(f0)):
         return None
@@ -98,11 +117,11 @@ def _probe_curves_then_matrix_at(fn, n_in, n_out, lo, hi, base, rtol):
     if np.max(np.abs(offset)) <= rtol * max(float(np.max(np.abs(f0))), 1.0):
         offset = np.zeros(n_out)
 
-    def make_curve(i):
+    def make_curve(i: int) -> _Fn:
         direction = matrix[i]
         shift = coeffs[i]
 
-        def curve(t):
+        def curve(t: ArrayLike) -> np.ndarray:
             t = np.asarray(t, dtype=np.float64)
             pts = np.broadcast_to(base, t.shape + (n_in,)).copy()
             pts[..., i] = t
@@ -125,7 +144,7 @@ def _probe_curves_then_matrix_at(fn, n_in, n_out, lo, hi, base, rtol):
     return curves, matrix, offset
 
 
-def _gradients(fn, points: np.ndarray, n_in: int, n_out: int, step: float):
+def _gradients(fn: _Fn, points: np.ndarray, n_in: int, n_out: int, step: float) -> np.ndarray | None:
     grads = np.zeros((points.shape[0], n_out, n_in))
     for k in range(n_in):
         delta = np.zeros(n_in)
@@ -137,11 +156,11 @@ def _gradients(fn, points: np.ndarray, n_in: int, n_out: int, step: float):
     return grads
 
 
-def _matrix_curves(fn, matrix: np.ndarray, n_out: int):
-    def make_curve(j):
+def _matrix_curves(fn: _Fn, matrix: np.ndarray, n_out: int) -> list[_Fn]:
+    def make_curve(j: int) -> _Fn:
         direction = matrix[:, j]
 
-        def curve(u):
+        def curve(u: ArrayLike) -> np.ndarray:
             u = np.asarray(u, dtype=np.float64)
             with np.errstate(all="ignore"):
                 vals = np.asarray(fn(u[..., None] * direction), dtype=np.float64)
@@ -152,7 +171,14 @@ def _matrix_curves(fn, matrix: np.ndarray, n_out: int):
     return [make_curve(j) for j in range(n_out)]
 
 
-def _check_matrix_curves(fn, matrix, samples, n_out, rtol, rng):
+def _check_matrix_curves(
+    fn: _Fn,
+    matrix: np.ndarray,
+    samples: np.ndarray,
+    n_out: int,
+    rtol: float,
+    rng: np.random.Generator,
+) -> tuple[np.ndarray, list[_Fn], list[tuple[float, float]]] | None:
     curves = _matrix_curves(fn, matrix, n_out)
     idx = rng.choice(samples.shape[0], size=min(_N_CHECK, samples.shape[0]), replace=False)
     check = samples[idx]
@@ -169,8 +195,13 @@ def _check_matrix_curves(fn, matrix, samples, n_out, rtol, rng):
 
 
 def probe_matrix_then_curves(
-    fn, n_in: int, n_out: int, samples: np.ndarray, matrix_hint=None, rtol: float = 1e-6
-):
+    fn: _Fn,
+    n_in: int,
+    n_out: int,
+    samples: np.ndarray,
+    matrix_hint: ArrayLike | None = None,
+    rtol: float = 1e-6,
+) -> tuple[np.ndarray, list[_Fn], list[tuple[float, float]]] | None:
     """Detect ``fn(x) == stack(c_j((x @ M)_j))`` around the given samples.
 
     Parameters

@@ -5,6 +5,7 @@ Conversions between XYZ, Lab, LCh and xyY, and chromatic adaptation.
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from ._core import D50, D50_xyY, _triple
 
@@ -23,11 +24,11 @@ __all__ = [
 _EPS = (24.0 / 116.0) ** 3
 
 
-def _white(white) -> np.ndarray:
+def _white(white: ArrayLike | None) -> np.ndarray:
     return D50 if white is None else _triple(white, "white")
 
 
-def xyz_to_lab(xyz, white=None) -> np.ndarray:
+def xyz_to_lab(xyz: ArrayLike, white: ArrayLike | None = None) -> np.ndarray:
     """XYZ to CIELAB (same formulas as LittleCMS).
 
     Parameters
@@ -50,7 +51,7 @@ def xyz_to_lab(xyz, white=None) -> np.ndarray:
     )
 
 
-def lab_to_xyz(lab, white=None) -> np.ndarray:
+def lab_to_xyz(lab: ArrayLike, white: ArrayLike | None = None) -> np.ndarray:
     """CIELAB to XYZ; inverse of :func:`xyz_to_lab`.
 
     Examples
@@ -66,7 +67,7 @@ def lab_to_xyz(lab, white=None) -> np.ndarray:
     return t * _white(white)
 
 
-def lab_to_lch(lab) -> np.ndarray:
+def lab_to_lch(lab: ArrayLike) -> np.ndarray:
     """CIELAB to LCh (hue in degrees, 0..360).
 
     Examples
@@ -80,7 +81,7 @@ def lab_to_lch(lab) -> np.ndarray:
     return np.stack([lab[..., 0], np.hypot(lab[..., 1], lab[..., 2]), h], axis=-1)
 
 
-def lch_to_lab(lch) -> np.ndarray:
+def lch_to_lab(lch: ArrayLike) -> np.ndarray:
     """LCh to CIELAB; inverse of :func:`lab_to_lch`.
 
     Examples
@@ -94,7 +95,7 @@ def lch_to_lab(lch) -> np.ndarray:
     return np.stack([lch[..., 0], lch[..., 1] * np.cos(h), lch[..., 1] * np.sin(h)], axis=-1)
 
 
-def xyz_to_xyy(xyz) -> np.ndarray:
+def xyz_to_xyy(xyz: ArrayLike) -> np.ndarray:
     """XYZ to xyY. Black (XYZ all zero) gets the D50 chromaticity.
 
     Examples
@@ -110,7 +111,7 @@ def xyz_to_xyy(xyz) -> np.ndarray:
     return np.concatenate([xy, xyz[..., 1:2]], axis=-1)
 
 
-def xyy_to_xyz(xyy) -> np.ndarray:
+def xyy_to_xyz(xyy: ArrayLike) -> np.ndarray:
     """xyY to XYZ. A zero ``y`` gives black.
 
     Examples
@@ -140,7 +141,7 @@ _CAT = {
 }
 
 
-def adaptation_matrix(src_white, dst_white, method: str = "bradford") -> np.ndarray:
+def adaptation_matrix(src_white: ArrayLike, dst_white: ArrayLike, method: str = "bradford") -> np.ndarray:
     """The 3x3 chromatic adaptation matrix between two white points.
 
     Parameters
@@ -175,7 +176,7 @@ def adaptation_matrix(src_white, dst_white, method: str = "bradford") -> np.ndar
     return np.linalg.inv(m) @ np.diag(gain) @ m
 
 
-def adapt(xyz, src_white, dst_white, method: str = "bradford") -> np.ndarray:
+def adapt(xyz: ArrayLike, src_white: ArrayLike, dst_white: ArrayLike, method: str = "bradford") -> np.ndarray:
     """Chromatic adaptation of XYZ colors from one white point to another.
 
     Parameters

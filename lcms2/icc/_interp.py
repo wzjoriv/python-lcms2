@@ -5,11 +5,14 @@ Multilinear interpolation over regular-grid lookup tables.
 from __future__ import annotations
 
 import itertools
+from collections.abc import Collection
 
 import numpy as np
 
 
-def sample_clut(clut: np.ndarray, coords: np.ndarray, circular_channels=frozenset()) -> np.ndarray:
+def sample_clut(
+    clut: np.ndarray, coords: np.ndarray, circular_channels: Collection[int] = frozenset()
+) -> np.ndarray:
     """Interpolate `clut` at `coords` in [0, 1].
 
     Parameters

@@ -4,7 +4,11 @@ Nodes of a traced expression graph and the operation tables.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+from typing import Any
+
 import numpy as np
+from numpy.typing import ArrayLike
 
 
 class Node:
@@ -24,13 +28,19 @@ class Node:
 
     __slots__ = ("op", "args", "meta", "width")
 
-    def __init__(self, op, args, meta=None, width=None):
+    def __init__(
+        self,
+        op: str,
+        args: tuple[Node, ...],
+        meta: dict[str, Any] | None = None,
+        width: int | None = None,
+    ):
         self.op = op
         self.args = args
         self.meta = meta or {}
         self.width = width
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Node({self.op}, width={self.width}, meta={self.meta})"
 
 
@@ -177,7 +187,7 @@ COMPARISON_FUNCS = {
 }
 
 
-def const_node(value) -> Node:
+def const_node(value: ArrayLike) -> Node:
     """A constant node; a 1-D value with more than one entry is per-channel."""
     arr = np.asarray(value, dtype=np.float64)
     if arr.ndim > 1:
@@ -216,6 +226,6 @@ def per_channel(node: Node) -> Node:
     return node
 
 
-def stack_node(nodes) -> Node:
+def stack_node(nodes: Iterable[Node]) -> Node:
     """Concatenate 1-channel nodes along the channel axis."""
     return Node("stack", tuple(nodes), width=len(nodes))

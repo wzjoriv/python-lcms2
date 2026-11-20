@@ -4,7 +4,11 @@ Constant folding, subexpression sharing and algebraic simplification of traced g
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+from typing import Any
+
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .tracing import (
     BINARY_FUNCS,
@@ -17,7 +21,7 @@ from .tracing import (
 )
 
 
-def _eval_const(node: Node):
+def _eval_const(node: Node) -> np.ndarray:
     """Evaluate a graph whose leaves are all constants."""
     op = node.op
     if op == "const":
@@ -60,7 +64,7 @@ def _eval_const(node: Node):
     raise TraceAbort(f"optimize: cannot constant-fold op {op!r}")
 
 
-def _make_const(value) -> Node:
+def _make_const(value: ArrayLike) -> Node:
     return const_node(value)
 
 
@@ -116,7 +120,7 @@ def _simplify(node: Node) -> Node:
     return node
 
 
-def _meta_key(meta: dict):
+def _meta_key(meta: dict[str, Any]) -> tuple:
     items = []
     for k in sorted(meta):
         v = meta[k]
@@ -127,7 +131,7 @@ def _meta_key(meta: dict):
     return tuple(items)
 
 
-def _struct_key(op, args, meta):
+def _struct_key(op: str, args: Iterable[Node], meta: dict[str, Any]) -> tuple:
     return (op, tuple(id(a) for a in args), _meta_key(meta))
 
 

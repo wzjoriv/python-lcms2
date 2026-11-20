@@ -4,10 +4,15 @@ Perceptual diagnostics and colour-vision-deficiency simulation.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from ..spaces import oklab, srgb, srgb_linear
 from ._cvd_data import MATRICES
+
+if TYPE_CHECKING:
+    from ._colormap import Colormap
 
 _ALIASES = {
     "protan": "protan",
@@ -106,7 +111,7 @@ class DiagnosticsMixin:
         d = np.diff(self.lightness())
         return bool(np.all(d >= -tol) or np.all(d <= tol))
 
-    def simulate(self, deficiency: str, severity: float = 1.0):
+    def simulate(self, deficiency: str, severity: float = 1.0) -> Colormap:
         """Simulate colour-vision deficiency (Machado, Oliveira and Fernandes 2009).
 
         Parameters

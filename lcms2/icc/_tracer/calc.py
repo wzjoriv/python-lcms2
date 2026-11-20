@@ -4,10 +4,14 @@ Compile traced graphs into ICC.2 calculator operations.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
+
 import numpy as np
 
 from .chain import _node_width
 from .tracing import ELEMENTWISE_OPS, Node, TraceAbort
+
+_Op = tuple[str, float | tuple[int, int]]
 
 _NULLARY_SEL = (0, 0)
 
@@ -55,11 +59,11 @@ _CALC_BINARY = {
 }
 
 
-def _op(sig):
+def _op(sig: str) -> _Op:
     return (sig, _NULLARY_SEL)
 
 
-def _data(value):
+def _data(value: float) -> _Op:
     value = float(value)
     if np.isnan(value):
         return _op("NaN ")
@@ -217,12 +221,12 @@ class _CalcCompiler:
             return self.channels(node.args[0], node.meta["width"])
         return [self.resolve(a) for a in node.args]
 
-    def _count(self, roots) -> dict:
+    def _count(self, roots: Sequence[Node]) -> tuple[dict[int, int], list[Node]]:
         counts: dict = {}
         seen: set = set()
         order: list = []
 
-        def visit(node):
+        def visit(node: Node) -> None:
             counts[id(node)] = counts.get(id(node), 0) + 1
             if id(node) in seen:
                 return
@@ -276,7 +280,7 @@ class _CalcCompiler:
             return self.expr(a) + self.expr(b) + list(_CALC_BINARY_SEQUENCES[op])
         raise TraceAbort(f"calc-compile: no calculator form for {op!r}")
 
-    def _interp(self, x: Node, xp, fp) -> list:
+    def _interp(self, x: Node, xp: np.ndarray, fp: np.ndarray) -> list:
         slot = self._new_slot()
         ops = self.expr(x) + [("tput", (slot, 0)), _data(fp[0])]
         for i in range(len(xp) - 1):
@@ -305,7 +309,7 @@ class _CalcCompiler:
             raise TraceAbort("calc-compile: too many temporaries")
         return slot
 
-    def program(self, roots) -> list:
+    def program(self, roots: Sequence[Node]) -> list:
         counts, order = self._count(roots)
         ops: list = []
         for node in order:
@@ -319,7 +323,9 @@ class _CalcCompiler:
         return ops
 
 
-def _channels_of(node: Node, width: int, expand=None):
+def _channels_of(
+    node: Node, width: int, expand: Callable[[Node, int], list[Node]] | None = None
+) -> list[Node]:
     """Per-channel nodes of a `width`-channel node, expanding operands with `expand`."""
     expand = expand or _channels_of
     if node.op == "stack":

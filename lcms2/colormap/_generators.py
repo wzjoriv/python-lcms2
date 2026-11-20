@@ -4,13 +4,16 @@ Generators for sequential, diverging, cyclic and qualitative colormaps.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from .._parse import parse_color
 from ..spaces import oklab, srgb
 from ._build import oklab_to_lch, oklch_to_srgb
+
+if TYPE_CHECKING:
+    from ._colormap import Colormap
 
 
 def _hue_chroma(value: Any) -> tuple[float, float | None, float | None]:
@@ -41,7 +44,7 @@ class GeneratorsMixin:
         chroma: float = 0.12,
         n: int = 256,
         name: str | None = None,
-    ):
+    ) -> Colormap:
         """A lightness ramp in OKLCh with monotonic lightness.
 
         Parameters
@@ -90,7 +93,7 @@ class GeneratorsMixin:
         center: Any = "#f2f2f2",
         n: int = 256,
         name: str | None = None,
-    ):
+    ) -> Colormap:
         """A two-armed map with a neutral centre and lightness symmetric about it.
 
         Parameters
@@ -136,7 +139,7 @@ class GeneratorsMixin:
         chroma: float = 0.1,
         n: int = 256,
         name: str | None = None,
-    ):
+    ) -> Colormap:
         """A constant-lightness hue wheel whose last colour wraps to the first.
 
         Parameters
@@ -174,7 +177,7 @@ class GeneratorsMixin:
         chroma: float = 0.12,
         hue_start: float = 25.0,
         name: str | None = None,
-    ):
+    ) -> Colormap:
         """``k`` well-separated categorical colours.
 
         Hues are evenly spaced around OKLCh; beyond six colours the lightness alternates

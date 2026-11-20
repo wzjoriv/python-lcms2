@@ -4,14 +4,17 @@ Sample-based checks that a written representation reproduces a space.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
+
 import numpy as np
+from numpy.typing import ArrayLike
 
 VERIFY_RTOL = 1e-5
 
 VERIFY_MAX_RTOL = 1e-3
 
 
-def call(fn, x):
+def call(fn: Callable[[np.ndarray], ArrayLike], x: np.ndarray) -> np.ndarray:
     """Evaluate `fn` at `x` as float64 without floating-point warnings."""
     with np.errstate(all="ignore"):
         return np.asarray(fn(x), dtype=np.float64)
@@ -20,7 +23,7 @@ def call(fn, x):
 def agrees(
     expected: np.ndarray,
     actual: np.ndarray,
-    periods=None,
+    periods: Mapping[int, float] | None = None,
     rtol: float = VERIFY_RTOL,
     max_rtol: float = VERIFY_MAX_RTOL,
 ) -> bool:

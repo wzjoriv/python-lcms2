@@ -5,6 +5,7 @@ Sampled lookup-table tags for spaces without an exact representation.
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .._interp import sample_clut
 from .._io import mpe
@@ -16,7 +17,7 @@ from .sampling import sample_grid
 from .structure import identity
 
 
-def cube_root(t):
+def cube_root(t: ArrayLike) -> np.ndarray:
     """Signed cube root."""
     t = np.asarray(t, dtype=np.float64)
     return np.sign(t) * np.abs(t) ** (1.0 / 3.0)
@@ -29,7 +30,7 @@ _A2B_GRID_DEFAULT = 17
 _B2A_GRID = 33
 
 
-def cube(t):
+def cube(t: ArrayLike) -> np.ndarray:
     """Cube."""
     return np.asarray(t, dtype=np.float64) ** 3
 

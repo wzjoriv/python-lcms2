@@ -5,7 +5,8 @@ Reading and writing CGATS.17 / IT8 measurement files (targets, characterisation 
 from __future__ import annotations
 
 import os
-from collections.abc import Iterator, MutableMapping
+from collections.abc import Iterable, Iterator, Mapping, MutableMapping, Sequence
+from typing import Any
 
 import numpy as np
 
@@ -27,7 +28,7 @@ class _Properties(MutableMapping):
             raise KeyError(key)
         return value
 
-    def __setitem__(self, key: str, value) -> None:
+    def __setitem__(self, key: str, value: str | float) -> None:
         h = self._owner._sel()
         if isinstance(value, bool):
             value = int(value)
@@ -96,7 +97,12 @@ class CGATS:
             return cls.from_bytes(fh.read())
 
     @classmethod
-    def from_columns(cls, data, sheet_type: str | None = None, properties=None) -> CGATS:
+    def from_columns(
+        cls,
+        data: Mapping[str, Sequence[Any]],
+        sheet_type: str | None = None,
+        properties: Mapping[str, str | float] | None = None,
+    ) -> CGATS:
         """Build a single-table CGATS from a mapping of column name to values.
 
         Parameters
@@ -136,7 +142,7 @@ class CGATS:
             fh.write(data)
 
     # ---- Tables ----
-    def _sel(self):
+    def _sel(self) -> Any:
         _lcms2.it8_set_table(self._handle, self._table)
         return self._handle
 
@@ -184,7 +190,7 @@ class CGATS:
         _lcms2.it8_set_sheet_type(self._sel(), str(value))
 
     # ---- Columns and rows ----
-    def define_table(self, columns, n_rows: int) -> None:
+    def define_table(self, columns: Iterable[str], n_rows: int) -> None:
         """Declare the column names and row count of the (empty) current table.
 
         Raises
@@ -213,7 +219,7 @@ class CGATS:
         idx = next((i for i, c in enumerate(cols) if c.upper() == "SAMPLE_ID"), 0)
         return [str(self._get_cell(r, idx)) for r in range(self.n_rows)]
 
-    def _col_index(self, column) -> int:
+    def _col_index(self, column: str | int) -> int:
         cols = self.columns
         if isinstance(column, (int, np.integer)):
             if not 0 <= column < len(cols):
@@ -224,7 +230,7 @@ class CGATS:
                 return i
         raise KeyError(f"no column named {column!r}; available columns: {', '.join(cols)}")
 
-    def _row_index(self, patch) -> int:
+    def _row_index(self, patch: str | int) -> int:
         if isinstance(patch, (int, np.integer)):
             if not 0 <= patch < self.n_rows:
                 raise IndexError(f"row {patch} out of range; the table has {self.n_rows} row(s)")
@@ -235,10 +241,10 @@ class CGATS:
         except ValueError:
             raise KeyError(f"no patch named {patch!r}; first patches: {', '.join(names[:5])}") from None
 
-    def _get_cell(self, row: int, col: int):
+    def _get_cell(self, row: int, col: int) -> str | None:
         return _lcms2.it8_get_cell(self._sel(), row, col)
 
-    def _set_cell(self, row: int, col: int, value) -> None:
+    def _set_cell(self, row: int, col: int, value: Any) -> None:
         if isinstance(value, (float, np.floating)):
             text = repr(float(value))
         elif isinstance(value, (bool, int, np.integer)):
@@ -247,7 +253,7 @@ class CGATS:
             text = str(value)
         _lcms2.it8_set_cell(self._sel(), row, col, text)
 
-    def get(self, patch, column):
+    def get(self, patch: str | int, column: str | int) -> float | str | None:
         """Value of one cell: a ``float`` when it is numeric, otherwise a string (``None`` if empty).
 
         Parameters
@@ -260,19 +266,19 @@ class CGATS:
         text = self._get_cell(self._row_index(patch), self._col_index(column))
         return _parse(text)
 
-    def set(self, patch, column, value) -> None:
+    def set(self, patch: str | int, column: str | int, value: str | float) -> None:
         """Set one cell from a number or string; see :meth:`get` for the addressing."""
         self._set_cell(self._row_index(patch), self._col_index(column), value)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: tuple[str | int, str | int]) -> float | str | None:
         patch, column = key
         return self.get(patch, column)
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key: tuple[str | int, str | int], value: str | float) -> None:
         patch, column = key
         self.set(patch, column, value)
 
-    def column(self, name) -> np.ndarray:
+    def column(self, name: str | int) -> np.ndarray:
         """One column: a ``float64`` array if every cell is numeric, else an array of strings.
 
         Empty numeric cells become ``nan``.
@@ -320,7 +326,7 @@ class CGATS:
         )
 
 
-def _parse(text):
+def _parse(text: str | None) -> float | str | None:
     if text is None:
         return None
     try:

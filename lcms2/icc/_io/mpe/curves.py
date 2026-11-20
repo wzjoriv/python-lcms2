@@ -5,8 +5,11 @@ Segmented curves ('curf') and curve-set elements ('cvst').
 from __future__ import annotations
 
 import struct
+from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from ...._errors import ICCParseError, ICCWriteError
 from .elements import _position_table
@@ -17,7 +20,7 @@ FLT_MIN = float(np.finfo(np.float32).tiny)
 FORMULA_PARAM_COUNTS = {0: 4, 1: 5, 2: 5, 3: 5, 4: 5, 5: 6, 6: 7, 7: 6}
 
 
-def _fpow(base, g):
+def _fpow(base: ArrayLike, g: ArrayLike) -> np.ndarray:
     base = np.asarray(base, dtype=np.float64)
     if float(g) != np.floor(g):
         base = np.where(base < 0, 0.0, base)
@@ -25,17 +28,17 @@ def _fpow(base, g):
         return np.power(base, g)
 
 
-def _clip_pow(base, g):
+def _clip_pow(base: ArrayLike, g: ArrayLike) -> np.ndarray:
     base = np.asarray(base, dtype=np.float64)
     with np.errstate(all="ignore"):
         return np.where(base <= 0, 0.0, np.power(np.maximum(base, 0.0), g))
 
 
-def _log_arg(arg):
+def _log_arg(arg: np.ndarray) -> np.ndarray:
     return np.where(arg <= 0, FLT_MIN, arg)
 
 
-def eval_formula(func_type: int, p, x: np.ndarray) -> np.ndarray:
+def eval_formula(func_type: int, p: Sequence[float], x: np.ndarray) -> np.ndarray:
     """Evaluate an ICC.2 formula curve segment of type 0-7 at `x`."""
     x = np.asarray(x, dtype=np.float64)
     with np.errstate(all="ignore"):
@@ -68,12 +71,12 @@ def eval_formula(func_type: int, p, x: np.ndarray) -> np.ndarray:
     raise ICCParseError(f"unknown formula segment type {func_type}")
 
 
-def constant_segment(value: float):
+def constant_segment(value: float) -> tuple[str, int, list[float]]:
     """Formula segment ``('formula', 0, params)`` equal to `value`."""
     return ("formula", 0, [1.0, 0.0, 0.0, float(value)])
 
 
-def _encode_segment(seg) -> bytes:
+def _encode_segment(seg: tuple[Any, ...]) -> bytes:
     if seg[0] == "formula":
         _, func_type, params = seg
         if len(params) != FORMULA_PARAM_COUNTS.get(func_type, -1):
@@ -90,7 +93,7 @@ def _encode_segment(seg) -> bytes:
     raise ICCWriteError(f"unknown curve segment kind {seg[0]}")
 
 
-def encode_segmented_curve(breakpoints, segments) -> bytes:
+def encode_segmented_curve(breakpoints: Sequence[float], segments: Sequence[tuple[Any, ...]]) -> bytes:
     """Encode a segmentedCurve ('curf').
 
     Parameters
@@ -120,7 +123,7 @@ def encode_segmented_curve(breakpoints, segments) -> bytes:
     )
 
 
-def encode_curveset_element(curves) -> bytes:
+def encode_curveset_element(curves: Sequence[bytes]) -> bytes:
     """Encode a curveSetElement ('cvst') from encoded segmented curves, one per channel."""
     n = len(curves)
     header = b"cvst" + b"\x00" * 4 + struct.pack(">HH", n, n)
@@ -170,7 +173,7 @@ def _decode_segmented_curve(buf: bytes) -> dict:
     return {"breakpoints": breakpoints, "segments": resolved}
 
 
-def _eval_segment(seg, x: np.ndarray) -> np.ndarray:
+def _eval_segment(seg: tuple[Any, ...], x: np.ndarray) -> np.ndarray:
     if seg[0] == "formula":
         return eval_formula(seg[1], seg[2], x)
     _, samples, lo, hi = seg

@@ -4,7 +4,10 @@ One-dimensional tone curves (gamma, parametric and tabulated).
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
+from numpy.typing import ArrayLike
 
 from . import _lcms2
 
@@ -36,7 +39,7 @@ class ToneCurve:
     [0.0, 0.25, 1.0]
     """
 
-    def __init__(self, source):
+    def __init__(self, source: float | ArrayLike | Any):
         if isinstance(source, (int, float, np.floating, np.integer)) and not isinstance(source, bool):
             source = _lcms2.curve_gamma(float(source))
         elif not _is_capsule(source):
@@ -44,7 +47,7 @@ class ToneCurve:
         self._handle = source
 
     @classmethod
-    def _from_handle(cls, handle) -> ToneCurve:
+    def _from_handle(cls, handle: Any) -> ToneCurve:
         """Wrap a curve capsule returned by the extension."""
         self = cls.__new__(cls)
         self._handle = handle
@@ -69,7 +72,7 @@ class ToneCurve:
         return cls(_lcms2.curve_gamma(float(gamma)))
 
     @classmethod
-    def parametric(cls, type: int, params) -> ToneCurve:
+    def parametric(cls, type: int, params: ArrayLike) -> ToneCurve:
         """Parametric curve of one of the ICC / LittleCMS types.
 
         Parameters
@@ -107,7 +110,7 @@ class ToneCurve:
         return cls(_lcms2.curve_parametric(type, values))
 
     @classmethod
-    def tabulated(cls, values) -> ToneCurve:
+    def tabulated(cls, values: ArrayLike) -> ToneCurve:
         """Curve interpolated from a table of samples evenly spaced on 0..1.
 
         Parameters
@@ -161,7 +164,7 @@ class ToneCurve:
         return cls.gamma(1.0)
 
     # ---- Evaluation ----
-    def __call__(self, x):
+    def __call__(self, x: ArrayLike) -> np.ndarray | np.generic:
         """Evaluate the curve over an array (or scalar) of any shape.
 
         Floating point input (0..1) gives ``float64`` output; ``uint16`` input gives
@@ -317,11 +320,11 @@ class ToneCurve:
         return f"ToneCurve({kind}, {info['entries']} entries{gamma})"
 
 
-def _is_capsule(obj) -> bool:
+def _is_capsule(obj: object) -> bool:
     return type(obj).__name__ == "PyCapsule"
 
 
-def _table_array(values) -> np.ndarray:
+def _table_array(values: ArrayLike) -> np.ndarray:
     arr = np.asarray(values)
     if arr.ndim != 1:
         raise ValueError(f"curve values must be a 1-D array, got shape {arr.shape}")
