@@ -12,7 +12,6 @@ jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -96,7 +95,8 @@ jobs:
     name: Collect all distributions
     needs: [build_wheels, build_pyodide, build_sdist]
     runs-on: ubuntu-latest
-    if: ${{ always() && needs.build_sdist.result == 'success' }}
+    # every platform wheel must build; Pyodide wheels are optional
+    if: ${{ always() && needs.build_sdist.result == 'success' && needs.build_wheels.result == 'success' }}
 
     steps:
       - uses: actions/download-artifact@v6
@@ -111,6 +111,7 @@ jobs:
           path: dist
 
       - uses: actions/download-artifact@v6
+        continue-on-error: true
         with:
           name: pyodide-wheels
           path: dist/pyodide
