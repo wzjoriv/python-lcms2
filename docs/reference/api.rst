@@ -17,8 +17,6 @@ Core
    Flag
    CMSError
    ToneCurve
-   CIECAM02
-   delta_e
    CGATS
    parse_color
    parse_colors
