@@ -47,11 +47,21 @@ def test_new_ufuncs_trace_and_evaluate_correctly(fn, x, expected):
     assert abs(result - expected) < 1e-9
 
 
-def test_channel_iteration_supported():
+def test_iterating_over_a_traced_array_is_refused():
+    """On a batch ``for c in x`` walks over pixels, so it cannot mean "over channels"."""
 
     def fn(x):
         chans = [c for c in x]  # noqa: C416 - iterates a traced array
         return np.stack([c * 2.0 for c in chans], axis=-1)
+
+    with pytest.raises(TraceAbort, match="iterating"):
+        trace_function(fn, 3)
+
+
+def test_channel_first_view_can_be_unpacked():
+    def fn(x):
+        r, g, b = np.moveaxis(x, -1, 0)
+        return np.stack([b * 2.0, g, r], axis=-1)
 
     node, out_ch = trace_function(fn, 3)
     assert out_ch == 3

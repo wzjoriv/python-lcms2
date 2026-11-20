@@ -105,12 +105,27 @@ class Profile(ProfileData):
         return cls._from_handle(_lcms2.profile_open(data))
 
     @classmethod
-    def from_space(cls, space: Any) -> Profile:
-        """An exact profile of a colour space object (anything with ``to_icc_profile()``)."""
+    def from_space(cls, space: Any, strict: bool = False) -> Profile:
+        """An exact profile of a colour space object (anything with ``to_icc_profile()``).
+
+        Parameters
+        ----------
+        space : ColorSpace
+            The space; its NumPy ``to_xyz``/``from_xyz`` are traced into an exact profile.
+        strict : bool, optional
+            Raise :class:`~lcms2.ICCWriteError` instead of falling back to sampled lookup
+            tables when the functions cannot be traced (data-dependent branching, ``float()``,
+            random numbers, non-NumPy libraries). Default False.
+
+        Raises
+        ------
+        ICCWriteError
+            With ``strict=True``, naming the operation that prevents an exact profile.
+        """
         make = getattr(space, "to_icc_profile", None)
         if make is None:
             raise TypeError(f"{type(space).__name__} has no to_icc_profile(); pass a ColorSpace")
-        data = make()
+        data = make(strict=True) if strict else make()
         if isinstance(data, Profile):
             return data
         if isinstance(data, dict):  # ColorSpace.to_icc_profile() -> {"bytes", "method", "notes"}

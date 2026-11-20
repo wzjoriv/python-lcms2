@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import threading
+import traceback
 
 import numpy as np
 
@@ -223,6 +225,10 @@ def stack_node(nodes) -> Node:
 
 def _operand(x):
     if isinstance(x, TracedArray):
+        if x.moved:
+            raise TraceAbort(
+                "a channel-first view (np.moveaxis / .T) can only be unpacked, not used in arithmetic"
+            )
         return x.node
     if isinstance(x, Node):
         return x
@@ -281,8 +287,10 @@ class TracedArray:
 
     __array_priority__ = 1000
 
-    def __init__(self, node: Node):
+    def __init__(self, node: Node, moved: bool = False):
         self.node = node
+        #: True for a channel-first view (``np.moveaxis(x, -1, 0)``, ``x.T``) that may be unpacked
+        self.moved = moved
 
     @property
     def n_channels(self) -> int:
@@ -340,6 +348,11 @@ class TracedArray:
         raise TraceAbort(f"unsupported indexing pattern {item!r}")
 
     def __getitem__(self, item):
+        if self.moved:
+            if isinstance(item, (int, np.integer)):
+                return self.channel(int(item))
+            raise TraceAbort("a channel-first view can only be indexed by channel number")
+        _reject_mask_key(item)
         key = item[-1] if isinstance(item, tuple) and item else item
         if key is None:
             if isinstance(item, tuple) and len(item) > 1 and item[-2] is not Ellipsis:
@@ -355,6 +368,7 @@ class TracedArray:
         return self._channels(indices)
 
     def __setitem__(self, item, value):
+        _reject_mask_key(item)
         indices = self._key_indices(item)
         value_node = _operand(value)
         width = value_node.width or 1
@@ -498,13 +512,30 @@ class TracedArray:
         raise TraceAbort("len() on a traced value; use x.shape[-1] or iterate over channels")
 
     def __iter__(self):
+        if not self.moved:
+            raise TraceAbort(
+                "iterating over a traced array (for v in x, r, g, b = x) walks over pixels, not "
+                "channels; index channels with x[..., i] or unpack np.moveaxis(x, -1, 0)"
+            )
         for i in range(self.n_channels):
             yield self.channel(i)
+
+    def item(self, *args):
+        raise TraceAbort(".item() on a traced value converts it to a Python scalar")
+
+    def tolist(self):
+        raise TraceAbort(".tolist() on a traced value converts it to Python lists")
+
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError(name)
+        raise TraceAbort(f".{name} on a traced value is not traceable")
 
     def clip(self, a_min=None, a_max=None):
         return _clip(self, a_min, a_max)
 
     def astype(self, dtype, *args, **kwargs):
+        _check_float_dtype(dtype, "astype")
         return TracedArray(self.node)
 
     def reshape(self, *shape, **kwargs):
@@ -521,7 +552,7 @@ class TracedArray:
 
     @property
     def T(self):
-        return TracedArray(self.node)
+        return TracedArray(self.node, moved=True)
 
     def sqrt(self):
         return elementwise("sqrt", self)
@@ -537,16 +568,16 @@ class TracedArray:
             raise TraceAbort("round() with decimals != 0 is not traceable")
         return elementwise("round", self)
 
-    def sum(self, axis=-1, keepdims=False, **kwargs):
+    def sum(self, axis=None, keepdims=False, **kwargs):
         return _sum(self, axis=axis, keepdims=keepdims)
 
-    def mean(self, axis=-1, keepdims=False, **kwargs):
+    def mean(self, axis=None, keepdims=False, **kwargs):
         return _mean(self, axis=axis, keepdims=keepdims)
 
-    def max(self, axis=-1, keepdims=False, **kwargs):
+    def max(self, axis=None, keepdims=False, **kwargs):
         return _reduce(self, "reduce_max", axis)
 
-    def min(self, axis=-1, keepdims=False, **kwargs):
+    def min(self, axis=None, keepdims=False, **kwargs):
         return _reduce(self, "reduce_min", axis)
 
     def argmax(self, *args, **kwargs):
@@ -554,6 +585,26 @@ class TracedArray:
 
     def argmin(self, *args, **kwargs):
         raise TraceAbort("argmin() is not traceable")
+
+
+def _reject_mask_key(item):
+    keys = item if isinstance(item, tuple) else (item,)
+    if any(isinstance(k, TracedArray) for k in keys):
+        raise TraceAbort(
+            "boolean-mask indexing (x[x < 0] = ...) selects pixels by their values; "
+            "use np.where, np.maximum or np.clip instead"
+        )
+
+
+def _check_float_dtype(dtype, where):
+    if dtype is None:
+        return
+    try:
+        kind = np.dtype(dtype).kind
+    except TypeError:
+        return
+    if kind != "f":
+        raise TraceAbort(f"{where}({np.dtype(dtype).name}) quantizes or changes the value type")
 
 
 def _as_traced(x) -> TracedArray:
@@ -582,23 +633,28 @@ def _matmul_any(a, b):
 
 
 def _check_channel_axis(axis):
-    if axis not in (-1, None):
+    if axis is None:
+        raise TraceAbort(
+            "a reduction over all axes (no axis= given) mixes different pixels; "
+            "reduce over the channels with axis=-1"
+        )
+    if axis != -1:
         raise TraceAbort(f"reduction over axis={axis!r} is not a channel-axis reduction")
 
 
-def _sum(x, axis=-1, keepdims=False, **kwargs):
+def _sum(x, axis=None, keepdims=False, **kwargs):
     x = _as_traced(x)
     _check_channel_axis(axis)
     return matmul(x.node, np.ones((x.n_channels, 1))).channel(0)
 
 
-def _mean(x, axis=-1, keepdims=False, **kwargs):
+def _mean(x, axis=None, keepdims=False, **kwargs):
     x = _as_traced(x)
     _check_channel_axis(axis)
     return matmul(x.node, np.full((x.n_channels, 1), 1.0 / x.n_channels)).channel(0)
 
 
-def _reduce(x, op, axis=-1, *args, **kwargs):
+def _reduce(x, op, axis=None, *args, **kwargs):
     x = _as_traced(x)
     _check_channel_axis(axis)
     if x.n_channels == 1:
@@ -688,11 +744,12 @@ def _full(shape, fill_value, *args, **kwargs):
     return TracedArray(const_node(float(fill_value)))
 
 
-def _norm(x, ord=None, axis=-1, keepdims=False):
-    if ord not in (None, 2) or axis not in (-1, None):
+def _norm(x, ord=None, axis=None, keepdims=False):
+    if ord not in (None, 2):
         raise TraceAbort("only the 2-norm over the channel axis is traceable")
+    _check_channel_axis(axis)
     x = _as_traced(x)
-    return elementwise("sqrt", _sum(elementwise("square", x)))
+    return elementwise("sqrt", _sum(elementwise("square", x), axis=-1))
 
 
 def _column_stack(arrays):
@@ -717,6 +774,73 @@ def _interp(x, xp, fp, left=None, right=None, period=None):
     xp = np.asarray(xp, dtype=np.float64)
     fp = np.asarray(fp, dtype=np.float64)
     return elementwise("interp", x, meta={"xp": xp, "fp": fp})
+
+
+def _repeat(a, repeats, axis=None):
+    if axis not in (-1,) or not isinstance(repeats, (int, np.integer)):
+        raise TraceAbort("np.repeat is only traceable with an integer count along axis=-1")
+    x = _as_traced(a)
+    return TracedArray(stack_node([select_node(x.node, i) for i in range(x.n_channels) for _ in range(int(repeats))]))
+
+
+def _tile(a, reps):
+    count = reps if isinstance(reps, (int, np.integer)) else (reps[-1] if len(reps) == 1 else None)
+    if count is None:
+        raise TraceAbort("np.tile is only traceable along the channel axis")
+    x = _as_traced(a)
+    return TracedArray(stack_node([select_node(x.node, i) for _ in range(int(count)) for i in range(x.n_channels)]))
+
+
+def _is_channel_axis_pair(a, b) -> bool:
+    return {a, b} == {-1, 0}
+
+
+def _moveaxis(x, source, destination):
+    if not _is_channel_axis_pair(source, destination):
+        raise TraceAbort(f"np.moveaxis({source}, {destination}) is not a channel-axis move")
+    return TracedArray(_as_traced(x).node, moved=True)
+
+
+def _swapaxes(x, axis1, axis2):
+    if not _is_channel_axis_pair(axis1, axis2):
+        raise TraceAbort(f"np.swapaxes({axis1}, {axis2}) is not a channel-axis swap")
+    return TracedArray(_as_traced(x).node, moved=True)
+
+
+def _transpose(x, axes=None):
+    if axes is not None:
+        raise TraceAbort("np.transpose with explicit axes is not traceable")
+    return TracedArray(_as_traced(x).node, moved=True)
+
+
+def _tensordot(a, b, axes=2):
+    traced_first = isinstance(a, TracedArray)
+    matrix = np.asarray(b if traced_first else a, dtype=np.float64)
+    if matrix.ndim != 2:
+        raise TraceAbort("np.tensordot is only traceable with a constant matrix")
+    if isinstance(axes, int):
+        pair = ([-1], [0]) if (axes == 1 and traced_first) else ([-1], [1]) if axes == 1 else None
+    else:
+        pair = (list(np.atleast_1d(axes[0])), list(np.atleast_1d(axes[1])))
+    if pair is None or len(pair[0]) != 1 or len(pair[1]) != 1:
+        raise TraceAbort(f"np.tensordot with axes={axes!r} is not a channel contraction")
+    t_axis, m_axis = (int(pair[0][0]), int(pair[1][0])) if traced_first else (int(pair[1][0]), int(pair[0][0]))
+    if t_axis != -1 or m_axis not in (0, 1, -1, -2):
+        raise TraceAbort(f"np.tensordot with axes={axes!r} is not a channel contraction")
+    x = _as_traced(a if traced_first else b)
+    # the traced channels contract with the matrix axis m_axis; the other matrix axis is the output
+    return matmul(x.node, matrix if m_axis in (0, -2) else matrix.T)
+
+
+def _average(x, axis=None, weights=None, **kwargs):
+    x = _as_traced(x)
+    _check_channel_axis(axis)
+    if weights is None:
+        return _mean(x, axis=-1)
+    w = np.asarray(weights, dtype=np.float64).reshape(-1)
+    if w.size != x.n_channels or w.sum() == 0:
+        raise TraceAbort("np.average weights do not match the channels")
+    return matmul(x.node, (w / w.sum()).reshape(-1, 1)).channel(0)
 
 
 def _dot(a, b, out=None):
@@ -754,10 +878,10 @@ _FUNCTIONS = {
     np.einsum: _einsum,
     np.sum: _sum,
     np.mean: _mean,
-    np.max: lambda x, axis=-1, **kw: _reduce(x, "reduce_max", axis),
-    np.amax: lambda x, axis=-1, **kw: _reduce(x, "reduce_max", axis),
-    np.min: lambda x, axis=-1, **kw: _reduce(x, "reduce_min", axis),
-    np.amin: lambda x, axis=-1, **kw: _reduce(x, "reduce_min", axis),
+    np.max: lambda x, axis=None, **kw: _reduce(x, "reduce_max", axis),
+    np.amax: lambda x, axis=None, **kw: _reduce(x, "reduce_max", axis),
+    np.min: lambda x, axis=None, **kw: _reduce(x, "reduce_min", axis),
+    np.amin: lambda x, axis=None, **kw: _reduce(x, "reduce_min", axis),
     np.split: _split,
     np.array_split: _split,
     np.dsplit: lambda x, sections: _split(x, sections),
@@ -779,9 +903,13 @@ _FUNCTIONS = {
     np.atleast_1d: _copy_function,
     np.expand_dims: _copy_function,
     np.squeeze: _copy_function,
-    np.transpose: _copy_function,
-    np.moveaxis: _copy_function,
-    np.swapaxes: _copy_function,
+    np.transpose: _transpose,
+    np.moveaxis: _moveaxis,
+    np.swapaxes: _swapaxes,
+    np.tensordot: _tensordot,
+    np.repeat: _repeat,
+    np.tile: _tile,
+    np.average: _average,
     np.asarray: _identity_function,
     np.asanyarray: _identity_function,
     np.ascontiguousarray: _copy_function,
@@ -800,6 +928,45 @@ def stack_channels(traced_list) -> TracedArray:
 _TRACE_LOCK = threading.Lock()
 
 
+_RANDOM_FUNCTIONS = (
+    "rand",
+    "randn",
+    "random",
+    "random_sample",
+    "ranf",
+    "sample",
+    "randint",
+    "uniform",
+    "normal",
+    "standard_normal",
+    "choice",
+    "shuffle",
+    "permutation",
+    "poisson",
+    "binomial",
+    "exponential",
+    "beta",
+    "gamma",
+)
+
+
+_PYTHON_PER_ELEMENT = ("vectorize", "frompyfunc")
+
+
+def _forbidden_python_loop(name):
+    def forbidden(*args, **kwargs):
+        raise TraceAbort(f"np.{name} calls a Python function for every element")
+
+    return forbidden
+
+
+def _forbidden_random(name):
+    def forbidden(*args, **kwargs):
+        raise TraceAbort(f"np.random.{name}: random numbers make the transform non-deterministic")
+
+    return forbidden
+
+
 class _PatchArrayConstructors:
     """Make ``np.asarray``/``np.array`` pass traced values through while tracing."""
 
@@ -809,22 +976,48 @@ class _PatchArrayConstructors:
         orig_asarray, orig_array = self._asarray, self._array
 
         def asarray(a, *args, **kwargs):
-            return a if isinstance(a, TracedArray) else orig_asarray(a, *args, **kwargs)
+            if isinstance(a, TracedArray):
+                _check_float_dtype(kwargs.get("dtype", args[0] if args else None), "np.asarray")
+                return a
+            return orig_asarray(a, *args, **kwargs)
 
         def array(a, *args, **kwargs):
             if isinstance(a, TracedArray):
+                _check_float_dtype(kwargs.get("dtype", args[0] if args else None), "np.array")
                 return a if kwargs.get("copy") is False else TracedArray(a.node)
             if isinstance(a, (list, tuple)) and any(isinstance(v, TracedArray) for v in a):
                 return _stack(a)
             return orig_array(a, *args, **kwargs)
 
         np.asarray, np.array = asarray, array
+        self._random = {}
+        for name in _RANDOM_FUNCTIONS:
+            original = getattr(np.random, name, None)
+            if original is not None:
+                self._random[name] = original
+                setattr(np.random, name, _forbidden_random(name))
+        for name in _PYTHON_PER_ELEMENT:
+            self._random[f"np.{name}"] = getattr(np, name)
+            setattr(np, name, _forbidden_python_loop(name))
         return self
 
     def __exit__(self, *exc):
         np.asarray, np.array = self._asarray, self._array
+        for name, original in self._random.items():
+            if name.startswith("np."):
+                setattr(np, name[3:], original)
+            else:
+                setattr(np.random, name, original)
         _TRACE_LOCK.release()
         return False
+
+
+def _numpy_frame(error) -> str:
+    """`` (inside numpy's <function>)`` for the first NumPy function an exception passed through."""
+    for frame, _ in traceback.walk_tb(error.__traceback__):
+        if f"{os.sep}numpy{os.sep}" in frame.f_code.co_filename:
+            return f" (inside numpy's {getattr(frame.f_code, 'co_qualname', frame.f_code.co_name)})"
+    return ""
 
 
 def trace_function(fn, n_channels: int):
@@ -847,7 +1040,7 @@ def trace_function(fn, n_channels: int):
     except TraceAbort:
         raise
     except Exception as e:  # noqa: BLE001
-        raise TraceAbort(f"exception while tracing: {e!r}") from e
+        raise TraceAbort(f"exception while tracing: {e!r}{_numpy_frame(e)}") from e
     if isinstance(y, (list, tuple)):
         y = _stack(y)
     if not isinstance(y, TracedArray):
