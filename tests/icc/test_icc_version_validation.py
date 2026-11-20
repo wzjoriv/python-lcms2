@@ -3,7 +3,7 @@
 import pytest
 
 from lcms2.icc import ICCWriteError
-from lcms2.icc._versions import normalize_icc_version as _normalize_icc_version
+from lcms2.icc import normalize_icc_version as _normalize_icc_version
 from lcms2.spaces import SRGBSpace
 
 

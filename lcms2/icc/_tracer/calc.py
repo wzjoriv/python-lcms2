@@ -192,12 +192,18 @@ class _CalcCompiler:
         return self.expanded[key]
 
     def resolve(self, node: Node) -> Node:
-        while node.op == "select" and node.args[0].op != "input":
-            parent = node.args[0]
-            width = _node_width(parent)
-            if width is None or node.meta["index"] >= width:
-                raise TraceAbort("calc-compile: select from a node of unknown width")
-            node = self.channels(parent, width)[node.meta["index"]]
+        while True:
+            if node.op == "select" and node.args[0].op != "input":
+                parent = node.args[0]
+                width = _node_width(parent)
+                if width is None or node.meta["index"] >= width:
+                    raise TraceAbort("calc-compile: select from a node of unknown width")
+                node = self.channels(parent, width)[node.meta["index"]]
+            elif node.op == "matmul" and node.meta["matrix"].shape[1] == 1:
+                # a one-channel matmul (a sum or a dot product) used as a scalar
+                node = self.channels(node, 1)[0]
+            else:
+                break
         if node.op == "const" and np.asarray(node.meta["value"]).size != 1:
             raise TraceAbort("calc-compile: vector constant in a scalar position")
         return node

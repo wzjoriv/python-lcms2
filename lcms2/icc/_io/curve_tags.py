@@ -17,7 +17,7 @@ import struct
 
 import numpy as np
 
-from .._errors import ICCParseError
+from ..._errors import ICCParseError
 from . import binary as bn
 
 

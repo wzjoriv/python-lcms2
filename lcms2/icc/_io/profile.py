@@ -7,7 +7,7 @@ import hashlib
 import struct
 from dataclasses import dataclass
 
-from .._errors import ICCParseError
+from ..._errors import ICCParseError
 from . import binary as bn
 
 HEADER_SIZE = 128

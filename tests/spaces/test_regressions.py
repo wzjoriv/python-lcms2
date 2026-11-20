@@ -8,6 +8,7 @@ import pytest
 
 import lcms2.icc
 import lcms2.spaces
+from lcms2.colorimetry import D50, D65
 from lcms2.icc import ICCParseError, ICCProfile, ICCSpace
 from lcms2.icc._reader import read_circular_channels
 from lcms2.spaces import (
@@ -21,7 +22,6 @@ from lcms2.spaces import (
     rec2020,
     srgb,
 )
-from lcms2.spaces._colorimetry import D50, D65
 
 # 1. OKLab ---------------------------------------------------------------------------------------
 

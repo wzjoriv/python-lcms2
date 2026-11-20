@@ -119,7 +119,8 @@ def adaptive_segments(fn, lo: float, hi: float, n_first: int = 4096, rel_tol: fl
     full = evaluate(fn, np.linspace(lo, hi, n_first))
     finite = full[np.isfinite(full)]
     tol = rel_tol * max(float(np.ptp(finite)) if finite.size else 1.0, 1e-12)
-    min_width = 1e-9 * max(abs(lo), abs(hi), 1.0)
+    # breakpoints are stored as float32: narrower segments would collapse
+    min_width = 2e-7 * max(abs(lo), abs(hi), 1.0)
 
     pending, done = [(lo, hi, full)], []
     while pending:
@@ -166,10 +167,12 @@ def v5_curve(fn, lo: float, hi: float) -> bytes:
         return power_curve(g, signed=True)
     pieces = []
     for a, b, samples in adaptive_segments(fn, lo, hi):
-        if pieces and np.float32(b) <= np.float32(pieces[-1][1]):
+        # breakpoints are float32: drop segments that collapse to zero width there
+        edge = pieces[-1][1] if pieces else a
+        if np.float32(b) <= np.float32(edge):
             continue
-        if pieces and np.float32(a) != np.float32(pieces[-1][1]):
-            a = pieces[-1][1]
+        if pieces and np.float32(a) != np.float32(edge):
+            a = edge
         pieces.append((a, b, samples))
     breakpoints = [pieces[0][0]] + [b for _, b, _ in pieces]
     segments = [mpe.constant_segment(pieces[0][2][0])]

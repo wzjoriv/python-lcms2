@@ -402,7 +402,7 @@ def test_hsv_v5_icc2_calc_matches_pure_numpy_across_many_samples():
 
 @pytest.mark.parametrize("version", [2, 4])
 def test_non_unit_device_domain_stays_exact_in_v2_v4(version, tmp_path):
-    from lcms2.spaces._colorimetry import D50
+    from lcms2.colorimetry import D50
 
     class LogY(ColorSpace):
         name = "test_log_y_domain"

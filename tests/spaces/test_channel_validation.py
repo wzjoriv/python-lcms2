@@ -3,9 +3,7 @@
 import numpy as np
 import pytest
 
-from lcms2.spaces import ColorSpace
-from lcms2.spaces._gray import GraySpace
-from lcms2.spaces._srgb import SRGBSpace, srgb
+from lcms2.spaces import ColorSpace, GraySpace, SRGBSpace, srgb
 
 
 def test_to_xyz_rejects_too_many_channels_subclass_override():

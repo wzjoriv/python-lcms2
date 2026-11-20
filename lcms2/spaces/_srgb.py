@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import numpy as np
 
-from ._colorimetry import D50, D65, bradford_matrix
+from ..colorimetry import D50, D65, adaptation_matrix
 from ._rgb import RGBSpace
 
-D65_TO_D50 = bradford_matrix(D65, D50)
+D65_TO_D50 = adaptation_matrix(D65, D50)
 
 SRGB_TO_XYZ_D65 = np.array(
     [

@@ -8,8 +8,8 @@ import pytest
 PIL_ImageCms = pytest.importorskip("PIL.ImageCms")
 from PIL import Image, ImageCms  # noqa: E402
 
+from lcms2.colorimetry import D50, lab_to_xyz  # noqa: E402
 from lcms2.spaces import GraySpace, SRGBSpace  # noqa: E402
-from lcms2.spaces._colorimetry import D50, lab_to_xyz  # noqa: E402
 
 
 def _lcms_lab_from_rgb(profile_bytes_or_path, rgb: np.ndarray) -> np.ndarray:

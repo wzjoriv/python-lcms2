@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from ._errors import ICCWriteError
+from .._errors import ICCWriteError
 
 __all__ = ["normalize_icc_version"]
 

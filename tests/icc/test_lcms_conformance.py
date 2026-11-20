@@ -10,9 +10,9 @@ import pytest
 pytest.importorskip("PIL.ImageCms")
 from PIL import Image, ImageCms  # noqa: E402
 
+from lcms2 import colorimetry  # noqa: E402
 from lcms2 import spaces as S  # noqa: E402
 from lcms2.icc import ICCSpace  # noqa: E402
-from lcms2.spaces import _colorimetry as colorimetry  # noqa: E402
 from tests.spaces.toys import TwoChannelChromaSpace  # noqa: E402
 
 PROFILES_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "profiles")

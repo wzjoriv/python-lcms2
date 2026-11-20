@@ -6,8 +6,9 @@ import struct
 
 import numpy as np
 
-from ..spaces import _colorimetry as col
-from ._errors import ICCParseError
+from .. import colorimetry as col
+from .._errors import ICCParseError
+from . import _pcs
 from ._interp import sample_clut
 from ._io import binary as bn
 from ._io import mpe
@@ -282,7 +283,7 @@ class LutStage:
             lab = (
                 pcs_values
                 if self.real_valued
-                else col.decode_lab_pcs(pcs_values, legacy16=self.legacy_lab)
+                else _pcs.decode_lab_pcs(pcs_values, legacy16=self.legacy_lab)
             )
             return col.lab_to_xyz(lab, white=col.D50)
         raise ICCParseError(f"unsupported PCS signature {self.pcs!r}")
@@ -292,7 +293,7 @@ class LutStage:
             return xyz if self.real_valued else xyz / XYZ_U1F15_SCALE
         if self.pcs == CS_LAB:
             lab = col.xyz_to_lab(xyz, white=col.D50)
-            return lab if self.real_valued else col.encode_lab_pcs(lab, legacy16=self.legacy_lab)
+            return lab if self.real_valued else _pcs.encode_lab_pcs(lab, legacy16=self.legacy_lab)
         raise ICCParseError(f"unsupported PCS signature {self.pcs!r}")
 
 

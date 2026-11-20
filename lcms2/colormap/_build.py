@@ -6,8 +6,7 @@ from typing import Any
 
 import numpy as np
 
-from ..spaces import ColorSpace, oklab, srgb
-from ..spaces._base import _REGISTRY
+from ..spaces import ColorSpace, get, oklab, srgb
 
 GAMUTS = ("chroma", "clip", "none")
 _EPS = 1e-9
@@ -19,11 +18,10 @@ def resolve_space(space: Any) -> ColorSpace:
         return space
     if isinstance(space, str):
         key = space.lower().replace("_", "-")
-        cls = _REGISTRY.get(key)
-        if cls is None:
-            raise ValueError(f"unknown colour space {space!r}; registered: {ColorSpace.list()}")
         try:
-            return cls()
+            return get(key)
+        except KeyError:
+            raise ValueError(f"unknown colour space {space!r}; registered: {ColorSpace.list()}") from None
         except TypeError as e:
             raise ValueError(f"colour space {space!r} needs constructor arguments; pass an instance") from e
     raise TypeError(f"space must be a name or a ColorSpace, got {type(space).__name__}")
