@@ -1,180 +1,141 @@
 # python-lcms2
 
-Python binding for the [LittleCMS2](https://github.com/mm2/Little-CMS) color management library.
+Color management for NumPy. Convert images between ICC profiles and color spaces in one call, measure color
+differences, build exact ICC profiles from your own NumPy color math, and make perceptually uniform colormaps,
+all backed by [LittleCMS 2](https://github.com/mm2/Little-CMS).
 
-## Installation
+[![Tests](https://github.com/wzjoriv/python-lcms2/actions/workflows/ci.yml/badge.svg)](https://github.com/wzjoriv/python-lcms2/actions/workflows/ci.yml)
+[![Docs](https://github.com/wzjoriv/python-lcms2/actions/workflows/docs.yml/badge.svg)](https://github.com/wzjoriv/python-lcms2/actions/workflows/docs.yml)
+[![PyPI](https://img.shields.io/pypi/v/python-lcms2)](https://pypi.org/project/python-lcms2/)
+[![Python](https://img.shields.io/pypi/pyversions/python-lcms2)](https://pypi.org/project/python-lcms2/)
+[![LittleCMS 2.20](https://img.shields.io/badge/LittleCMS-2.20-blue)](https://github.com/mm2/Little-CMS)
+[![License: GPL v3+](https://img.shields.io/badge/License-GPLv3+-blue.svg)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-wzjoriv.github.io%2Fpython--lcms2-blue)](https://wzjoriv.github.io/python-lcms2)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-```
+## Features
+
+| Feature | What you get |
+|---|---|
+| One-call conversion | `lcms2.convert(img, "sRGB", "Display P3")`: pixel formats come from the array's dtype and shape. |
+| Profiles | 25 built-ins (sRGB, Display P3, Adobe RGB, ProPhoto, Rec.2020, Lab, XYZ, …), ICC files, bytes; read and edit header, text and tags. |
+| Transforms | Rendering intents, black-point compensation, soft proofing with gamut check, multi-profile chains, device links. |
+| Fast and safe | The GIL is released during transforms; any contiguity or stride; alpha channels carried through. |
+| Color spaces | OKLab, OKLCh, CIE LCh, HSV, HWB, Display P3, Rec.2100 PQ/HLG, … as NumPy functions, mixed freely with ICC profiles. |
+| ICC authoring | `lcms2.Profile(my_space)` traces your NumPy `to_xyz`/`from_xyz` into an exact ICC v4/v5 profile. |
+| Colorimetry | ΔE 76/94/2000/CMC/BFD, CIECAM02, white point ⇄ color temperature, chromatic adaptation. |
+| Tone curves | Gamma, parametric and tabulated curves; evaluate, invert, join, estimate gamma. |
+| Colormaps | Perceptually uniform colormaps in OKLab, gamut-mapped, color-vision-deficiency simulation, matplotlib export. |
+| Measurement data | Read and write CGATS / IT8 files. |
+
+Wheels for Windows, Linux and macOS (x86-64 and ARM64) on Python 3.10 and later. NumPy is the only dependency.
+
+## Install
+
+```bash
 pip install python-lcms2
+pip install "python-lcms2[plot]"      # + matplotlib for colormap export
 ```
 
-Pre-built wheels are available on PyPI for Windows (x86-64, ARM64), Linux (x86-64, ARM64), and macOS (Intel, Apple Silicon) on Python 3.10 and later. Windows ARM64 requires Python 3.11 or later. For other platforms, see [Building from source](#building-from-source).
-
-## Usage
+## Use
 
 ```python
+import numpy as np
 import lcms2
+
+img = np.asarray(...)                                  # (H, W, 3) uint8, e.g. from Pillow or OpenCV
+
+p3  = lcms2.convert(img, "sRGB", "Display P3")         # uint8 in, uint8 out
+lab = lcms2.Profile("sRGB").transform(img, "Lab")      # float64 L*a*b*
+
+lcms2.convert([255, 0, 0], "sRGB", "Lab", intent="relative")
+# array([54.29, 80.81, 69.89])
+lcms2.convert([255, 0, 0], "sRGB", "oklab")
+# array([0.6279, 0.2249, 0.1258])
+```
+
+Reuse a `Transform` when converting many images; formats are resolved per input and cached:
+
+```python
+to_cmyk = lcms2.Transform("sRGB", lcms2.Profile("press.icc"), intent="relative", bpc=True)
+cmyk = to_cmyk(img)                                    # (H, W, 4) uint8
 ```
 
 ### Profiles
 
-A `Profile` can be created from a built-in name, a file on disk, or raw bytes in memory:
+```python
+srgb = lcms2.Profile("sRGB")                  # built-in (case-insensitive: "display p3", "adobe rgb", …)
+cmyk = lcms2.Profile("press.icc")             # a file
+web  = lcms2.Profile.from_bytes(icc_bytes)    # bytes, e.g. embedded in an image
+
+cmyk                                          # <Profile 'Fogra27L CMYK Coated Press' CMYK output v2.2>
+cmyk.color_space, cmyk.device_class, cmyk.tags
+cmyk.description = "Press proof"
+cmyk.save("press-v2.icc")
+```
+
+### Soft proofing
 
 ```python
-srgb    = lcms2.Profile("sRGB")
-prophoto = lcms2.Profile("ProPhoto RGB")
-from_file = lcms2.Profile(filename="CMYK.icm")
-
-with open("CMYK.icm", "rb") as f:
-    from_bytes = lcms2.Profile(buffer=f.read())
+proof = lcms2.Transform(srgb, srgb, proof=cmyk, gamut_check=True)
+proof(img)                                    # how img prints; out-of-gamut pixels marked gray
 ```
 
-Built-in profiles provided by LittleCMS: `sRGB`, `Lab`, `XYZ`.
-
-Additional built-in RGB profiles: `Adobe RGB (1998)`, `Apple RGB`, `Best RGB`, `Beta RGB`, `Bruce RGB`, `CIE RGB`, `ColorMatch RGB`, `Don RGB 4`, `ECI RGB v2`, `Ekta Space PS5`, `NTSC RGB`, `PAL/SECAM RGB`, `ProPhoto RGB`, `SMPTE-C RGB`, `_sRGB`, `Wide Gamut RGB`.
-
-### Transforms
-
-A `Transform` converts pixel data from one profile and format to another:
+### Your own color space, as an ICC profile
 
 ```python
-lab  = lcms2.Profile("Lab")
-srgb = lcms2.Profile("sRGB")
+from lcms2.spaces import ColorSpace
 
-transform = lcms2.Transform(lab, "Lab_DBL", srgb, "RGB_16")
+class Gamma18(ColorSpace):
+    n_channels = 3
+    def to_xyz(self, rgb):
+        return (rgb ** 1.8) @ M.T             # M: your 3x3 RGB→XYZ (D50) matrix
+    def from_xyz(self, xyz):
+        return (xyz @ M_inv.T) ** (1 / 1.8)
+
+profile = lcms2.Profile(Gamma18())            # exact matrix/TRC profile, usable in any CMS
+profile.save("gamma18.icc")
+lcms2.convert(img, profile, "sRGB")
 ```
 
-The constructor signature is:
+Built-in analytic spaces (`lcms2.spaces.oklab`, `oklch`, `hsv`, `display_p3`, `rec2100_pq`, …) work the same
+way: `lcms2.spaces.oklab.profile` is an ICC profile of OKLab.
 
-```
-Transform(src_profile, src_format, dst_profile, dst_format, intent="PERCEPTUAL", flags="NONE")
-```
-
-#### Format strings
-
-Format strings follow the pattern `{COLORSPACE}_{DTYPE}` with an optional suffix. The dtype suffix determines the NumPy array type expected at runtime:
-
-| Suffix | NumPy dtype | Typical use |
-|--------|-------------|-------------|
-| `_8`   | `uint8`     | 8-bit images (0–255) |
-| `_16`  | `uint16`    | 16-bit images (0–65535) |
-| `_FLT` | `float32`   | Single-precision float |
-| `_DBL` | `float64`   | Double-precision float |
-| `_HALF_FLT` | `float16` | Half-precision float |
-
-Common colorspace prefixes: `RGB`, `BGR`, `RGBA`, `BGRA`, `GRAY`, `Lab`, `XYZ`, `CMYK`, `YCbCr`, `HSV`, `HLS`.
-
-Optional suffixes: `_PLANAR` (channel-first layout), `_REV` (ink-reversed), `_SE` (swap-endian), `_PREMUL` (premultiplied alpha).
-
-The full list of supported format strings:
+### Color differences
 
 ```python
-lcms2.DATA_TYPES.keys()
+lcms2.delta_e(lab1, lab2)                     # CIEDE2000, vectorized over (..., 3)
+lcms2.delta_e(lab1, lab2, method="cmc", l=2, c=1)
 ```
 
-Rendering intents (`lcms2.INTENT`): `PERCEPTUAL`, `RELATIVE_COLORIMETRIC`, `SATURATION`, `ABSOLUTE_COLORIMETRIC`.
-
-Flags (`lcms2.FLAG`) can be combined with commas, spaces, semicolons, or `|`:
+### Colormaps
 
 ```python
-transform = lcms2.Transform(lab, "Lab_DBL", srgb, "RGB_16",
-                            intent="PERCEPTUAL",
-                            flags="GAMUTCHECK,SOFTPROOFING")
+cm = lcms2.Colormap.from_colors(["#0b1a3a", "#f08a24", "#fff6d5"])   # interpolated in OKLab
+cm = lcms2.Colormap.get("glacier")            # built-ins: lcms2.colormap.list()
+
+rgb = cm(values)                              # (..., 3) floats; bytes=True for uint8
+cm.is_lightness_monotonic(), cm.uniformity()
+cm.simulate("deuteranopia")                   # color-vision-deficiency preview
+plt.imshow(data, cmap=cm.to_matplotlib())
 ```
 
-### Applying a transform
+## Documentation
 
-`Transform.apply` accepts a NumPy array or any array-compatible object and returns a transformed NumPy array. It works on single pixels, batches, and full images — the last dimension is always the channel axis:
-
-```python
-result = transform.apply([50.0, 0.0, 0.0])   # L*a*b* neutral grey, shape (3,)
-```
-
-The array dtype must match the source format declared at construction time. When passing lists or other convertibles, the data is cast automatically where possible.
-
-#### Converting a full image
-
-`apply` treats any array shape as `(..., channels)`, so a 2D image `(H, W, C)` is processed in one call:
-
-```python
-import numpy as np
-import lcms2
-
-srgb     = lcms2.Profile("sRGB")
-prophoto = lcms2.Profile("ProPhoto RGB")
-
-transform = lcms2.Transform(srgb, "RGB_8", prophoto, "RGB_16")
-
-image   = np.random.randint(0, 256, (480, 640, 3), dtype=np.uint8)
-result  = transform.apply(image)   # shape (480, 640, 3), dtype uint16
-```
-
-A common use case is editing in Lab — perceptually uniform, so lightness adjustments look natural. OpenCV loads images as BGR uint8:
-
-```python
-import cv2
-import numpy as np
-import lcms2
-import matplotlib.pyplot as plt
-
-image = cv2.imread("photo.jpg")               # uint8, BGR
-
-srgb = lcms2.Profile("sRGB")
-lab  = lcms2.Profile("Lab")
-
-to_lab  = lcms2.Transform(srgb, "bgr_8",   lab,  "lab_flt")
-to_srgb = lcms2.Transform(lab,  "lab_flt", srgb, "rgb_flt")
-
-lab_image = to_lab.apply(image)
-lab_image[..., 0] = np.clip(lab_image[..., 0] * 1.2, 0, 100)  # boost lightness
-
-result = np.clip(to_srgb.apply(lab_image), 0.0, 1.0)   # float32, RGB, 0.0–1.0
-
-plt.imshow(result)
-plt.show()
-```
-
-Format strings are case-insensitive, so `"BGR_8"`, `"bgr_8"`, and `"Bgr_8"` are all accepted.
-
-To save back to a file with cv2:
-
-```python
-bgr_out = cv2.cvtColor((result * 255).astype(np.uint8), cv2.COLOR_RGB2BGR)
-cv2.imwrite("output.jpg", bgr_out)
-```
+Guides and the API reference: <https://wzjoriv.github.io/python-lcms2>.
 
 ## Building from source
 
-Clone the repository with its submodules:
-
-```
+```bash
 git clone --recurse-submodules https://github.com/wzjoriv/python-lcms2.git
 cd python-lcms2
+pip install -e ".[dev]"
+python scripts/dev.py check                   # lint + tests
 ```
 
-Install the build tool if needed:
+A C compiler is needed (MSVC on Windows, gcc/clang elsewhere). LittleCMS is vendored as a git submodule in
+`vendor/Little-CMS`; `python scripts/dev.py lcms2 update` moves it to the newest release.
 
-```
-pip install build --upgrade
-```
+## License
 
-Build a wheel:
-
-```
-python -m build --wheel
-```
-
-The wheel is written to `dist/`. Install it with:
-
-```
-pip install dist/python_lcms2*.whl
-```
-
-Windows path detection (Windows SDK include and library directories) is handled automatically via the registry in `setup.py`. If the build fails on your Windows installation, the paths may need to be adjusted manually.
-
-For bugs, questions, and feature requests use [GitHub Issues](https://github.com/wzjoriv/python-lcms2/issues).
-
-## Acknowledgements
-
-This project is a continuation of work by prior maintainers. The lineage of the repository is:
-[sk1-project](https://github.com/sk1-project) → [RomanKosobrodov](https://github.com/RomanKosobrodov/python-lcms2) → [wzjoriv](https://github.com/wzjoriv/python-lcms2).
+GPL-3.0-or-later. LittleCMS is © Marti Maria Saguer, MIT license (`vendor/Little-CMS/LICENSE`).
