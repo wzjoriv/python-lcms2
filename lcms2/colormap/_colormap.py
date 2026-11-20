@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 
+from .._parallel import parallel_worthwhile, run_chunks
 from .._parse import parse_color, parse_colors, to_hex
 from ._build import interpolate, resolve_space
 from ._diagnostics import DiagnosticsMixin
@@ -239,6 +240,16 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
         return Colormap(sub, name=self._name, space=self._space)
 
     # ---- Sampling ----
+    def _lookup(self, v: np.ndarray, nan: np.ndarray, lo: float, hi: float, fill: np.ndarray) -> np.ndarray:
+        """Linearly interpolated colours of `v` scaled from ``lo..hi``; NaN entries get `fill`."""
+        t = (v - lo) / (hi - lo) if hi != lo else np.zeros_like(v)
+        t = np.clip(np.where(nan, 0.0, t), 0.0, 1.0) * (len(self) - 1)
+        i0 = np.minimum(np.floor(t).astype(int), max(len(self) - 2, 0))
+        frac = (t - i0)[..., None]
+        i1 = np.minimum(i0 + 1, len(self) - 1)
+        out = self._colors[i0] * (1 - frac) + self._colors[i1] * frac
+        return np.where(nan[..., None], fill, out)
+
     def __call__(
         self,
         values: Any,
@@ -286,14 +297,18 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
             finite = v[~nan]
             lo = float(vmin) if vmin is not None else (float(finite.min()) if finite.size else 0.0)
             hi = float(vmax) if vmax is not None else (float(finite.max()) if finite.size else 1.0)
-        t = (v - lo) / (hi - lo) if hi != lo else np.zeros_like(v)
-        t = np.clip(np.where(nan, 0.0, t), 0.0, 1.0) * (len(self) - 1)
-        i0 = np.minimum(np.floor(t).astype(int), max(len(self) - 2, 0))
-        frac = (t - i0)[..., None]
-        i1 = np.minimum(i0 + 1, len(self) - 1)
-        out = self._colors[i0] * (1 - frac) + self._colors[i1] * frac
         fill = np.array([0.5, 0.5, 0.5]) if nan_color is None else parse_color(nan_color)[:3]
-        out = np.where(nan[..., None], fill, out)
+        if parallel_worthwhile(v.size):
+            flat_v, flat_nan = v.reshape(-1), nan.reshape(-1)
+            flat_out = np.empty((v.size, 3))
+
+            def work(start: int, stop: int) -> None:
+                flat_out[start:stop] = self._lookup(flat_v[start:stop], flat_nan[start:stop], lo, hi, fill)
+
+            run_chunks(v.size, work)
+            out = flat_out.reshape(v.shape + (3,))
+        else:
+            out = self._lookup(v, nan, lo, hi, fill)
         if alpha is not None:
             a = np.broadcast_to(np.asarray(alpha, dtype=np.float64), v.shape).copy()
             if nan_color is None:
