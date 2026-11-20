@@ -46,7 +46,7 @@ dev = [
     "pytest-cov",
     "ruff>=0.6",
     "typer>=0.12",
-    "stubpy",
+    "stubpy>=0.8.1",
     "build",
     "tomli; python_version < '3.11'",
 ]
@@ -111,8 +111,11 @@ file = "lcms2/__init__.py"
 tag = "{version}"
 
 [tool.devkit.stub]
+# Only the C extension has a stub (hand-written; `dev.py stub docstrings sync` copies the C docstrings in).
+# Pure-Python modules use inline hints + py.typed.
 targets = ["lcms2"]
 output = "build/stubs"
+docstring_args = ["lcms2/_lcms2.pyi"]
 
 [tool.devkit.tiers]
 default = "quick"

@@ -94,11 +94,10 @@ jobs:
         run: pytest -q --cov=lcms2 --cov-report=term-missing
 
   stubs:
-    # Stub checking is advisory until stubs are generated and committed.
-    # Remove continue-on-error once lcms2/*.pyi is in the repository.
+    # lcms2/_lcms2.pyi is hand-written (the C extension); its docstrings must match the compiled module.
+    # Pure-Python modules ship inline hints + py.typed, no .pyi.
     if: github.event.action != 'labeled'
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
         with:
@@ -112,6 +111,6 @@ jobs:
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          pip install -e . stubpy
-      - name: Check stubs
-        run: python -m stubpy check lcms2
+          pip install -e . "stubpy>=0.8.1"
+      - name: Check extension stub docstrings
+        run: python -m stubpy docstrings check lcms2/_lcms2.pyi

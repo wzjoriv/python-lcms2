@@ -8,6 +8,7 @@ from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
+from numpy.typing import DTypeLike
 
 from . import _lcms2
 from ._builtins import builtin_names, create_builtin, lookup_builtin, resolve_white_point
@@ -366,7 +367,21 @@ class Profile(ProfileData):
 
     # Conversion -------------------------------------------------------------------------------------
 
-    def transform(self, data: Any, to: Any, **kwargs: Any) -> np.ndarray:
+    def transform(
+        self,
+        data: Any,
+        to: Any,
+        *,
+        intent: Any = "perceptual",
+        bpc: bool = False,
+        proof: Any = None,
+        gamut_check: bool = False,
+        optimize: bool = True,
+        precision: str = "auto",
+        flags: Any = None,
+        out: np.ndarray | None = None,
+        out_dtype: DTypeLike = None,
+    ) -> np.ndarray:
         """Convert ``data`` from this profile to ``to``; same keywords as :func:`lcms2.convert`.
 
         Examples
@@ -376,7 +391,20 @@ class Profile(ProfileData):
         """
         from ._convert import convert
 
-        return convert(data, self, to, **kwargs)
+        return convert(
+            data,
+            self,
+            to,
+            intent=intent,
+            bpc=bpc,
+            proof=proof,
+            gamut_check=gamut_check,
+            optimize=optimize,
+            precision=precision,
+            flags=flags,
+            out=out,
+            out_dtype=out_dtype,
+        )
 
     def __repr__(self) -> str:
         if self._handle is None:

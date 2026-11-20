@@ -8,6 +8,7 @@ from collections import OrderedDict
 from typing import Any
 
 import numpy as np
+from numpy.typing import DTypeLike
 
 from ._builtins import lookup_builtin
 from ._profile import Profile
@@ -121,7 +122,7 @@ def convert(
     dst: Any,
     *,
     out: np.ndarray | None = None,
-    out_dtype: Any = None,
+    out_dtype: DTypeLike = None,
     **options: Any,
 ) -> np.ndarray:
     """Convert colours from ``src`` to ``dst``.

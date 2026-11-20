@@ -7,6 +7,7 @@ from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
+from numpy.typing import DTypeLike
 
 from . import _lcms2
 from ._constants import ColorSpaceSignature, DeviceClass, Flag, Intent
@@ -221,7 +222,7 @@ class Transform:
         last = self.profiles[-1]
         return last.pcs if _output_side_is_pcs(last) else last.color_space
 
-    def _infer(self, arr: np.ndarray, out_dtype: Any) -> tuple[int, int, np.dtype]:
+    def _infer(self, arr: np.ndarray, out_dtype: DTypeLike) -> tuple[int, int, np.dtype]:
         nbytes, is_float = dtype_spec(arr.dtype)
         first, last = self.profiles[0], self.profiles[-1]
         base = format_info(_lcms2.format_for_profile(first, nbytes, is_float, 0)).channels
@@ -247,7 +248,7 @@ class Transform:
 
     # Apply ------------------------------------------------------------------------------------------------
 
-    def apply(self, data: Any, out: np.ndarray | None = None, *, out_dtype: Any = None) -> np.ndarray:
+    def apply(self, data: Any, out: np.ndarray | None = None, *, out_dtype: DTypeLike = None) -> np.ndarray:
         """Transform pixel data; the last axis holds the channels.
 
         Parameters

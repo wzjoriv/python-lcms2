@@ -7,6 +7,7 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
+from numpy.typing import DTypeLike
 
 from ._domain import check_circular_channels, resolve_channels_and_domain
 
@@ -173,6 +174,49 @@ class ColorSpace:
         """
         return sorted(_REGISTRY)
 
+    def transform(
+        self,
+        data: Any,
+        to: Any,
+        *,
+        intent: Any = "perceptual",
+        bpc: bool = False,
+        proof: Any = None,
+        gamut_check: bool = False,
+        optimize: bool = True,
+        precision: str = "auto",
+        flags: Any = None,
+        out: np.ndarray | None = None,
+        out_dtype: DTypeLike = None,
+    ) -> np.ndarray:
+        """Convert ``data`` from this space to ``to``, exactly like :meth:`lcms2.Profile.transform`.
+
+        ``to`` may be a colour space, a profile, a built-in profile name or an ICC file; see
+        :func:`lcms2.convert` for the keywords (they apply when a profile is involved).
+
+        Examples
+        --------
+        >>> from lcms2.spaces import oklab
+        >>> oklab.transform([1.0, 0.0, 0.0], "sRGB").round(3)
+        array([1., 1., 1.])
+        """
+        from .._convert import convert
+
+        return convert(
+            data,
+            self,
+            to,
+            intent=intent,
+            bpc=bpc,
+            proof=proof,
+            gamut_check=gamut_check,
+            optimize=optimize,
+            precision=precision,
+            flags=flags,
+            out=out,
+            out_dtype=out_dtype,
+        )
+
     def to(self, target: str | ColorSpace, array: Any) -> np.ndarray:
         """Convert values from this space into `target`.
 
@@ -201,6 +245,12 @@ class ColorSpace:
         >>> srgb.to(xyz_d50, np.array([1.0, 1.0, 1.0])).round(4)
         array([0.9642, 1.    , 0.8249])
         """
+        from .._convert import _is_color_text
+
+        if _is_color_text(array):
+            from .._parse import parse_color, parse_colors
+
+            array = parse_color(array) if isinstance(array, str) else parse_colors(array)
         if (isinstance(target, str) and target.lower() not in _REGISTRY) or (
             not isinstance(target, (str, ColorSpace))
         ):
