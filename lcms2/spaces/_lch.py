@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from ..colorimetry import D50, lab_to_xyz, xyz_to_lab
 from ._base import ColorSpace
-from ._colorimetry import D50, lab_to_xyz, xyz_to_lab
 
 
 def lab_to_lch(lab: np.ndarray) -> np.ndarray:

@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 
+from lcms2.colorimetry import D50
 from lcms2.spaces import (
     A98RGBSpace,
     ColorSpace,
@@ -15,7 +16,6 @@ from lcms2.spaces import (
     XYZD50Space,
     XYZD65Space,
 )
-from lcms2.spaces._colorimetry import D50
 
 
 def _sample_unit(n_channels, n, seed=0, lo=0.0, hi=1.0):
@@ -210,7 +210,7 @@ def test_xyz_d65_roundtrip_single_and_batch():
 
 
 def test_xyz_d65_white_maps_to_d50_pcs_white():
-    from lcms2.spaces._colorimetry import D65
+    from lcms2.colorimetry import D65
 
     sp = XYZD65Space()
     out = sp.to_xyz(D65)
@@ -218,7 +218,7 @@ def test_xyz_d65_white_maps_to_d50_pcs_white():
 
 
 def test_xyz_d65_matches_srgb_white_adaptation():
-    from lcms2.spaces._colorimetry import D65
+    from lcms2.colorimetry import D65
 
     sp = XYZD65Space()
     assert np.allclose(sp.to_xyz(D65), SRGBSpace().to_xyz([1.0, 1.0, 1.0]), atol=1e-6)

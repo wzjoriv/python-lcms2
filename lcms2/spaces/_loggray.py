@@ -6,8 +6,8 @@ from typing import Any
 
 import numpy as np
 
+from ..colorimetry import D50
 from ._base import ColorSpace
-from ._colorimetry import D50
 
 
 class LogGraySpace(ColorSpace):

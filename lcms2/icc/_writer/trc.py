@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from ...spaces._colorimetry import D50
+from ...colorimetry import D50
 from .._io import tagtypes as tt
 from . import curves as cv
 from .context import Context
