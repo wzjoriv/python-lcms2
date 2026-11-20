@@ -46,7 +46,7 @@ dev = [
     "pytest-cov",
     "ruff>=0.6",
     "typer>=0.12",
-    "stubpy>=0.8.1",
+    "stubpy>=0.8.2",
     "build",
     "tomli; python_version < '3.11'",
 ]
