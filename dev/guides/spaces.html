@@ -269,12 +269,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/guides/spaces.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/guides/spaces.rst?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/guides/spaces.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/guides/spaces.rst" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -306,8 +306,13 @@ profile and mix freely with profiles.</p>
 <code class="docutils literal notranslate"><span class="pre">lcms2.spaces.get(name)</span></code> returns one.</p>
 <section id="spaces-and-profiles">
 <h2>Spaces and profiles<a class="headerlink" href="#spaces-and-profiles" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
+<div class="table-wrapper colwidths-given docutils container">
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 60.0%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>From</p></th>
 <th class="head"><p>To</p></th>
@@ -351,6 +356,14 @@ arrays. Subclasses register themselves by <code class="docutils literal notransl
 <p><a class="reference internal" href="../reference/generated/lcms2.spaces.html#lcms2.spaces.RGBSpace" title="lcms2.spaces.RGBSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">RGBSpace</span></code></a> is a shortcut for RGB spaces: give it a <code class="docutils literal notranslate"><span class="pre">matrix</span></code> and per-channel
 <code class="docutils literal notranslate"><span class="pre">decode</span></code>/<code class="docutils literal notranslate"><span class="pre">encode</span></code>. <code class="docutils literal notranslate"><span class="pre">device_domain</span></code> declares the valid range per channel and <code class="docutils literal notranslate"><span class="pre">circular_device_channels</span></code> marks
 hue channels.</p>
+<p>Hue is in degrees (0 to 360) in <code class="docutils literal notranslate"><span class="pre">hsv</span></code>, <code class="docutils literal notranslate"><span class="pre">hwb</span></code>, <code class="docutils literal notranslate"><span class="pre">lch</span></code> and <code class="docutils literal notranslate"><span class="pre">oklch</span></code>, not a 0 to 1 fraction or a number of turns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lcms2</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">hsv</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"srgb"</span><span class="p">,</span> <span class="p">[</span><span class="mf">120.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>    <span class="c1"># pure green</span>
+<span class="go">array([0., 1., 0.])</span>
+</pre></div>
+</div>
+<p>A profile made from a color space takes the same real device values: <code class="docutils literal notranslate"><span class="pre">lcms2.Profile(hsv).transform(...)</span></code>
+expects hue in degrees. The space’s <code class="docutils literal notranslate"><span class="pre">device_domain</span></code> is stored in the profile (a <code class="docutils literal notranslate"><span class="pre">crsD</span></code> tag) and
+<a class="reference internal" href="../reference/generated/lcms2.Profile.html#lcms2.Profile.transform" title="lcms2.Profile.transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">lcms2.Profile.transform()</span></code></a> and <a class="reference internal" href="../reference/generated/lcms2.Transform.html#lcms2.Transform" title="lcms2.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">lcms2.Transform</span></code></a> apply it, so you never rescale to 0..1 yourself.</p>
 </section>
 </section>
 

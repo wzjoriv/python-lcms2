@@ -269,12 +269,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/start/quickstart.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/start/quickstart.rst?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/start/quickstart.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/start/quickstart.rst" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -323,7 +323,8 @@ dtype, except that integer data converted to Lab or XYZ comes back as <code clas
 </section>
 <section id="reuse-a-transform">
 <h2>Reuse a transform<a class="headerlink" href="#reuse-a-transform" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">lcms2.convert</span></code> caches recent transforms. For explicit control, create a <code class="docutils literal notranslate"><span class="pre">Transform</span></code> once and call it:</p>
+<p><code class="docutils literal notranslate"><span class="pre">lcms2.convert</span></code> caches recent transforms. For explicit control, create a <code class="docutils literal notranslate"><span class="pre">Transform</span></code> once and call it. The
+default rendering intent is relative colorimetric; pass <code class="docutils literal notranslate"><span class="pre">intent=&quot;perceptual&quot;</span></code> for photos going to a printer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to_print</span> <span class="o">=</span> <span class="n">lcms2</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="n">srgb</span><span class="p">,</span> <span class="n">cmyk</span><span class="p">,</span> <span class="n">intent</span><span class="o">=</span><span class="s2">"relative"</span><span class="p">,</span> <span class="n">bpc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">ink</span> <span class="o">=</span> <span class="n">to_print</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>                           <span class="c1"># (H, W, 4) uint8</span>
 </pre></div>

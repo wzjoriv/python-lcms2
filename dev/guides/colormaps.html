@@ -269,12 +269,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/guides/colormaps.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/guides/colormaps.rst?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/guides/colormaps.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/guides/colormaps.rst" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -303,7 +303,7 @@ steps in data look like equal steps in color.</p>
 <span class="n">cm</span> <span class="o">=</span> <span class="n">lcms2</span><span class="o">.</span><span class="n">Colormap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"glacier"</span><span class="p">)</span>                        <span class="c1"># built-ins: lcms2.colormap.list()</span>
 </pre></div>
 </div>
-<p>Colors may be hex strings, CSS names, <code class="docutils literal notranslate"><span class="pre">rgb(...)</span></code> strings, 0–1 floats or 0–255 integers
+<p>Colors may be hex strings, CSS names, <code class="docutils literal notranslate"><span class="pre">rgb(...)</span></code> strings, 0-1 floats or 0-255 integers
 (<a class="reference internal" href="../reference/generated/lcms2.parse_colors.html#lcms2.parse_colors" title="lcms2.parse_colors"><code class="xref py py-func docutils literal notranslate"><span class="pre">lcms2.parse_colors()</span></code></a>).</p>
 <p>Colors that interpolate outside sRGB are brought back by reducing chroma at constant lightness and hue
 (<code class="docutils literal notranslate"><span class="pre">gamut=&quot;chroma&quot;</span></code>, default); <code class="docutils literal notranslate"><span class="pre">gamut=&quot;clip&quot;</span></code> clips.</p>

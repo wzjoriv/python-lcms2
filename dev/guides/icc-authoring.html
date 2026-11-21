@@ -269,12 +269,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/guides/icc-authoring.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/guides/icc-authoring.rst?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/guides/icc-authoring.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/guides/icc-authoring.rst" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -300,7 +300,7 @@ management systems (Photoshop, browsers, OS color pipelines) can use.</p>
 <p>The space’s <code class="docutils literal notranslate"><span class="pre">to_xyz</span></code> / <code class="docutils literal notranslate"><span class="pre">from_xyz</span></code> are run once on a tracing array that records every NumPy operation. The
 recorded graph is then matched against ICC building blocks, in order of exactness:</p>
 <ol class="arabic simple">
-<li><p><strong>matrix/TRC</strong>: a 3×3 matrix with per-channel curves (classic RGB display profiles);</p></li>
+<li><p><strong>matrix/TRC</strong>: a 3x3 matrix with per-channel curves (classic RGB display profiles);</p></li>
 <li><p><strong>gray TRC</strong>: one curve;</p></li>
 <li><p><strong>LUT</strong> (<code class="docutils literal notranslate"><span class="pre">mAB</span></code>/<code class="docutils literal notranslate"><span class="pre">mBA</span></code>): curves, matrix and CLUT stages in exact composition;</p></li>
 <li><p><strong>v5 multiProcessElement / calculator</strong>: exact formulas for spaces like OKLab that no v2/v4 element can express;</p></li>
@@ -321,6 +321,13 @@ interpolation is linear and does not wrap hue, so colours whose hue lies between
 and 360° are interpolated through the whole hue range. Expect small errors near hue 0/360 in such
 profiles. Converting with the space itself (<code class="docutils literal notranslate"><span class="pre">lcms2.convert(x,</span> <span class="pre">&quot;sRGB&quot;,</span> <span class="pre">&quot;oklch&quot;)</span></code>) is exact.</p>
 </div>
+</section>
+<section id="device-values">
+<h2>Device values<a class="headerlink" href="#device-values" title="Link to this heading">¶</a></h2>
+<p>The profile is written for the space’s own ranges: <code class="docutils literal notranslate"><span class="pre">device_domain</span></code> (for example 0 to 360 for a hue channel)
+is mapped onto the 0 to 1 range ICC stores and recorded in a <code class="docutils literal notranslate"><span class="pre">crsD</span></code> tag, with hue channels flagged in a <code class="docutils literal notranslate"><span class="pre">crsC</span></code>
+tag. <code class="docutils literal notranslate"><span class="pre">Profile.transform</span></code> and <code class="docutils literal notranslate"><span class="pre">Transform</span></code> read <code class="docutils literal notranslate"><span class="pre">crsD</span></code> and scale for you, so a profile generated from a
+space takes and returns real device values.</p>
 </section>
 <section id="versions">
 <h2>Versions<a class="headerlink" href="#versions" title="Link to this heading">¶</a></h2>
@@ -391,6 +398,7 @@ profile or for v5 elements LittleCMS does not implement.</p>
             <ul>
 <li><a class="reference internal" href="#">ICC authoring</a><ul>
 <li><a class="reference internal" href="#how-it-works">How it works</a></li>
+<li><a class="reference internal" href="#device-values">Device values</a></li>
 <li><a class="reference internal" href="#versions">Versions</a></li>
 <li><a class="reference internal" href="#reading-back-without-littlecms">Reading back without LittleCMS</a></li>
 </ul>
