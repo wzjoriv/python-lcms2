@@ -120,6 +120,10 @@ cm.simulate("deuteranopia")                   # color-vision-deficiency preview
 plt.imshow(data, cmap=cm.to_matplotlib())
 ```
 
+## Examples
+
+A numbered learning path from first conversions to ICC authoring, each as a script and a notebook with outputs: [examples/](examples/README.md).
+
 ## Documentation
 
 Guides and the API reference: <https://wzjoriv.github.io/python-lcms2>.

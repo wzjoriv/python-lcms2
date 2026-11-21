@@ -38,7 +38,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[test]" ruff
       - name: Lint
-        run: ruff check lcms2 scripts tests
+        run: ruff check lcms2 scripts tests examples
+      - name: Notebooks match their scripts
+        run: python scripts/dev.py notebooks check
       - name: Tests
         run: pytest -q
 
@@ -69,7 +71,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[test]" ruff
       - name: Lint
-        run: ruff check lcms2 scripts tests
+        run: ruff check lcms2 scripts tests examples
       - name: Tests
         run: pytest -q
 

@@ -14,6 +14,7 @@ lcms2.Profile(lcms2.spaces.oklab).save("oklab.icc")  # an ICC profile of OKLab
 | You want to… | Read |
 |---|---|
 | Install and convert a first image | {doc}`start/quickstart` |
+| Follow runnable examples, step by step | {doc}`start/examples` |
 | Open, inspect, edit and create ICC profiles | {doc}`guides/profiles` |
 | Control intents, proofing, chains and device links | {doc}`guides/transforms` |
 | Mix ICC profiles with OKLab, HSV, PQ… | {doc}`guides/spaces` |
@@ -29,6 +30,7 @@ lcms2.Profile(lcms2.spaces.oklab).save("oklab.icc")  # an ICC profile of OKLab
 
 start/installation
 start/quickstart
+start/examples
 ```
 
 ```{toctree}
