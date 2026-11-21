@@ -1,0 +1,836 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
+
+    <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
+        <title>lcms2._profile - python-lcms2 0.4.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=daf686e3" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f0f0f0;
+  --color-code-foreground: black;
+  --color-brand-primary: #c2410c;
+  --color-brand-content: #9a3412;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #fb923c;
+  --color-brand-content: #fdba74;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #fb923c;
+  --color-brand-content: #fdba74;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">python-lcms2 0.4.0</span>
+  
+</a><div class="sidebar-versions">
+  <span class="sidebar-versions-label">0.4.0</span>
+  <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
+  <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
+</div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Start</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../start/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../start/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../start/examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/profiles.html">Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/spaces.html">Color spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/icc-authoring.html">ICC authoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/colorimetry.html">Colorimetry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/colormaps.html">Colormaps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/cgats.html">Measurement files (CGATS / IT8)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/formats.html">How arrays become pixel formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/api.html">API reference</a><input aria-label="Toggle navigation of API reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.Profile.html">lcms2.Profile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.Transform.html">lcms2.Transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.convert.html">lcms2.convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.Intent.html">lcms2.Intent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.Flag.html">lcms2.Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.CMSError.html">lcms2.CMSError</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.ToneCurve.html">lcms2.ToneCurve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.CGATS.html">lcms2.CGATS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.parse_color.html">lcms2.parse_color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.parse_colors.html">lcms2.parse_colors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.to_hex.html">lcms2.to_hex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.get_version.html">lcms2.get_version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.set_alarm_codes.html">lcms2.set_alarm_codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.get_alarm_codes.html">lcms2.get_alarm_codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.set_adaptation_state.html">lcms2.set_adaptation_state</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.colorimetry.html">lcms2.colorimetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.spaces.html">lcms2.spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.icc.html">lcms2.icc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/generated/lcms2.colormap.html">lcms2.colormap</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for lcms2._profile</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">ICC profiles.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTypeLike</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_lcms2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._builtins</span><span class="w"> </span><span class="kn">import</span> <span class="n">builtin_names</span><span class="p">,</span> <span class="n">create_builtin</span><span class="p">,</span> <span class="n">lookup_builtin</span><span class="p">,</span> <span class="n">resolve_white_point</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColorSpaceSignature</span><span class="p">,</span> <span class="n">DeviceClass</span><span class="p">,</span> <span class="n">Intent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._profile_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProfileData</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.icc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICCSpace</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Profile"</span><span class="p">]</span>
+
+<span class="n">_INFO</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"description"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"manufacturer"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"copyright"</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_info_property</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">property</span><span class="p">:</span>
+    <span class="n">which</span> <span class="o">=</span> <span class="n">_INFO</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">fget</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Profile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_get_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">which</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">fset</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">Profile</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_set_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="n">which</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="p">,</span> <span class="n">fset</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Profile">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Profile</span><span class="p">(</span><span class="n">ProfileData</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""An ICC profile.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source : str, os.PathLike, bytes, Profile, colour space or None</span>
+<span class="sd">        A built-in name (case-insensitive, lenient: ``"adobe rgb"``, ``"display p3"``, ``"prophoto"``;</span>
+<span class="sd">        see :meth:`builtins`), a path to an ``.icc``/``.icm`` file, raw profile bytes, an object with</span>
+<span class="sd">        ``to_icc_profile()`` (a ``ColorSpace``) or None for the NULL profile.</span>
+<span class="sd">    white_point : str or sequence of float, optional</span>
+<span class="sd">        For ``"Lab"`` only: illuminant name (``"D65"``) or xyY of the Lab white (D50 by default).</span>
+<span class="sd">    degrees : {2, 10}</span>
+<span class="sd">        Observer for illuminant names.</span>
+<span class="sd">    temperature : float, optional</span>
+<span class="sd">        For ``"Lab"`` only: white point as a daylight colour temperature in kelvin.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        For a string that is neither a built-in name nor an existing file.</span>
+<span class="sd">    CMSError</span>
+<span class="sd">        When the data is not a valid ICC profile.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import lcms2</span>
+<span class="sd">    &gt;&gt;&gt; p = lcms2.Profile("sRGB")</span>
+<span class="sd">    &gt;&gt;&gt; p.color_space, p.device_class</span>
+<span class="sd">    (&lt;ColorSpaceSignature.RGB: 'RGB'&gt;, &lt;DeviceClass.DISPLAY: 'display'&gt;)</span>
+<span class="sd">    &gt;&gt;&gt; lcms2.Profile("display p3").description</span>
+<span class="sd">    'Display P3'</span>
+<span class="sd">    """</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"__weakref__"</span><span class="p">,</span> <span class="s2">"_handle"</span><span class="p">,</span> <span class="s2">"_source_space"</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Profile.__init__">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">white_point</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">_open_source</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_space</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="c1"># ---- Construction ----</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_from_handle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">handle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_space</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="Profile.open">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.open">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Read a profile file (any path, including non-ASCII ones on Windows)."""</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Profile.from_bytes">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.from_bytes">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_bytes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">memoryview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Parse a profile from memory.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; p = Profile.from_bytes(Profile("sRGB").to_bytes())</span>
+<span class="sd">        &gt;&gt;&gt; p.description</span>
+<span class="sd">        'sRGB built-in'</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_open</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Profile.from_space">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.from_space">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_space</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""An exact profile of a colour space object (anything with ``to_icc_profile()``).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        space : ColorSpace</span>
+<span class="sd">            The space; its NumPy ``to_xyz``/``from_xyz`` are traced into an exact profile.</span>
+<span class="sd">        strict : bool, optional</span>
+<span class="sd">            Raise :class:`~lcms2.ICCWriteError` instead of falling back to sampled lookup</span>
+<span class="sd">            tables when the functions cannot be traced (data-dependent branching, ``float()``,</span>
+<span class="sd">            random numbers, non-NumPy libraries). Default False.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ICCWriteError</span>
+<span class="sd">            With ``strict=True``, naming the operation that prevents an exact profile.</span>
+<span class="sd">        """</span>
+        <span class="n">make</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="s2">"to_icc_profile"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">make</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> has no to_icc_profile(); pass a ColorSpace"</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">strict</span> <span class="k">else</span> <span class="n">make</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Profile</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># ColorSpace.to_icc_profile() -&gt; {"bytes", "method", "notes"}</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"bytes"</span><span class="p">]</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">profile</span><span class="o">.</span><span class="n">_source_space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="k">return</span> <span class="n">profile</span></div>
+
+
+<div class="viewcode-block" id="Profile.builtin">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.builtin">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">builtin</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""A built-in profile by (lenient) name; see :meth:`builtins`."""</span>
+        <span class="n">canonical</span> <span class="o">=</span> <span class="n">lookup_builtin</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">canonical</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown built-in profile </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">; available: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_names</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">canonical</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"sRGB"</span><span class="p">,</span> <span class="s2">"Lab"</span><span class="p">,</span> <span class="s2">"Lab v2"</span><span class="p">,</span> <span class="s2">"XYZ"</span><span class="p">,</span> <span class="s2">"NULL"</span><span class="p">)</span> <span class="k">else</span> <span class="n">canonical</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">create_builtin</span><span class="p">(</span><span class="n">canonical</span><span class="p">),</span> <span class="n">desc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Profile.builtins">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.builtins">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">builtins</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Names of the built-in profiles.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; "Display P3" in Profile.builtins()</span>
+<span class="sd">        True</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">builtin_names</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Profile.srgb">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.srgb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">srgb</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""LittleCMS's built-in sRGB profile."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_srgb</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Profile.lab">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.lab">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lab</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">white_point</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Lab identity profile (v4 or v2) relative to a white point (D50 by default).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.lab("D65").color_space</span>
+<span class="sd">        &lt;ColorSpaceSignature.LAB: 'Lab'&gt;</span>
+<span class="sd">        """</span>
+        <span class="n">wp</span> <span class="o">=</span> <span class="n">resolve_white_point</span><span class="p">(</span><span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_lab</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">wp</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Profile.xyz">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.xyz">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">xyz</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""XYZ identity profile (D50 PCS, Y = 1 for the white)."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_xyz</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Profile.rgb">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.rgb">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rgb</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">white_point</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">"D65"</span><span class="p">,</span>
+        <span class="n">primaries</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">((</span><span class="mf">0.64</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.30</span><span class="p">,</span> <span class="mf">0.60</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">)),</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="mf">2.2</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Matrix-shaper RGB profile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        white_point : str or sequence of float</span>
+<span class="sd">            Illuminant name or xyY.</span>
+<span class="sd">        primaries : three (x, y) or (x, y, Y) sequences</span>
+<span class="sd">            Red, green and blue chromaticities.</span>
+<span class="sd">        gamma : float, ToneCurve, (type, params) or a sequence of 3 of those</span>
+<span class="sd">            Transfer function(s) from encoded to linear values.</span>
+<span class="sd">        description : str, optional</span>
+<span class="sd">            Profile description text. Defaults to one naming the white point and gamma,</span>
+<span class="sd">            such as ``"RGB (D65, gamma 2.2)"``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.rgb("D65", gamma=2.2).description</span>
+<span class="sd">        'RGB (D65, gamma 2.2)'</span>
+<span class="sd">        &gt;&gt;&gt; p = Profile.rgb("D65", gamma=2.2, description="my RGB")</span>
+<span class="sd">        &gt;&gt;&gt; p.description, p.is_matrix_shaper</span>
+<span class="sd">        ('my RGB', True)</span>
+<span class="sd">        """</span>
+        <span class="n">wp</span> <span class="o">=</span> <span class="n">resolve_white_point</span><span class="p">(</span><span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">)</span>
+        <span class="n">prims</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">prims</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"primaries must be (red, green, blue), got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">prims</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries"</span><span class="p">)</span>
+        <span class="n">is_parametric</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">curves</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_parametric</span> <span class="k">else</span> <span class="p">[</span><span class="n">gamma</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wp_name</span> <span class="o">=</span> <span class="n">white_point</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">white_point</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"custom white"</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"gamma </span><span class="si">{</span><span class="n">gamma</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">else</span> <span class="s2">"custom curves"</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"RGB (</span><span class="si">{</span><span class="n">wp_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_rgb</span><span class="p">(</span><span class="n">wp</span><span class="p">,</span> <span class="n">prims</span><span class="p">,</span> <span class="n">curves</span><span class="p">),</span> <span class="n">description</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Profile.gray">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.gray">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gray</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">white_point</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">"D50"</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="mf">2.2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Gray profile from a white point and a transfer function (gamma, ToneCurve or (type, params))."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_gray</span><span class="p">(</span><span class="n">resolve_white_point</span><span class="p">(</span><span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">),</span> <span class="n">gamma</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Profile.abstract">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.abstract">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">abstract</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">brightness</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">contrast</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">hue</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">saturation</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">temp_src</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">temp_dst</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">lut_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">17</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Abstract Lab profile adjusting brightness, contrast, hue, saturation and white temperature."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span>
+            <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_bchsw</span><span class="p">(</span><span class="n">lut_points</span><span class="p">,</span> <span class="n">brightness</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">hue</span><span class="p">,</span> <span class="n">saturation</span><span class="p">,</span> <span class="n">temp_src</span><span class="p">,</span> <span class="n">temp_dst</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Profile.ink_limiting">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.ink_limiting">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ink_limiting</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">300.0</span><span class="p">,</span> <span class="n">color_space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CMYK"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""CMYK device link limiting total ink coverage to ``limit`` percent."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_ink_limiting</span><span class="p">(</span><span class="n">color_space</span><span class="p">,</span> <span class="n">limit</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Profile.linearization">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.linearization">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">linearization</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">curves</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">color_space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"RGB"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Device link applying one curve (gamma, ToneCurve or (type, params)) per channel."""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_linearization</span><span class="p">(</span><span class="n">color_space</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">curves</span><span class="p">)))</span></div>
+
+
+    <span class="c1"># ---- Serialisation ----</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ICCSpace</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""A :class:`lcms2.spaces.ColorSpace` view of this profile (pure NumPy evaluation).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import lcms2</span>
+<span class="sd">        &gt;&gt;&gt; lcms2.Profile("sRGB").space.n_channels</span>
+<span class="sd">        3</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.icc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICCSpace</span>
+
+        <span class="k">return</span> <span class="n">ICCSpace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Profile.to_bytes">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.to_bytes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The profile as ICC bytes."""</span>
+        <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Profile.save">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Write the profile to a file."""</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">Profile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(),))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Profile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">())</span>
+
+    <span class="c1"># ---- Text and header ----</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">_info_property</span><span class="p">(</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">"Profile description text (settable)."</span><span class="p">)</span>
+    <span class="n">manufacturer</span> <span class="o">=</span> <span class="n">_info_property</span><span class="p">(</span><span class="s2">"manufacturer"</span><span class="p">,</span> <span class="s2">"Device manufacturer text (settable)."</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_info_property</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="s2">"Device model text (settable)."</span><span class="p">)</span>
+    <span class="n">copyright</span> <span class="o">=</span> <span class="n">_info_property</span><span class="p">(</span><span class="s2">"copyright"</span><span class="p">,</span> <span class="s2">"Copyright text (settable)."</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Raw header fields (signatures as 4-character strings)."""</span>
+        <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_get_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Profile.set_header">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.set_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Change header fields: device_class, color_space, pcs, version, rendering_intent, flags,</span>
+<span class="sd">        manufacturer, model, attributes, profile_id."""</span>
+        <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_set_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">color_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorSpaceSignature</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Data colour space (``"RGB"``, ``"CMYK"``, ``"Lab"`` ...)."""</span>
+        <span class="k">return</span> <span class="n">ColorSpaceSignature</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"color_space"</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pcs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorSpaceSignature</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Profile connection space (``"XYZ"`` or ``"Lab"``)."""</span>
+        <span class="k">return</span> <span class="n">ColorSpaceSignature</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"pcs"</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceClass</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Profile class (``display``, ``output``, ``link`` ...)."""</span>
+        <span class="k">return</span> <span class="n">DeviceClass</span><span class="o">.</span><span class="n">from_signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"device_class"</span><span class="p">])</span>
+
+    <span class="nd">@device_class</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">device_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">DeviceClass</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">signature</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DeviceClass</span><span class="p">)</span> <span class="k">else</span> <span class="n">DeviceClass</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_header</span><span class="p">(</span><span class="n">device_class</span><span class="o">=</span><span class="n">sig</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""ICC version, e.g. 4.3 or 2.1 (settable)."""</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"version"</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="nd">@version</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_header</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">channels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Number of channels of the data colour space."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"channels"</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rendering_intent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Intent</span> <span class="o">|</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Header rendering intent (settable)."""</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"rendering_intent"</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Intent</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">v</span>
+
+    <span class="nd">@rendering_intent</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rendering_intent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Intent</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_header</span><span class="p">(</span><span class="n">rendering_intent</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">Intent</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">creation_date</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Creation date from the header."""</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"creation_date"</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">profile_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The 16-byte MD5 profile ID (zeros when unset); see :meth:`compute_id`."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s2">"profile_id"</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Profile.compute_id">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.compute_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute the MD5 profile ID, store it in the header and return it."""</span>
+        <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_compute_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ---- Conversion ----</span>
+<div class="viewcode-block" id="Profile.transform">
+<a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">to</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">intent</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">"relative"</span><span class="p">,</span>
+        <span class="n">bpc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">proof</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gamut_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">precision</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"auto"</span><span class="p">,</span>
+        <span class="n">flags</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Convert ``data`` from this profile to ``to``; same keywords as :func:`lcms2.convert`.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile("sRGB").transform([255, 255, 255], "Lab").round(2) + 0.0</span>
+<span class="sd">        array([100.,   0.,   0.])</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">._convert</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span>
+
+        <span class="k">return</span> <span class="n">convert</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">,</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">to</span><span class="p">,</span>
+            <span class="n">intent</span><span class="o">=</span><span class="n">intent</span><span class="p">,</span>
+            <span class="n">bpc</span><span class="o">=</span><span class="n">bpc</span><span class="p">,</span>
+            <span class="n">proof</span><span class="o">=</span><span class="n">proof</span><span class="p">,</span>
+            <span class="n">gamut_check</span><span class="o">=</span><span class="n">gamut_check</span><span class="p">,</span>
+            <span class="n">optimize</span><span class="o">=</span><span class="n">optimize</span><span class="p">,</span>
+            <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span>
+            <span class="n">flags</span><span class="o">=</span><span class="n">flags</span><span class="p">,</span>
+            <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span>
+            <span class="n">out_dtype</span><span class="o">=</span><span class="n">out_dtype</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"&lt;Profile closed&gt;"</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;Profile </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">!r}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">color_space</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_class</span><span class="si">}</span><span class="s2"> v</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&gt;"</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_open_source</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">white_point</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">white_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">temperature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">lookup_builtin</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Lab"</span><span class="p">,</span> <span class="s2">"Lab v2"</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"white_point/temperature only apply to Profile('Lab'); use Profile.rgb/gray otherwise"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_null</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Profile</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_open</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">,</span> <span class="nb">memoryview</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_open</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">lookup_builtin</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Lab"</span><span class="p">,</span> <span class="s2">"Lab v2"</span><span class="p">):</span>
+            <span class="n">wp</span> <span class="o">=</span> <span class="n">resolve_white_point</span><span class="p">(</span><span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_lab</span><span class="p">(</span><span class="mi">4</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">"Lab"</span> <span class="k">else</span> <span class="mi">2</span><span class="p">,</span> <span class="n">wp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Profile</span><span class="o">.</span><span class="n">builtin</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">_handle</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Profile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">_handle</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">source</span><span class="si">!r}</span><span class="s2"> is neither a built-in profile name nor an existing file; "</span>
+            <span class="sa">f</span><span class="s2">"built-ins: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_names</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Profile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">_handle</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s2">"to_icc_profile"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Profile</span><span class="o">.</span><span class="n">from_space</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">_handle</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"cannot make a Profile from </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">; pass a built-in name, a path, bytes or a ColorSpace"</span>
+    <span class="p">)</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Josue N Rivera
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=1437fa6d"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

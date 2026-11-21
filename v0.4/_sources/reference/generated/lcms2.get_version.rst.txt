@@ -1,0 +1,6 @@
+﻿lcms2.get\_version
+==================
+
+.. currentmodule:: lcms2
+
+.. autofunction:: get_version

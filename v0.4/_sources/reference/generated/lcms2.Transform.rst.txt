@@ -1,0 +1,33 @@
+﻿lcms2.Transform
+===============
+
+.. currentmodule:: lcms2
+
+.. autoclass:: Transform
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Transform.__init__
+      ~Transform.apply
+      ~Transform.to_device_link
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Transform.input_format
+      ~Transform.input_profile
+      ~Transform.output_format
+      ~Transform.output_profile
+   
+   

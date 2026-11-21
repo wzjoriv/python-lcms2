@@ -1,0 +1,6 @@
+﻿lcms2.set\_alarm\_codes
+=======================
+
+.. currentmodule:: lcms2
+
+.. autofunction:: set_alarm_codes

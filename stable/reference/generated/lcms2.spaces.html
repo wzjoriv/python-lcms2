@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="lcms2.icc" href="lcms2.icc.html"><link rel="prev" title="lcms2.colorimetry" href="lcms2.colorimetry.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.spaces - python-lcms2 0.3.1</title>
+        <title>lcms2.spaces - python-lcms2 0.4.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.3.1</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +189,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.3.1</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.0</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.3.1</span>
+  <span class="sidebar-versions-label">0.4.0</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -1178,7 +1178,8 @@ blackness above 1 is normalized to 1.</p>
 <dt class="sig sig-object py" id="lcms2.spaces.CMYKSpace">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">CMYKSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_xyz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><span class="pre">Callable</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_xyz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.15)"><span class="pre">Callable</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device_domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/lcms2/spaces/_cmyk.html#CMYKSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.spaces.CMYKSpace" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lcms2.spaces.ColorSpace" title="lcms2.spaces._base.ColorSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorSpace</span></code></a></p>
-<p>CMYK from the complement of sRGB with <code class="docutils literal notranslate"><span class="pre">K</span> <span class="pre">=</span> <span class="pre">min(C,</span> <span class="pre">M,</span> <span class="pre">Y)</span></code>; not an ink model.</p>
+<p>CMYK ink in percent (0..100, as in Photoshop and Little CMS) from the complement of sRGB
+with <code class="docutils literal notranslate"><span class="pre">K</span> <span class="pre">=</span> <span class="pre">min(C,</span> <span class="pre">M,</span> <span class="pre">Y)</span></code>; not an ink model.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lcms2.spaces.CMYKSpace.name">
 <span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cmyk'</span></span><a class="headerlink" href="#lcms2.spaces.CMYKSpace.name" title="Link to this definition">¶</a></dt>
@@ -1192,6 +1193,11 @@ blackness above 1 is normalized to 1.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lcms2.spaces.CMYKSpace.icc_colour_space_signature">
 <span class="sig-name descname"><span class="pre">icc_colour_space_signature</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b'CMYK'</span></span><a class="headerlink" href="#lcms2.spaces.CMYKSpace.icc_colour_space_signature" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lcms2.spaces.CMYKSpace.device_domain">
+<span class="sig-name descname"><span class="pre">device_domain</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[(0.0,</span> <span class="pre">100.0),</span> <span class="pre">(0.0,</span> <span class="pre">100.0),</span> <span class="pre">(0.0,</span> <span class="pre">100.0),</span> <span class="pre">(0.0,</span> <span class="pre">100.0)]</span></span><a class="headerlink" href="#lcms2.spaces.CMYKSpace.device_domain" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1430,6 +1436,7 @@ blackness above 1 is normalized to 1.</p>
 <li><a class="reference internal" href="#lcms2.spaces.CMYKSpace.name"><code class="docutils literal notranslate"><span class="pre">CMYKSpace.name</span></code></a></li>
 <li><a class="reference internal" href="#lcms2.spaces.CMYKSpace.n_channels"><code class="docutils literal notranslate"><span class="pre">CMYKSpace.n_channels</span></code></a></li>
 <li><a class="reference internal" href="#lcms2.spaces.CMYKSpace.icc_colour_space_signature"><code class="docutils literal notranslate"><span class="pre">CMYKSpace.icc_colour_space_signature</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.spaces.CMYKSpace.device_domain"><code class="docutils literal notranslate"><span class="pre">CMYKSpace.device_domain</span></code></a></li>
 <li><a class="reference internal" href="#lcms2.spaces.CMYKSpace.to_xyz"><code class="docutils literal notranslate"><span class="pre">CMYKSpace.to_xyz()</span></code></a></li>
 <li><a class="reference internal" href="#lcms2.spaces.CMYKSpace.from_xyz"><code class="docutils literal notranslate"><span class="pre">CMYKSpace.from_xyz()</span></code></a></li>
 </ul>
@@ -1445,7 +1452,7 @@ blackness above 1 is normalized to 1.</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=5869b996"></script>
+</div><script src="../../_static/documentation_options.js?v=1437fa6d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

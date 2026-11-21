@@ -1,0 +1,45 @@
+﻿lcms2.ToneCurve
+===============
+
+.. currentmodule:: lcms2
+
+.. autoclass:: ToneCurve
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ToneCurve.__init__
+      ~ToneCurve.copy
+      ~ToneCurve.estimate_gamma
+      ~ToneCurve.gamma
+      ~ToneCurve.inverse
+      ~ToneCurve.join
+      ~ToneCurve.linear
+      ~ToneCurve.parametric
+      ~ToneCurve.rec709
+      ~ToneCurve.smooth
+      ~ToneCurve.srgb
+      ~ToneCurve.tabulated
+      ~ToneCurve.then
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ToneCurve.is_descending
+      ~ToneCurve.is_linear
+      ~ToneCurve.is_monotonic
+      ~ToneCurve.is_multisegment
+      ~ToneCurve.parametric_type
+      ~ToneCurve.table
+   
+   

@@ -1,0 +1,75 @@
+﻿lcms2.Profile
+=============
+
+.. currentmodule:: lcms2
+
+.. autoclass:: Profile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Profile.__init__
+      ~Profile.abstract
+      ~Profile.black_point
+      ~Profile.builtin
+      ~Profile.builtins
+      ~Profile.compute_id
+      ~Profile.from_bytes
+      ~Profile.from_space
+      ~Profile.gray
+      ~Profile.has_tag
+      ~Profile.ink_limiting
+      ~Profile.is_clut
+      ~Profile.is_intent_supported
+      ~Profile.lab
+      ~Profile.linearization
+      ~Profile.open
+      ~Profile.read_tag_raw
+      ~Profile.rgb
+      ~Profile.save
+      ~Profile.set_header
+      ~Profile.srgb
+      ~Profile.to_bytes
+      ~Profile.transform
+      ~Profile.write_tag_raw
+      ~Profile.xyz
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Profile.channels
+      ~Profile.chromatic_adaptation
+      ~Profile.color_space
+      ~Profile.colorants
+      ~Profile.copyright
+      ~Profile.creation_date
+      ~Profile.description
+      ~Profile.device_class
+      ~Profile.header
+      ~Profile.is_matrix_shaper
+      ~Profile.luminance
+      ~Profile.manufacturer
+      ~Profile.media_white_point
+      ~Profile.model
+      ~Profile.named_colors
+      ~Profile.pcs
+      ~Profile.profile_id
+      ~Profile.rendering_intent
+      ~Profile.space
+      ~Profile.supported_intents
+      ~Profile.tac
+      ~Profile.tags
+      ~Profile.trc
+      ~Profile.version
+   
+   

@@ -1,0 +1,6 @@
+﻿lcms2.get\_alarm\_codes
+=======================
+
+.. currentmodule:: lcms2
+
+.. autofunction:: get_alarm_codes
