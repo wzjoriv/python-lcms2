@@ -108,7 +108,8 @@ def interpolate(
     colors: np.ndarray, space: ColorSpace, positions: np.ndarray, n: int, gamut: str
 ) -> np.ndarray:
     """Sample ``n`` colours along control ``colors`` (sRGB) interpolated in ``space``."""
-    vals = np.asarray(srgb.to(space, colors), dtype=np.float64)
+    same = type(space) is type(srgb)
+    vals = np.array(colors, dtype=np.float64) if same else np.asarray(srgb.to(space, colors), dtype=np.float64)
     t = np.linspace(0.0, 1.0, n)
     circular = sorted(space.circular_device_channels)
     out = np.empty((n, vals.shape[1]))
@@ -122,9 +123,12 @@ def interpolate(
         out[:, ch] = np.interp(t, positions, col)
         if ch in circular:
             out[:, ch] = np.mod(out[:, ch], period)
-    rgb = space.to(srgb, out)
+    rgb = out.copy() if same else space.to(srgb, out)
     if gamut == "chroma":
-        rgb = gamut_map_oklab(space.to(oklab, out), "chroma")
+        bad = ~_inside(rgb)
+        if bad.any():
+            rgb[bad] = gamut_map_oklab(space.to(oklab, out[bad]), "chroma")
+        rgb = np.clip(rgb, 0.0, 1.0)
     elif gamut == "clip":
         rgb = np.clip(rgb, 0.0, 1.0)
     elif gamut != "none":

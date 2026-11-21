@@ -2,6 +2,8 @@
 Defaults and name handling users rely on: intent, space names, device links, raw tags.
 """
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -62,3 +64,12 @@ def test_hue_is_in_degrees(name):
     hue = spaces.get(name).from_xyz(spaces.srgb.to_xyz(np.array([0.0, 0.0, 1.0])))
     h = hue[0] if name in ("hsv", "hwb") else hue[2]
     assert 200.0 < h < 320.0
+
+
+def test_using_a_profile_does_not_change_its_bytes():
+    path = Path(__file__).resolve().parents[1] / "data" / "CMYK.icm"
+    raw = path.read_bytes()
+    p = Profile.from_bytes(raw)
+    Transform(p, "Lab").apply(np.full((4, 4), 50.0))
+    Transform("Lab", p).apply(np.array([[50.0, 10.0, -10.0]]))
+    assert p.to_bytes() == raw
