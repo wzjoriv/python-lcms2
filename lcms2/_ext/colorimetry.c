@@ -145,6 +145,50 @@ convert_triples(PyObject *args, int to_lab)
     return (PyObject *)out;
 }
 
+/* 3x3 matrix over (..., 3) ------------------------------------------------------------------ */
+
+static PyObject *
+py_mat3(PyObject *self, PyObject *args)
+{
+    (void)self;
+    PyObject *mobj, *xobj;
+    if (!PyArg_ParseTuple(args, "OO:mat3", &mobj, &xobj))
+        return NULL;
+    PyArrayObject *m = (PyArrayObject *)PyArray_FROMANY(mobj, NPY_DOUBLE, 2, 2, COLOR_FLAGS);
+    if (m == NULL)
+        return NULL;
+    if (PyArray_DIM(m, 0) != 3 || PyArray_DIM(m, 1) != 3) {
+        PyErr_SetString(PyExc_ValueError, "matrix must have shape (3, 3)");
+        Py_DECREF(m);
+        return NULL;
+    }
+    PyArrayObject *x = triple_array(xobj, "values");
+    if (x == NULL) {
+        Py_DECREF(m);
+        return NULL;
+    }
+    PyArrayObject *out = (PyArrayObject *)PyArray_SimpleNew(PyArray_NDIM(x), PyArray_DIMS(x), NPY_DOUBLE);
+    if (out == NULL) {
+        Py_DECREF(m);
+        Py_DECREF(x);
+        return NULL;
+    }
+    const double *k = PyArray_DATA(m), *px = PyArray_DATA(x);
+    double *po = PyArray_DATA(out);
+    npy_intp n = PyArray_SIZE(x) / 3;
+    Py_BEGIN_ALLOW_THREADS
+    for (npy_intp i = 0; i < n; i++) {
+        double a = px[3 * i], b = px[3 * i + 1], c = px[3 * i + 2];
+        po[3 * i] = k[0] * a + k[1] * b + k[2] * c;
+        po[3 * i + 1] = k[3] * a + k[4] * b + k[5] * c;
+        po[3 * i + 2] = k[6] * a + k[7] * b + k[8] * c;
+    }
+    Py_END_ALLOW_THREADS
+    Py_DECREF(m);
+    Py_DECREF(x);
+    return (PyObject *)out;
+}
+
 static PyObject *
 py_xyz_to_lab(PyObject *self, PyObject *args)
 {
@@ -321,6 +365,9 @@ PyMethodDef lcms2_colorimetry_methods[] = {
      "delta_e(lab1, lab2, method, p0=1.0, p1=1.0, p2=1.0) -> ndarray\n\nColor difference over two "
      "equally-shaped (..., 3) Lab arrays. method: 0=76, 1=94, 2=2000 (p0..p2 = Kl, Kc, Kh), "
      "3=CMC (p0, p1 = l, c), 4=BFD."},
+    {"mat3", py_mat3, METH_VARARGS,
+     "mat3(matrix, values) -> ndarray\n\nApply a (3, 3) matrix to every row of a (..., 3) float64 array "
+     "(``values @ matrix.T``) without BLAS and without the GIL."},
     {"_xyz_to_lab", py_xyz_to_lab, METH_VARARGS,
      "_xyz_to_lab(white, xyz) -> ndarray\n\nReference cmsXYZ2Lab over a (..., 3) array (used by the tests)."},
     {"_lab_to_xyz", py_lab_to_xyz, METH_VARARGS,

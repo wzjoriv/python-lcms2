@@ -8,12 +8,20 @@ from typing import Any
 
 import numpy as np
 
+from .._lcms2 import mat3 as _mat3
 from ._base import ColorSpace
 
 
 def identity(v: np.ndarray, /) -> np.ndarray:
     """Identity transfer function."""
     return v
+
+
+def mat3(matrix: np.ndarray, values: Any) -> Any:
+    """``values @ matrix.T`` for (..., 3) values; NumPy arrays take the BLAS-free, thread-safe C path."""
+    if isinstance(values, (np.ndarray, list, tuple)):
+        return _mat3(matrix, values)
+    return values @ matrix.T
 
 
 class RGBSpace(ColorSpace):
@@ -44,11 +52,11 @@ class RGBSpace(ColorSpace):
 
     def to_xyz(self, rgb: np.ndarray) -> np.ndarray:
         """Convert device RGB to CIE XYZ (D50)."""
-        return self.decode(np.asarray(rgb, dtype=np.float64)) @ self.matrix.T
+        return mat3(self.matrix, self.decode(np.asarray(rgb, dtype=np.float64)))
 
     def from_xyz(self, xyz: np.ndarray) -> np.ndarray:
         """Convert CIE XYZ (D50) to device RGB."""
-        return self.encode(np.asarray(xyz, dtype=np.float64) @ self._inverse.T)
+        return self.encode(mat3(self._inverse, xyz))
 
 
-__all__ = ["RGBSpace"]
+__all__ = ["RGBSpace", "mat3"]
