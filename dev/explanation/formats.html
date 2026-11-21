@@ -332,6 +332,9 @@ write one.</p>
 <p>Python lists: all integers → <code class="docutils literal notranslate"><span class="pre">uint8</span></code> (or <code class="docutils literal notranslate"><span class="pre">uint16</span></code> past 255); any float → <code class="docutils literal notranslate"><span class="pre">float64</span></code>.</p>
 <p><strong>Value ranges</strong> follow LittleCMS: integer RGB/CMYK use the full integer range; float RGB is 0–1; float CMYK is
 0–100 (percent ink); float Lab is real L*a*b* (L 0–100); float XYZ has Y = 1 for the white.</p>
+<p>Profiles generated from a <a class="reference internal" href="../reference/generated/lcms2.spaces.html#module-lcms2.spaces" title="lcms2.spaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lcms2.spaces</span></code></a> color space are the exception: they take that space’s own
+values (<code class="docutils literal notranslate"><span class="pre">spaces.cmyk</span></code> ink is 0–1, OKLab a/b about ±0.4, hue in degrees), the same values
+<a class="reference internal" href="../reference/generated/lcms2.convert.html#lcms2.convert" title="lcms2.convert"><code class="xref py py-func docutils literal notranslate"><span class="pre">lcms2.convert()</span></code></a> uses.</p>
 <p><strong>Output dtype</strong>: the input dtype, except integer input converted to Lab or XYZ gives <code class="docutils literal notranslate"><span class="pre">float64</span></code>, since encoded
 integer Lab is rarely what you want. <code class="docutils literal notranslate"><span class="pre">out_dtype=</span></code> overrides.</p>
 <p><strong>Memory layout</strong>: any strides work; non-contiguous input is copied once. Output is C-contiguous with the

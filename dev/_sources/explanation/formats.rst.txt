@@ -29,6 +29,10 @@ Python lists: all integers → ``uint8`` (or ``uint16`` past 255); any float →
 **Value ranges** follow LittleCMS: integer RGB/CMYK use the full integer range; float RGB is 0–1; float CMYK is
 0–100 (percent ink); float Lab is real L\*a\*b\* (L 0–100); float XYZ has Y = 1 for the white.
 
+Profiles generated from a :mod:`lcms2.spaces` color space are the exception: they take that space's own
+values (``spaces.cmyk`` ink is 0–1, OKLab a/b about ±0.4, hue in degrees), the same values
+:func:`lcms2.convert` uses.
+
 **Output dtype**: the input dtype, except integer input converted to Lab or XYZ gives ``float64``, since encoded
 integer Lab is rarely what you want. ``out_dtype=`` overrides.
 
