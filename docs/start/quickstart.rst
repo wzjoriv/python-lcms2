@@ -37,7 +37,8 @@ Profiles
 Reuse a transform
 -----------------
 
-``lcms2.convert`` caches recent transforms. For explicit control, create a ``Transform`` once and call it.
+``lcms2.convert`` caches recent transforms. For explicit control, create a ``Transform`` once and call it. The
+default rendering intent is relative colorimetric; pass ``intent="perceptual"`` for photos going to a printer.
 
 .. code-block:: python
 

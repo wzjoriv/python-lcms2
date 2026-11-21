@@ -59,3 +59,14 @@ arrays. Subclasses register themselves by ``name`` (default: the class name).
 :class:`~lcms2.spaces.RGBSpace` is a shortcut for RGB spaces: give it a ``matrix`` and per-channel
 ``decode``/``encode``. ``device_domain`` declares the valid range per channel and ``circular_device_channels`` marks
 hue channels.
+
+Hue is in degrees (0 to 360) in ``hsv``, ``hwb``, ``lch`` and ``oklch``, not a 0 to 1 fraction or a number of turns:
+
+.. code-block:: python
+
+   >>> lcms2.spaces.hsv.to("srgb", [120.0, 1.0, 1.0]).round(3)    # pure green
+   array([0., 1., 0.])
+
+A profile made from a color space takes the same real device values: ``lcms2.Profile(hsv).transform(...)``
+expects hue in degrees. The space's ``device_domain`` is stored in the profile (a ``crsD`` tag) and
+:meth:`lcms2.Profile.transform` and :class:`lcms2.Transform` apply it, so you never rescale to 0..1 yourself.

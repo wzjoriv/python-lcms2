@@ -34,6 +34,14 @@ libraries), the writer falls back to a CLUT and says why in ``notes``. Pass ``st
    and 360° are interpolated through the whole hue range. Expect small errors near hue 0/360 in such
    profiles. Converting with the space itself (``lcms2.convert(x, "sRGB", "oklch")``) is exact.
 
+Device values
+-------------
+
+The profile is written for the space's own ranges: ``device_domain`` (for example 0 to 360 for a hue channel)
+is mapped onto the 0 to 1 range ICC stores and recorded in a ``crsD`` tag, with hue channels flagged in a ``crsC``
+tag. ``Profile.transform`` and ``Transform`` read ``crsD`` and scale for you, so a profile generated from a
+space takes and returns real device values.
+
 Versions
 --------
 

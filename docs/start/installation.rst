@@ -8,6 +8,7 @@ Installation
 
 Wheels are published for Windows, Linux and macOS on x86-64 and ARM64, Python 3.10 and later. NumPy (2.0+) is
 the only runtime dependency. LittleCMS is compiled into the extension; nothing else needs to be installed.
+python-lcms2 is released under the MIT license, like the LittleCMS it bundles.
 
 Check what you got:
 
@@ -15,7 +16,7 @@ Check what you got:
 
    >>> import lcms2
    >>> lcms2.__version__, lcms2.get_version()   # package, bundled LittleCMS
-   ('0.2.0', '2.20')
+   ('0.3.0', '2.20')
 
 From source
 -----------
