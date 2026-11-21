@@ -39,6 +39,13 @@ print(marked)
 print("out of gamut:", (marked != p3).any(axis=-1))
 
 # %% [markdown]
+# Proofing to an RGB profile clips to its gamut: Display P3 red previewed as an sRGB display would show it.
+
+# %%
+p3 = np.array([[1.0, 0.0, 0.0], [0.2, 0.6, 0.3]])
+print(lcms2.Transform("Display P3", "Display P3", proof="sRGB").apply(p3).round(4))
+
+# %% [markdown]
 # `set_alarm_codes` changes the marker; the codes are 16-bit values per channel, global, and used by
 # transforms created after the call.
 
