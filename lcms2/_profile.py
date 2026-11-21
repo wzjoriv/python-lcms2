@@ -202,10 +202,13 @@ class Profile(ProfileData):
         gamma : float, ToneCurve, (type, params) or a sequence of 3 of those
             Transfer function(s) from encoded to linear values.
         description : str, optional
-            Profile description text.
+            Profile description text. Defaults to one naming the white point and gamma,
+            such as ``"RGB (D65, gamma 2.2)"``.
 
         Examples
         --------
+        >>> Profile.rgb("D65", gamma=2.2).description
+        'RGB (D65, gamma 2.2)'
         >>> p = Profile.rgb("D65", gamma=2.2, description="my RGB")
         >>> p.description, p.is_matrix_shaper
         ('my RGB', True)
@@ -221,6 +224,10 @@ class Profile(ProfileData):
             and not isinstance(gamma[1], (int, float))
         )
         curves = list(gamma) if isinstance(gamma, (list, tuple)) and not is_parametric else [gamma]
+        if description is None:
+            wp_name = white_point if isinstance(white_point, str) else "custom white"
+            g = f"gamma {gamma:g}" if isinstance(gamma, (int, float)) else "custom curves"
+            description = f"RGB ({wp_name}, {g})"
         return cls._from_handle(_lcms2.profile_create_rgb(wp, prims, curves), description)
 
     @classmethod

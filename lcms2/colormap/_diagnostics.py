@@ -81,6 +81,9 @@ class DiagnosticsMixin:
     def uniformity(self) -> float:
         """Coefficient of variation of the perceptual step sizes (lower is more uniform).
 
+        Meant for continuous maps (sequential, diverging, cyclic). A qualitative map's
+        colors are categories, so equal steps between them say nothing about its quality.
+
         Returns
         -------
         float
@@ -99,6 +102,9 @@ class DiagnosticsMixin:
 
     def is_lightness_monotonic(self, tol: float = 1e-6) -> bool:
         """Whether OKLab lightness never reverses direction along the map.
+
+        A map of constant lightness (most cyclic maps) counts as monotonic; check
+        `lightness` too when that matters.
 
         Examples
         --------

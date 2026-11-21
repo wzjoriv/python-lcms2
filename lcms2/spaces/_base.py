@@ -270,6 +270,8 @@ class ColorSpace:
             except TypeError as e:
                 raise TypeError(f"{target_cls.__name__} needs constructor arguments; pass an instance") from e
         arr = np.asarray(array)
+        if target is self:
+            return np.array(arr, dtype=np.float64)
         n = arr.size // self.n_channels
         if arr.ndim < 2 or arr.shape[-1] != self.n_channels or not parallel_worthwhile(n):
             return target.from_xyz(self.to_xyz(arr))

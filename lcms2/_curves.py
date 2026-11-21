@@ -230,7 +230,8 @@ class ToneCurve:
         """
         if not isinstance(other, ToneCurve):
             raise TypeError(f"expected a ToneCurve, got {type(other).__name__}")
-        return self.join(other.inverse(n), n)
+        x = np.linspace(0.0, 1.0, int(n))
+        return ToneCurve.tabulated(np.asarray(other(np.asarray(self(x), dtype=np.float64)), dtype=np.float64))
 
     def smooth(self, lam: float) -> ToneCurve:
         """Smoothed copy of the curve, for noisy tabulated curves (raises ``CMSError`` if the result
@@ -269,7 +270,9 @@ class ToneCurve:
         Parameters
         ----------
         precision : float
-            Maximum acceptable mean error; raises ``CMSError`` when not reachable.
+            Maximum acceptable mean error. When no single gamma reaches it (as for the sRGB
+            curve), the tolerance is relaxed step by step up to 0.5 before :class:`~lcms2.LCMSError` is
+            raised.
 
         Examples
         --------
@@ -277,7 +280,14 @@ class ToneCurve:
         >>> round(ToneCurve.gamma(2.2).estimate_gamma(), 1)
         2.2
         """
-        return _lcms2.curve_estimate_gamma(self._handle, float(precision))
+        tol = float(precision)
+        while True:
+            try:
+                return _lcms2.curve_estimate_gamma(self._handle, tol)
+            except _lcms2.LCMSError:
+                if tol >= 0.5:
+                    raise
+                tol = min(tol * 2.0, 0.5)
 
     # ---- Properties ----
     @property
