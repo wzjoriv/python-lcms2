@@ -65,16 +65,16 @@ def test_unknown_name_and_bad_type():
 
 
 def test_files(data_dir, tmp_path):
-    p = lcms2.Profile(data_dir / "CMYK.icm")
-    assert "CMYK" in p.description and "Offset printing" in p.model and "Public" in p.copyright
+    p = lcms2.Profile(data_dir / "profiles" / "test1.icc")
+    assert p.description == "Test profile, not suitable for real use"
     assert p.color_space == "CMYK" and p.channels == 4 and str(p.device_class) == "output"
-    assert lcms2.Profile(str(data_dir / "sRGB.icm")).color_space == "RGB"
+    assert lcms2.Profile(str(data_dir / "profiles" / "sRGB-v2-micro.icc")).color_space == "RGB"
     with pytest.raises(lcms2.CMSError):
         lcms2.Profile(data_dir / "empty.icm")
     with pytest.raises(FileNotFoundError):
         lcms2.Profile(data_dir / "missing.icm")
     target = tmp_path / "prøfil ü 色.icm"
-    shutil.copy(data_dir / "CMYK.icm", target)
+    shutil.copy(data_dir / "profiles" / "test1.icc", target)
     assert lcms2.Profile(target).description == p.description
     assert lcms2.Profile(str(target)).description == p.description
 

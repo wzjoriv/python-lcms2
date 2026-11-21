@@ -47,10 +47,11 @@ Inspecting
 
 .. code-block:: python
 
-   >>> p = lcms2.Profile("tests/data/CMYK.icm")
+   >>> p = lcms2.Profile("FOGRA39L_coated.icc")
    >>> p
-   <Profile 'Fogra27L CMYK Coated Press' CMYK output v2.2>
+   <Profile 'FOGRA39L Coated' CMYK output v2.2>
    >>> p.color_space, p.pcs, p.device_class, p.channels
+   ('CMYK', 'Lab', 'output', 4)
 
 Header: ``version``, ``device_class``, ``color_space``, ``pcs``, ``rendering_intent``, ``creation_date``, ``profile_id``,
 ``header`` (everything at once; ``set_header(**fields)`` to change several).
