@@ -13,7 +13,7 @@ from ._base import ColorSpace
 def lab_to_lch(lab: np.ndarray) -> np.ndarray:
     """Convert (L, a, b) to (L, C, h) with hue in degrees, 0..360."""
     L, a, b = lab[..., 0], lab[..., 1], lab[..., 2]
-    return np.stack([L, np.hypot(a, b), np.mod(np.arctan2(b, a) * (180.0 / np.pi), 360.0)], axis=-1)
+    return np.stack([L, np.hypot(a, b), np.mod(np.arctan2(b, a) * (180.0 / np.pi) + 360.0, 360.0)], axis=-1)
 
 
 def lch_to_lab(lch: np.ndarray) -> np.ndarray:

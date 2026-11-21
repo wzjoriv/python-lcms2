@@ -39,7 +39,7 @@ def rgb_to_hsv(rgb: np.ndarray) -> np.ndarray:
     gc = (maxc - g) / safe_delta
     bc = (maxc - b) / safe_delta
     h = np.select([maxc == r, maxc == g], [bc - gc, 2.0 + rc - bc], default=4.0 + gc - rc)
-    h = np.where(chromatic, np.mod(h * 60.0, 360.0), 0.0)
+    h = np.where(chromatic, np.mod(h * 60.0 + 360.0, 360.0), 0.0)
     return np.stack([h, s, maxc], axis=-1)
 
 

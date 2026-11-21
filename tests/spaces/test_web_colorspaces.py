@@ -295,3 +295,11 @@ def test_display_p3_through_to():
     v = srgb.to("display-p3", pixel)
     back = p3.to(srgb, v)
     assert np.allclose(pixel, back, atol=1e-9)
+
+
+def test_hue_stays_below_360_for_values_just_under_zero():
+    from lcms2.spaces._hsv import rgb_to_hsv
+    from lcms2.spaces._lch import lab_to_lch
+
+    assert rgb_to_hsv(np.array([1.0, 0.0, -1e-17]))[0] == 0.0
+    assert lab_to_lch(np.array([50.0, 10.0, -1e-17]))[2] == 0.0
