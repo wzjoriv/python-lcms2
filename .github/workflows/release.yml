@@ -147,6 +147,24 @@ jobs:
           name: dist
           path: dist/
 
+  pyodide_assets:
+    name: Attach Pyodide wheels to the release
+    needs: [build_pyodide]
+    if: ${{ github.event_name == 'release' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: pyodide-wheels
+          path: pyodide
+      - run: gh release upload "$TAG" pyodide/*.whl --repo "$REPO" --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+          REPO: ${{ github.repository }}
+
   publish:
     name: Publish to PyPI
     needs: [collect, build_sdist]
