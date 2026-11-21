@@ -11,7 +11,7 @@ authors = [
 description = "Color management for NumPy: LittleCMS2 bindings, color spaces, ICC profile authoring and colormaps"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "GPL-3.0-or-later"
+license = "MIT"
 license-files = ["LICENSE", "vendor/Little-CMS/LICENSE"]
 classifiers = [
     "Development Status :: 4 - Beta",

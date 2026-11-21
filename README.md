@@ -9,7 +9,7 @@ all backed by [LittleCMS 2](https://github.com/mm2/Little-CMS).
 [![PyPI](https://img.shields.io/pypi/v/python-lcms2)](https://pypi.org/project/python-lcms2/)
 [![Python](https://img.shields.io/pypi/pyversions/python-lcms2)](https://pypi.org/project/python-lcms2/)
 [![LittleCMS 2.20](https://img.shields.io/badge/LittleCMS-2.20-blue)](https://github.com/mm2/Little-CMS)
-[![License: GPL v3+](https://img.shields.io/badge/License-GPLv3+-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-wzjoriv.github.io%2Fpython--lcms2-blue)](https://wzjoriv.github.io/python-lcms2)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
@@ -138,4 +138,4 @@ A C compiler is needed (MSVC on Windows, gcc/clang elsewhere). LittleCMS is vend
 
 ## License
 
-GPL-3.0-or-later. LittleCMS is © Marti Maria Saguer, MIT license (`vendor/Little-CMS/LICENSE`).
+MIT. LittleCMS is © Marti Maria Saguer, MIT license (`vendor/Little-CMS/LICENSE`).
