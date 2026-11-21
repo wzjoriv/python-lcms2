@@ -82,7 +82,8 @@ class Transform:
     dst : Profile, str or path
         Destination profile.
     intent : Intent, str or int, or one per profile
-        Rendering intent (``"perceptual"``, ``"relative"``, ``"saturation"``, ``"absolute"``).
+        Rendering intent: ``"relative"`` (default; in-gamut colors unchanged), ``"perceptual"``,
+        ``"saturation"`` or ``"absolute"``.
     bpc : bool or one per profile
         Black point compensation.
     proof : Profile, optional
@@ -120,7 +121,7 @@ class Transform:
         self,
         src: Any,
         *args: Any,
-        intent: Any = Intent.PERCEPTUAL,
+        intent: Any = Intent.RELATIVE_COLORIMETRIC,
         flags: Any = None,
         proof: Any = None,
         proof_intent: Any = Intent.RELATIVE_COLORIMETRIC,
@@ -143,7 +144,12 @@ class Transform:
             profiles = [as_profile(src), as_profile(dst)]
         elif len(args) == 1:
             profiles = [as_profile(src), as_profile(args[0])]
-        elif not args and isinstance(src, (list, tuple)):
+        elif not args and not isinstance(src, (list, tuple)):
+            link = as_profile(src)
+            if link.device_class != DeviceClass.LINK:
+                raise TypeError("Transform(profile) needs a device link; use Transform(src, dst)")
+            profiles = [link]
+        elif not args:
             profiles = [as_profile(p) for p in src]
             if len(profiles) < 1:
                 raise ValueError("a multi-profile transform needs at least one profile")
@@ -393,7 +399,9 @@ class Transform:
         chain = " -> ".join(repr(p.description) for p in self.profiles)
         fmt = f" {self.input_format} -> {self.output_format}" if self._formats else ""
         extra = f" proof={self.proof.description!r}" if self.proof is not None else ""
-        return f"<Transform {chain}{fmt} {self.intent.name.lower()}{extra} flags={self.flags!r}>"
+        flags = self.flags & ~Flag.NOCACHE
+        shown = f" flags={flags!r}" if flags else ""
+        return f"<Transform {chain}{fmt} {self.intent.name.lower()}{extra}{shown}>"
 
 
 def _per(value: Any, n: int, what: str, conv: Any) -> list[Any]:

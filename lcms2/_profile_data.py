@@ -60,6 +60,7 @@ class ProfileData:
     def write_tag_raw(self, sig: str, data: bytes) -> None:
         """Store raw tag data (with its type header) under ``sig``."""
         _lcms2.profile_write_raw_tag(self._handle, sig, data)
+        self._handle = _lcms2.profile_open(_lcms2.profile_to_bytes(self._handle))
 
     def _xyz(self, sig: str) -> np.ndarray | None:
         v = _lcms2.profile_read_xyz(self._handle, sig)

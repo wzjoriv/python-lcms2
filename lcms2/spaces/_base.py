@@ -154,7 +154,7 @@ class ColorSpace:
         if cls.__dict__.get("_abstract", False):
             return
         key = cls.__dict__.get("name")
-        key = (key if isinstance(key, str) else cls.__name__).lower()
+        key = _key(key if isinstance(key, str) else cls.__name__)
         cls._registry_name = key
         existing = _REGISTRY.get(key)
         redefined = existing is not None and (existing.__module__, existing.__qualname__) == (
@@ -185,7 +185,7 @@ class ColorSpace:
         data: Any,
         to: Any,
         *,
-        intent: Any = "perceptual",
+        intent: Any = "relative",
         bpc: bool = False,
         proof: Any = None,
         gamut_check: bool = False,
@@ -257,14 +257,14 @@ class ColorSpace:
             from .._parse import parse_color, parse_colors
 
             array = parse_color(array) if isinstance(array, str) else parse_colors(array)
-        if (isinstance(target, str) and target.lower() not in _REGISTRY) or (
+        if (isinstance(target, str) and _key(target) not in _REGISTRY) or (
             not isinstance(target, (str, ColorSpace))
         ):
             from .._convert import convert
 
             return convert(array, self, target)
         if isinstance(target, str):
-            target_cls = _REGISTRY[target.lower()]
+            target_cls = _REGISTRY[_key(target)]
             try:
                 target = get(target)
             except TypeError as e:
@@ -419,8 +419,12 @@ class ColorSpace:
 _INSTANCES: dict[type, ColorSpace] = {}
 
 
+def _key(name: object) -> str:
+    return str(name).lower().replace("_", "-")
+
+
 def get(name: str) -> ColorSpace:
-    """The registered color space called `name` (case-insensitive), as an instance.
+    """The registered color space called `name` (case-insensitive; ``_`` and ``-`` match), as an instance.
 
     The instance is shared: repeated calls return the same object until another class is
     registered under that name.
@@ -436,7 +440,7 @@ def get(name: str) -> ColorSpace:
     >>> get("OKLab").n_channels
     3
     """
-    cls = _REGISTRY.get(str(name).lower())
+    cls = _REGISTRY.get(_key(name))
     if cls is None:
         raise KeyError(f"no color space registered as {name!r}; registered: {ColorSpace.list()}")
     space = _INSTANCES.get(cls)

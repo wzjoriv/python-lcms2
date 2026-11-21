@@ -373,7 +373,7 @@ class Profile(ProfileData):
         data: Any,
         to: Any,
         *,
-        intent: Any = "perceptual",
+        intent: Any = "relative",
         bpc: bool = False,
         proof: Any = None,
         gamut_check: bool = False,
