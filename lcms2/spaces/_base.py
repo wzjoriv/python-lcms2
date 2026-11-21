@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from numpy.typing import DTypeLike
 
+from .._parallel import parallel_worthwhile, run_chunks
 from ._domain import check_circular_channels, resolve_channels_and_domain
 
 if TYPE_CHECKING:
@@ -268,7 +269,18 @@ class ColorSpace:
                 target = get(target)
             except TypeError as e:
                 raise TypeError(f"{target_cls.__name__} needs constructor arguments; pass an instance") from e
-        return target.from_xyz(self.to_xyz(array))
+        arr = np.asarray(array)
+        n = arr.size // self.n_channels
+        if arr.ndim < 2 or arr.shape[-1] != self.n_channels or not parallel_worthwhile(n):
+            return target.from_xyz(self.to_xyz(arr))
+        src = arr.reshape(n, self.n_channels)
+        out = np.empty((n, target.n_channels))
+
+        def work(a: int, b: int) -> None:
+            out[a:b] = target.from_xyz(self.to_xyz(src[a:b]))
+
+        run_chunks(n, work)
+        return out.reshape(*arr.shape[:-1], target.n_channels)
 
     def to_xyz(self, values: Any) -> np.ndarray:
         """Convert device values to CIE XYZ (D50).

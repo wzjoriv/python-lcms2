@@ -7,6 +7,7 @@ from __future__ import annotations
 import numpy as np
 
 from ._base import ColorSpace
+from ._rgb import mat3
 from ._srgb import D65_TO_D50, SRGB_TO_XYZ_D65
 
 OKLAB_M1 = np.array(
@@ -38,13 +39,12 @@ class OKLabSpace(ColorSpace):
 
     def to_xyz(self, oklab: np.ndarray) -> np.ndarray:
         """Convert OKLab to CIE XYZ (D50)."""
-        lms_ = np.asarray(oklab, dtype=np.float64) @ _M2_INV.T
-        return (lms_**3) @ _LMS_TO_XYZ_D50.T
+        lms_ = mat3(_M2_INV, oklab)
+        return mat3(_LMS_TO_XYZ_D50, lms_**3)
 
     def from_xyz(self, xyz: np.ndarray) -> np.ndarray:
         """Convert CIE XYZ (D50) to OKLab."""
-        lms = np.asarray(xyz, dtype=np.float64) @ _XYZ_D50_TO_LMS.T
-        return np.cbrt(lms) @ OKLAB_M2.T
+        return mat3(OKLAB_M2, np.cbrt(mat3(_XYZ_D50_TO_LMS, xyz)))
 
 
 oklab = OKLabSpace()
