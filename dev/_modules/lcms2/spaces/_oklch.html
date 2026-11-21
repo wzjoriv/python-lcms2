@@ -208,6 +208,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../start/examples.html">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul>
@@ -296,12 +297,12 @@
 <div class="viewcode-block" id="OKLChSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLChSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OKLChSpace</span><span class="p">(</span><span class="n">ColorSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Cylindrical OKLab (CSS ``oklch``); hue as a fraction of a turn."""</span>
+<span class="w">    </span><span class="sd">"""Cylindrical OKLab (CSS ``oklch``); hue in degrees."""</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"oklch"</span>
     <span class="n">icc_colour_space_signature</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"3CLR"</span>
     <span class="n">circular_device_channels</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="mi">2</span><span class="p">})</span>
-    <span class="n">device_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
+    <span class="n">device_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="OKLChSpace.to_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLChSpace.to_xyz">[docs]</a>

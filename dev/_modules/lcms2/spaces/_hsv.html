@@ -208,6 +208,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../start/examples.html">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul>
@@ -293,8 +294,8 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">hsv_to_rgb</span><span class="p">(</span><span class="n">hsv</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Convert HSV (hue as a fraction of a turn) to RGB."""</span>
-    <span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">hsv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">6.0</span><span class="p">,</span> <span class="n">hsv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">hsv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">"""Convert HSV (hue in degrees) to RGB."""</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">hsv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">,</span> <span class="n">hsv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">hsv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
     <span class="n">sector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">h</span> <span class="o">-</span> <span class="n">sector</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">)</span>
@@ -309,7 +310,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_hsv</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Convert RGB to HSV (hue as a fraction of a turn); hue is 0 for grays."""</span>
+<span class="w">    </span><span class="sd">"""Convert RGB to HSV (hue in degrees, 0..360); hue is 0 for grays."""</span>
     <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">rgb</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
     <span class="n">maxc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
     <span class="n">minc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
@@ -321,19 +322,20 @@
     <span class="n">gc</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxc</span> <span class="o">-</span> <span class="n">g</span><span class="p">)</span> <span class="o">/</span> <span class="n">safe_delta</span>
     <span class="n">bc</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxc</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="n">safe_delta</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">maxc</span> <span class="o">==</span> <span class="n">r</span><span class="p">,</span> <span class="n">maxc</span> <span class="o">==</span> <span class="n">g</span><span class="p">],</span> <span class="p">[</span><span class="n">bc</span> <span class="o">-</span> <span class="n">gc</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">+</span> <span class="n">rc</span> <span class="o">-</span> <span class="n">bc</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mf">4.0</span> <span class="o">+</span> <span class="n">gc</span> <span class="o">-</span> <span class="n">rc</span><span class="p">)</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">chromatic</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">h</span> <span class="o">/</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">chromatic</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="mf">60.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">maxc</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="HSVSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.HSVSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HSVSpace</span><span class="p">(</span><span class="n">ColorSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""HSV over sRGB; hue is a fraction of a turn and circular."""</span>
+<span class="w">    </span><span class="sd">"""HSV over sRGB; hue in degrees (circular), saturation and value in 0..1."""</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"hsv"</span>
     <span class="n">n_channels</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">icc_colour_space_signature</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"HSV "</span>
     <span class="n">circular_device_channels</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="mi">0</span><span class="p">})</span>
+    <span class="n">device_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="HSVSpace.to_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.HSVSpace.to_xyz">[docs]</a>

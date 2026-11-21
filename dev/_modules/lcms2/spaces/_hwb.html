@@ -208,6 +208,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../start/examples.html">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul>
@@ -296,13 +297,14 @@
 <div class="viewcode-block" id="HWBSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.HWBSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HWBSpace</span><span class="p">(</span><span class="n">ColorSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Hue, whiteness, blackness over sRGB (CSS Color 4); whiteness plus</span>
+<span class="w">    </span><span class="sd">"""Hue (degrees), whiteness, blackness over sRGB (CSS Color 4); whiteness plus</span>
 <span class="sd">    blackness above 1 is normalized to 1."""</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"hwb"</span>
     <span class="n">n_channels</span> <span class="o">=</span> <span class="mi">3</span>
     <span class="n">icc_colour_space_signature</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"3CLR"</span>
     <span class="n">circular_device_channels</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="mi">0</span><span class="p">})</span>
+    <span class="n">device_domain</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="HWBSpace.to_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.HWBSpace.to_xyz">[docs]</a>

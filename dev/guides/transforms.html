@@ -209,6 +209,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../start/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../start/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../start/examples.html">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul class="current">
@@ -305,13 +306,13 @@ Both take the same options.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intent</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&quot;perceptual&quot;</span></code> (default), <code class="docutils literal notranslate"><span class="pre">&quot;relative&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;saturation&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;absolute&quot;</span></code>, the K-preserving intents, or <a class="reference internal" href="../reference/generated/lcms2.Intent.html#lcms2.Intent" title="lcms2.Intent"><code class="xref py py-class docutils literal notranslate"><span class="pre">lcms2.Intent</span></code></a>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;relative&quot;</span></code> (default; in-gamut colors are kept exactly), <code class="docutils literal notranslate"><span class="pre">&quot;perceptual&quot;</span></code> (compresses the gamut, for photos through printer profiles), <code class="docutils literal notranslate"><span class="pre">&quot;saturation&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;absolute&quot;</span></code>, the K-preserving intents, or <a class="reference internal" href="../reference/generated/lcms2.Intent.html#lcms2.Intent" title="lcms2.Intent"><code class="xref py py-class docutils literal notranslate"><span class="pre">lcms2.Intent</span></code></a>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bpc</span></code></p></td>
 <td><p>Black-point compensation.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">proof</span></code>, <code class="docutils literal notranslate"><span class="pre">proof_intent</span></code>, <code class="docutils literal notranslate"><span class="pre">gamut_check</span></code></p></td>
-<td><p>Soft proofing through a third profile; <code class="docutils literal notranslate"><span class="pre">gamut_check=True</span></code> paints out-of-gamut pixels with the alarm color.</p></td>
+<td><p>Soft proofing through a third profile: colors outside its gamut are clipped (RGB matrix profiles too), so the result previews what the proof device can show; <code class="docutils literal notranslate"><span class="pre">gamut_check=True</span></code> paints out-of-gamut pixels with the alarm color instead.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">optimize</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">False</span></code> disables LittleCMS optimization (slower, sometimes more exact).</p></td>

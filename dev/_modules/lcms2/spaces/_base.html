@@ -208,6 +208,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../start/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../start/examples.html">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul>
@@ -362,7 +363,7 @@
 <span class="sd">    device_domain : list of tuple</span>
 <span class="sd">        One ``(lo, hi)`` pair per channel, whichever form was given.</span>
 <span class="sd">    circular_device_channels : frozenset of int</span>
-<span class="sd">        Device channels holding an angle as a fraction of a turn.</span>
+<span class="sd">        Device channels holding an angle; they wrap over their `device_domain` range (0..360 for degrees).</span>
 <span class="sd">    icc_colour_space_signature : bytes or None</span>
 <span class="sd">        ICC data colour space written to profiles; inferred when None.</span>
 
@@ -438,7 +439,7 @@
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"_abstract"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="n">key</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">_key</span><span class="p">(</span><span class="n">key</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_registry_name</span> <span class="o">=</span> <span class="n">key</span>
         <span class="n">existing</span> <span class="o">=</span> <span class="n">_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="n">redefined</span> <span class="o">=</span> <span class="n">existing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">existing</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span> <span class="n">existing</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
@@ -474,7 +475,7 @@
         <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">to</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">intent</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">"perceptual"</span><span class="p">,</span>
+        <span class="n">intent</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">"relative"</span><span class="p">,</span>
         <span class="n">bpc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">proof</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">gamut_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -549,14 +550,14 @@
             <span class="kn">from</span><span class="w"> </span><span class="nn">.._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color</span><span class="p">,</span> <span class="n">parse_colors</span>
 
             <span class="n">array</span> <span class="o">=</span> <span class="n">parse_color</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">parse_colors</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">target</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_REGISTRY</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_key</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_REGISTRY</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">ColorSpace</span><span class="p">))</span>
         <span class="p">):</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">.._convert</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span>
 
             <span class="k">return</span> <span class="n">convert</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">target_cls</span> <span class="o">=</span> <span class="n">_REGISTRY</span><span class="p">[</span><span class="n">target</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+            <span class="n">target_cls</span> <span class="o">=</span> <span class="n">_REGISTRY</span><span class="p">[</span><span class="n">_key</span><span class="p">(</span><span class="n">target</span><span class="p">)]</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">target</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -722,10 +723,14 @@
 <span class="n">_INSTANCES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">ColorSpace</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_key</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">"-"</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="get">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.get">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorSpace</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""The registered color space called `name` (case-insensitive), as an instance.</span>
+<span class="w">    </span><span class="sd">"""The registered color space called `name` (case-insensitive; ``_`` and ``-`` match), as an instance.</span>
 
 <span class="sd">    The instance is shared: repeated calls return the same object until another class is</span>
 <span class="sd">    registered under that name.</span>
@@ -741,7 +746,7 @@
 <span class="sd">    &gt;&gt;&gt; get("OKLab").n_channels</span>
 <span class="sd">    3</span>
 <span class="sd">    """</span>
-    <span class="bp">cls</span> <span class="o">=</span> <span class="n">_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="n">_REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_key</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
     <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no color space registered as </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">; registered: </span><span class="si">{</span><span class="n">ColorSpace</span><span class="o">.</span><span class="n">list</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">space</span> <span class="o">=</span> <span class="n">_INSTANCES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
