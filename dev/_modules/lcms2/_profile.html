@@ -355,7 +355,7 @@
 <span class="sd">    'Display P3'</span>
 <span class="sd">    """</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"__weakref__"</span><span class="p">,</span> <span class="s2">"_handle"</span><span class="p">)</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"__weakref__"</span><span class="p">,</span> <span class="s2">"_handle"</span><span class="p">,</span> <span class="s2">"_source_space"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Profile.__init__">
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.__init__">[docs]</a>
@@ -367,7 +367,8 @@
         <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">_open_source</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">_open_source</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_space</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
     <span class="c1"># ---- Construction ----</span>
@@ -375,6 +376,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_from_handle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
         <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">handle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_space</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
         <span class="k">return</span> <span class="bp">self</span>
@@ -431,7 +433,9 @@
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># ColorSpace.to_icc_profile() -&gt; {"bytes", "method", "notes"}</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"bytes"</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+        <span class="n">profile</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">profile</span><span class="o">.</span><span class="n">_source_space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="k">return</span> <span class="n">profile</span></div>
 
 
 <div class="viewcode-block" id="Profile.builtin">
