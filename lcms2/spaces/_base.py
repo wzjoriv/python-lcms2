@@ -78,7 +78,7 @@ class ColorSpace:
     device_domain : list of tuple
         One ``(lo, hi)`` pair per channel, whichever form was given.
     circular_device_channels : frozenset of int
-        Device channels holding an angle as a fraction of a turn.
+        Device channels holding an angle; they wrap over their `device_domain` range (0..360 for degrees).
     icc_colour_space_signature : bytes or None
         ICC data colour space written to profiles; inferred when None.
 

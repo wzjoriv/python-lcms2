@@ -12,13 +12,14 @@ from ._srgb import srgb
 
 
 class HWBSpace(ColorSpace):
-    """Hue, whiteness, blackness over sRGB (CSS Color 4); whiteness plus
+    """Hue (degrees), whiteness, blackness over sRGB (CSS Color 4); whiteness plus
     blackness above 1 is normalized to 1."""
 
     name = "hwb"
     n_channels = 3
     icc_colour_space_signature = b"3CLR"
     circular_device_channels = frozenset({0})
+    device_domain = [(0.0, 360.0), (0.0, 1.0), (0.0, 1.0)]
 
     def to_xyz(self, hwb: np.ndarray) -> np.ndarray:
         """Convert HWB to CIE XYZ (D50)."""

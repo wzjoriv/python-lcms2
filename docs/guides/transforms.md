@@ -9,7 +9,7 @@ Both take the same options.
 |---|---|
 | `intent` | `"relative"` (default; in-gamut colors are kept exactly), `"perceptual"` (compresses the gamut, for photos through printer profiles), `"saturation"`, `"absolute"`, the K-preserving intents, or {class}`lcms2.Intent`. |
 | `bpc` | Black-point compensation. |
-| `proof`, `proof_intent`, `gamut_check` | Soft proofing through a third profile; `gamut_check=True` paints out-of-gamut pixels with the alarm color. |
+| `proof`, `proof_intent`, `gamut_check` | Soft proofing through a third profile: colors outside its gamut are clipped (RGB matrix profiles too), so the result previews what the proof device can show; `gamut_check=True` paints out-of-gamut pixels with the alarm color instead. |
 | `optimize` | `False` disables LittleCMS optimization (slower, sometimes more exact). |
 | `precision` | `"auto"`, `"high"` or `"low"` precalculation. |
 | `flags` | Any {class}`lcms2.Flag` combination, e.g. `"NOWHITEONWHITEFIXUP|GUESSDEVICECLASS"`. |

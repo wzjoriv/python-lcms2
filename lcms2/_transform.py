@@ -204,6 +204,16 @@ class Transform:
         self._in_domain = _device_domain(self.profiles[0])
         last = self.profiles[-1]
         self._out_domain = None if _output_side_is_pcs(last) else _device_domain(last)
+        self._proof_chain: tuple[Transform, Transform] | None = None
+        if self.proof is not None and not gamut_check and not per_profile and self.proof.is_matrix_shaper:
+            self._proof_chain = (
+                Transform(
+                    profiles[0], self.proof, intent=self.intent, flags=flags, bpc=bpc, precision=precision
+                ),
+                Transform(
+                    self.proof, profiles[1], intent=self.proof_intent, flags=flags, precision=precision
+                ),
+            )
         if self._formats is not None:
             self._get(*self._formats)
 
@@ -352,6 +362,11 @@ class Transform:
         else:
             arr = as_array(data)
             in_fmt, out_fmt, odt = self._infer(arr, out_dtype)
+            if self._proof_chain is not None:
+                to_proof, from_proof = self._proof_chain
+                mid = to_proof.apply(arr, out_dtype=np.float64)
+                np.clip(mid, 0.0, 1.0, out=mid)
+                return from_proof.apply(mid, out=out, out_dtype=odt)
             in_info = format_info(in_fmt)
             if self._in_domain is not None and arr.dtype.kind == "f":
                 arr = _scale_device(arr.astype(np.float64, copy=True), *self._in_domain, inverse=True)

@@ -114,13 +114,14 @@ def interpolate(
     out = np.empty((n, vals.shape[1]))
     for ch in range(vals.shape[1]):
         col = vals[:, ch]
+        period = space.device_domain[ch][1] - space.device_domain[ch][0]
         if ch in circular and len(col) > 1:
             lo, hi = space.device_domain[1] if len(space.device_domain) > 1 else (0.0, 1.0)
             achromatic = vals[:, 1] <= 1e-3 * (hi - lo) if vals.shape[1] > 1 else np.zeros(len(col), bool)
-            col = _unwrap_hue(np.mod(col, 1.0), achromatic)
+            col = _unwrap_hue(np.mod(col / period, 1.0), achromatic) * period
         out[:, ch] = np.interp(t, positions, col)
         if ch in circular:
-            out[:, ch] = np.mod(out[:, ch], 1.0)
+            out[:, ch] = np.mod(out[:, ch], period)
     rgb = space.to(srgb, out)
     if gamut == "chroma":
         rgb = gamut_map_oklab(space.to(oklab, out), "chroma")
