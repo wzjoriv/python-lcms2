@@ -24,6 +24,11 @@ from .v5 import write_calc, write_mpet
 if TYPE_CHECKING:
     from ...spaces import ColorSpace
 
+# LittleCMS scales floats of these data colour spaces; crsD makes readers pass plain [0, 1] values.
+_SCALED_FLOAT_SPACES = frozenset(
+    {b"XYZ ", b"Lab ", b"CMY ", b"CMYK"} | {f"{c}CLR".encode() for c in "56789ABCDEF"}
+)
+
 
 def _colour_space_signature(colorspace: ColorSpace) -> bytes:
     explicit = colorspace.icc_colour_space_signature
@@ -149,7 +154,9 @@ def write_icc_bytes(
 
     lo = [d[0] for d in ctx.domain]
     hi = [d[1] for d in ctx.domain]
-    if not (np.allclose(lo, 0.0) and np.allclose(hi, 1.0)):
+    if _colour_space_signature(colorspace) in _SCALED_FLOAT_SPACES or not (
+        np.allclose(lo, 0.0) and np.allclose(hi, 1.0)
+    ):
         tags[b"crsD"] = struct.pack(">I", ctx.n) + b"".join(struct.pack(">ff", a, b) for a, b in ctx.domain)
         notes.append(f"device_domain {ctx.domain} mapped onto [0, 1] and stored in a 'crsD' tag")
     circular = sorted(colorspace.circular_device_channels)

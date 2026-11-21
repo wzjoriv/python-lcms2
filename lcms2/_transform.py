@@ -21,6 +21,7 @@ __all__ = ["Transform", "get_alarm_codes", "set_adaptation_state", "set_alarm_co
 
 _PRECISION = {"auto": Flag.NONE, "high": Flag.HIGHRESPRECALC, "low": Flag.LOWRESPRECALC}
 _FLOAT_SPACES = (ColorSpaceSignature.LAB, ColorSpaceSignature.XYZ)
+_COLORSPACE_BITS = 0x1F << 16
 
 
 def _run(handle: Any, arr: np.ndarray, out: np.ndarray, fin: Any, fout: Any) -> None:
@@ -32,6 +33,30 @@ def _run(handle: Any, arr: np.ndarray, out: np.ndarray, fin: Any, fout: Any) -> 
     src = arr.reshape(npix, fin.channels)
     dst = out.reshape(npix, fout.channels)
     run_chunks(npix, lambda a, b: _lcms2.transform_apply(handle, src[a:b], dst[a:b]))
+
+
+def _device_domain(profile: Profile) -> tuple[np.ndarray, np.ndarray] | None:
+    """``(lo, span)`` from a generated profile's ``crsD`` tag; such profiles take plain [0, 1] device values."""
+    if not profile.has_tag("crsD"):
+        return None
+    import struct
+
+    raw = profile.read_tag_raw("crsD")
+    n = struct.unpack_from(">I", raw, 0)[0]
+    lo, hi = np.array([struct.unpack_from(">ff", raw, 4 + 8 * i) for i in range(n)], dtype=np.float64).T
+    return lo, hi - lo
+
+
+def _scale_device(v: np.ndarray, lo: np.ndarray, span: np.ndarray, inverse: bool) -> np.ndarray:
+    """In place: [0, 1] -> device range, or back with ``inverse``; gray arrays may lack a channel axis."""
+    view = v[..., : lo.size] if lo.size > 1 else v
+    if inverse:
+        view -= lo
+        view /= span
+    else:
+        view *= span
+        view += lo
+    return v
 
 
 def as_profile(obj: Any) -> Profile:
@@ -170,6 +195,9 @@ class Transform:
         self._cache: dict[tuple[int, int], Any] = {}
         self._formats_for: dict[tuple[str, int | None, str | None], tuple[int, int, np.dtype]] = {}
         self._lock = threading.Lock()
+        self._in_domain = _device_domain(self.profiles[0])
+        last = self.profiles[-1]
+        self._out_domain = None if _output_side_is_pcs(last) else _device_domain(last)
         if self._formats is not None:
             self._get(*self._formats)
 
@@ -268,6 +296,10 @@ class Transform:
         obytes, ofloat = dtype_spec(out_dtype)
         in_fmt = _lcms2.format_for_profile(first, nbytes, is_float, extra)
         out_fmt = _lcms2.format_for_profile(last, obytes, ofloat, extra, _output_side_is_pcs(last))
+        if self._in_domain is not None:
+            in_fmt &= ~_COLORSPACE_BITS
+        if self._out_domain is not None:
+            out_fmt &= ~_COLORSPACE_BITS
         return in_fmt, out_fmt, out_dtype
 
     # ---- Apply ----
@@ -315,6 +347,9 @@ class Transform:
             arr = as_array(data)
             in_fmt, out_fmt, odt = self._infer(arr, out_dtype)
             in_info = format_info(in_fmt)
+            if self._in_domain is not None and arr.dtype.kind == "f":
+                arr = _scale_device(arr.astype(np.float64, copy=True), *self._in_domain, inverse=True)
+                arr = arr.astype(in_info.dtype, copy=False)
         shape = _out_shape(arr, in_info, format_info(out_fmt))
         if out is None:
             out = np.empty(shape, odt)
@@ -326,6 +361,8 @@ class Transform:
                 raise ValueError("out must be C-contiguous and writable")
         if arr.size:
             _run(self._get(in_fmt, out_fmt), arr, out, in_info, format_info(out_fmt))
+            if self._formats is None and self._out_domain is not None and out.dtype.kind == "f":
+                _scale_device(out, *self._out_domain, inverse=False)
         return out
 
     __call__ = apply
