@@ -59,6 +59,13 @@ def _scale_device(v: np.ndarray, lo: np.ndarray, span: np.ndarray, inverse: bool
     return v
 
 
+def _private(profile: Profile) -> Profile:
+    """A copy for Little CMS to read when building a transform would rewrite the profile's v2 Lab tables."""
+    if profile.version >= 4 or str(profile.pcs) != "Lab":
+        return profile
+    return Profile._from_handle(_lcms2.profile_open(_lcms2.profile_to_bytes(profile._handle)))
+
+
 def as_profile(obj: Any) -> Profile:
     """``obj`` itself if it is a Profile, else ``Profile(obj)`` (name, path, bytes, colour space)."""
     return obj if isinstance(obj, Profile) else Profile(obj)
@@ -222,9 +229,10 @@ class Transform:
         flags = int(self.flags)
         if format_info(in_fmt).extra:
             flags |= Flag.COPY_ALPHA
-        p = self.profiles
+        p = [_private(x) for x in self.profiles]
+        proof = None if self.proof is None else _private(self.proof)
         if self._per_profile:
-            gamut = self.proof if self.flags & Flag.GAMUTCHECK else None
+            gamut = proof if self.flags & Flag.GAMUTCHECK else None
             return _lcms2.transform_create_extended(
                 list(p),
                 self._bpc,
@@ -238,7 +246,7 @@ class Transform:
             )
         if self.proof is not None:
             return _lcms2.transform_create_proofing(
-                p[0], p[1], self.proof, in_fmt, out_fmt, int(self.intent), int(self.proof_intent), flags
+                p[0], p[1], proof, in_fmt, out_fmt, int(self.intent), int(self.proof_intent), flags
             )
         if len(p) == 2:
             return _lcms2.transform_create(p[0], p[1], in_fmt, out_fmt, int(self.intent), flags)
