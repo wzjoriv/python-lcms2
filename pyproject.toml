@@ -1,5 +1,10 @@
 [build-system]
-requires = ["setuptools>=77", "wheel", "numpy>=2.0"]
+requires = [
+    "setuptools>=77",
+    "wheel",
+    "numpy>=2.0; implementation_name != 'pypy'",
+    "numpy>=2.0,<2.5; implementation_name == 'pypy'",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -26,17 +31,27 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Multimedia :: Graphics :: Graphics Conversion",
     "Topic :: Scientific/Engineering :: Image Processing",
     "Typing :: Typed",
 ]
 keywords = ["color management", "lcms2", "littlecms", "icc", "color profile", "colorspace",
             "oklab", "colormap", "delta e", "ciecam02"]
-dependencies = ["numpy>=2.0"]
+# NumPy 2.5 publishes no PyPy wheels.
+dependencies = [
+    "numpy>=2.0; implementation_name != 'pypy'",
+    "numpy>=2.0,<2.5; implementation_name == 'pypy'",
+]
 
 [project.optional-dependencies]
 plot = ["matplotlib>=3.7"]
-test = ["pytest>=7.0", "pillow>=10", "typer>=0.12"]
+test = [
+    "pytest>=7.0",
+    "pillow>=10",
+    "typer>=0.12",
+]
 docs = [
     "sphinx>=7.0",
     "furo>=2024.1.29",
@@ -114,7 +129,6 @@ file = "lcms2/__init__.py"
 tag = "{version}"
 
 [tool.devkit.stub]
-# Generated stubs land beside the sources (git-ignored) and ship in wheels; lcms2/_lcms2.pyi is hand-written.
 targets = ["lcms2"]
 output = ""
 docstring_args = ["lcms2/_lcms2.pyi"]
@@ -135,7 +149,8 @@ help = "The whole suite with a coverage report."
 args = ["tests", "-q", "--cov=lcms2", "--cov-report=term-missing"]
 
 [tool.cibuildwheel]
-build = "cp310-* cp311-* cp312-* cp313-* cp314-* cp314t-* cp315-* cp315t-*"
+build = "cp310-* cp311-* cp312-* cp313-* cp314-* cp314t-* cp315-* cp315t-* pp311-*"
+enable = ["pypy"]
 skip = ["cp310-win_arm64", "*-musllinux_i686", "*-manylinux_i686"]
 build-frontend = "build"
 test-requires = ["pytest"]
