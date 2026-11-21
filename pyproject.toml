@@ -116,6 +116,9 @@ targets = ["lcms2"]
 output = ""
 docstring_args = ["lcms2/_lcms2.pyi"]
 
+[tool.devkit.notebooks]
+source = "examples"
+
 [tool.devkit.tiers]
 default = "quick"
 log_dir = "build/test-logs"

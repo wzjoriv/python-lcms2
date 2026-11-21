@@ -161,6 +161,67 @@ also = [                                     # other places repeating the versio
 ]
 ```
 
+# Notebooks
+
+`python scripts/dev.py notebooks build` turns every example script into a Jupyter notebook next to it (or in
+`out`) and runs it, so the notebook shows the results on GitHub without anyone running it. Scripts stay plain
+Python and remain the only source:
+
+- the module docstring becomes the first markdown cell;
+- `# %%` starts a code cell (text after the marker becomes a comment on the cell's first line);
+- `# %% [markdown]` starts a markdown cell written as `#` comments;
+- a script without markers becomes one code cell; files starting with `_` are skipped.
+
+A cell that should show a picture ends with an expression (`doc`), which a plain `python script.py` run
+ignores. Notebooks run in a temporary folder, so files the examples save do not land in the repository.
+`build name ...` rebuilds only those scripts; `--no-run` writes the cells without outputs.
+`notebooks check` exits 1 when a notebook is missing or its cells differ from its script. It compares
+cell sources only, not outputs, so it is fast and gives the same answer on every OS; use it in CI.
+Needs `nbformat`, `nbclient` and `ipykernel` (`dev.py deps` lists them).
+
+```toml
+[tool.devkit.notebooks]
+source = "examples"        # folder of the scripts
+out = "examples"           # where the .ipynb files go (default: the source folder)
+pattern = "*.py"           # which scripts
+exclude = ["helpers.py"]   # file names to skip
+execute = true             # run notebooks on build (false: cells only)
+timeout = 600              # seconds per cell
+kernel = "python3"         # Jupyter kernel name
+drop = ["image/png"]       # output mimetypes to leave out when another picture type remains (smaller files)
+```
+
+# Logo
+
+`python scripts/dev.py logo build` renders every logo asset from one svgwriter function and writes it to
+`output`; nothing is committed or published. `--check` writes nothing and exits 1 when a file on disk differs
+from what would be generated (svgwriter output is deterministic, so this is the "are the assets stale" check
+for CI). The project root is put on `sys.path` to import `source`; without svgwriter installed the command
+prints "pip install svgwriter (add it to your dev extra)" and exits 2.
+
+`source` is `"package.module:function"`, a function `logo(**variant)` returning an `svgwriter.Document`. The
+variant `default` (no keyword arguments) always exists; every other variant adds `logo-<name>` files.
+
+Per variant: `logo.svg`, `logo-<size>.png` for each size, `logo.ico` (the sizes up to 256) and `logo.icns`.
+The default variant also gets `favicon.ico` (16, 32, 48), `apple-touch-icon.png` (180) and `site.webmanifest`,
+whose icons list points at `logo-192.png` and `logo-512.png` (added to the PNGs when the sizes lack them).
+
+```toml
+[tool.devkit.logo]
+source = "mypkg.logo:logo"                   # "module:function" returning an svgwriter Document (required)
+variants = { dark = { theme = "dark" } }     # name -> keyword arguments of the function
+output = "docs/_static/logo"                 # output folder
+png_sizes = [16, 32, 48, 64, 128, 256, 512]  # square PNG sizes
+formats = ["svg", "png", "ico", "icns", "favicon", "webmanifest"]   # which assets to write (default: all)
+presets = ["web"]                           # any of web, ios, android, desktop; --preset overrides
+```
+
+Presets: `web` is the set above. `ios` writes `ios/AppIcon.appiconset/` (every iPhone and iPad size plus
+the 1024 px marketing icon, on white as the App Store requires, with Xcode's `Contents.json`). `android`
+writes `android/mipmap-<density>/ic_launcher.png` for mdpi to xxxhdpi and a 512 px `play-store-icon.png`.
+`desktop` writes `desktop/` with an ICO, an ICNS and Linux `hicolor/<n>x<n>/apps/logo.png` sizes plus the
+scalable SVG. Platform presets use the default variant.
+
 # Deps
 
 `python scripts/dev.py deps` is always available. It lists the requirements of the enabled tools (the
@@ -182,6 +243,7 @@ External programs missing from `PATH` are reported on stderr.
 | `tiers` | `pytest>=7.0` | |
 | `bench` | | `git` |
 | `version` | | |
+| `logo` | `svgwriter` | |
 
 Each tool module declares `REQUIRES` and `EXTERNAL` (tuples of strings); `check` also has `requires(cfg)` for
 the ones that depend on its table. Docs extras and `pytest-xdist` are the project's to add.
