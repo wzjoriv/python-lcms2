@@ -7,6 +7,7 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike
 
+from ...colorimetry import D50
 from .._interp import sample_clut
 from .._io import mpe
 from .._reader import XYZ_U1F15_SCALE
@@ -28,6 +29,26 @@ _A2B_GRID = {1: 255, 2: 65, 3: 33}
 _A2B_GRID_DEFAULT = 17
 
 _B2A_GRID = 33
+
+
+def _white_knots(grid: int) -> tuple[np.ndarray, np.ndarray]:
+    """Cube-root PCS white per channel and the grid node it is moved onto."""
+    white = cube_root(D50 / XYZ_U1F15_SCALE)
+    return white, np.round(white * (grid - 1)) / (grid - 1)
+
+
+def _warp(s: np.ndarray, knots: tuple[np.ndarray, np.ndarray], i: int) -> np.ndarray:
+    """Piecewise-linear map of cube-root PCS channel ``i`` that puts white on a grid node."""
+    w, k = knots[0][i], knots[1][i]
+    s = np.asarray(s, dtype=np.float64)
+    return np.where(s <= w, s * (k / w), k + (s - w) * ((1.0 - k) / (1.0 - w)))
+
+
+def _unwarp(t: np.ndarray, knots: tuple[np.ndarray, np.ndarray]) -> np.ndarray:
+    """Inverse of `_warp` for all three channels (last axis)."""
+    w, k = knots
+    t = np.asarray(t, dtype=np.float64)
+    return np.where(t <= k, t * (w / k), w + (t - k) * ((1.0 - w) / (1.0 - k)))
 
 
 def cube(t: ArrayLike) -> np.ndarray:
@@ -73,11 +94,15 @@ def write_clut(ctx: Context, tags: dict, notes: list) -> None:
             ],
         )
     else:
-        b2a = sample_grid(lambda s: ctx.bwd(s**3 * XYZ_U1F15_SCALE), [(0.0, 1.0)] * 3, b2a_grid)
+        knots = _white_knots(b2a_grid)
+        b2a = sample_grid(
+            lambda t: ctx.bwd(_unwarp(t, knots) ** 3 * XYZ_U1F15_SCALE), [(0.0, 1.0)] * 3, b2a_grid
+        )
         pcs_max = cube_root(XYZ_U1F15_SCALE) if use_shaping else XYZ_U1F15_SCALE
         a2b_enc = np.clip(a2b / pcs_max, 0.0, 1.0)
         b2a_enc = np.clip(np.nan_to_num(b2a), 0.0, 1.0)
         tags[b"A2B0"] = encode_lut_tag(ctx, False, None, a2b_enc, [out_curve] * 3 if use_shaping else None)
-        tags[b"B2A0"] = encode_lut_tag(ctx, True, [cube_root] * 3, b2a_enc, None)
+        b_curves = [lambda u, i=i: _warp(cube_root(u), knots, i) for i in range(3)]
+        tags[b"B2A0"] = encode_lut_tag(ctx, True, b_curves, b2a_enc, None)
     shaping = "cube-root-shaped " if use_shaping else ""
     notes.append(f"sampled onto a {shaping}{a2b_grid}^{ctx.n} A2B0 grid and a {b2a_grid}^3 B2A0 grid")

@@ -36,12 +36,8 @@ ROUND_TRIP = [
     "oklab",
     "xyz-d50",
     "cmyk",
-    pytest.param(
-        "lch",
-        marks=pytest.mark.xfail(
-            strict=True, reason="Little CMS interpolates hue straight across 360 -> 0 in the B2A table"
-        ),
-    ),
+    "lch",
+    "oklch",
 ]
 
 
@@ -62,3 +58,25 @@ def test_profile_transform_agrees_with_convert():
     np.testing.assert_allclose(
         spaces.oklab.profile.transform(v, "Lab"), lcms2.convert(v, "oklab", "Lab"), atol=0.5
     )
+
+
+def test_profile_from_space_uses_the_exact_math_on_output():
+    cmyk = Profile.from_space(spaces.cmyk)
+    rgb = np.array([[255, 255, 255], [255, 0, 0], [0, 0, 0]], np.uint8)
+    np.testing.assert_array_equal(
+        Profile("sRGB").transform(rgb, cmyk), [[0, 0, 0, 0], [0, 255, 255, 0], [0, 0, 0, 255]]
+    )
+
+
+def test_loaded_profile_wraps_hue_across_360():
+    loaded = Profile.from_bytes(spaces.lch.to_icc_profile()["bytes"])
+    lch = np.array([[60.0, 40.0, 359.0], [60.0, 40.0, 1.0]])
+    back = Profile("Lab").transform(loaded.transform(lch, "Lab"), loaded)
+    d = np.abs(back[:, 2] - lch[:, 2])
+    assert np.minimum(d, 360.0 - d).max() < 2.0
+
+
+def test_loaded_cmyk_profile_maps_white_to_no_ink():
+    loaded = Profile.from_bytes(spaces.cmyk.to_icc_profile()["bytes"])
+    white = Profile("sRGB").transform(np.array([[255, 255, 255]], np.uint8), loaded)
+    np.testing.assert_array_equal(white, [[0, 0, 0, 0]])

@@ -221,6 +221,22 @@ class Transform:
                     self.proof, profiles[1], intent=self.proof_intent, flags=flags, precision=precision
                 ),
             )
+        self._exact_out: tuple[Transform, Any] | None = None
+        out_profile = profiles[-1]
+        if (
+            self.proof is None
+            and not per_profile
+            and len(profiles) >= 2
+            and not _output_side_is_pcs(out_profile)
+        ):
+            space = getattr(out_profile, "_source_space", None)
+            if space is None and out_profile.has_tag("crsC"):
+                from .icc import ICCSpace
+
+                space = ICCSpace(out_profile.to_bytes())
+            if space is not None:
+                to_xyz = Transform([*profiles[:-1], Profile.xyz()], intent=self.intent, flags=flags, bpc=bpc)
+                self._exact_out = (to_xyz, space)
         if self._formats is not None:
             self._get(*self._formats)
 
@@ -376,6 +392,20 @@ class Transform:
                 np.clip(mid, 0.0, 1.0, out=mid)
                 return from_proof.apply(mid, out=out, out_dtype=odt)
             in_info = format_info(in_fmt)
+            if self._exact_out is not None and in_info.extra == 0:
+                to_xyz, space = self._exact_out
+                result = space.from_xyz(to_xyz.apply(arr, out_dtype=np.float64))
+                if odt.kind == "f":
+                    result = result.astype(odt, copy=False)
+                else:
+                    lo, hi = np.array(space.device_domain, dtype=np.float64).T
+                    scaled = np.clip((result - lo) / (hi - lo), 0.0, 1.0) * np.iinfo(odt).max
+                    result = np.rint(scaled).astype(odt)
+                result = result.reshape(_out_shape(arr, in_info, format_info(out_fmt)))
+                if out is None:
+                    return result
+                out[...] = result
+                return out
             if self._in_domain is not None and arr.dtype.kind == "f":
                 arr = _scale_device(arr.astype(np.float64, copy=True), *self._in_domain, inverse=True)
                 arr = arr.astype(in_info.dtype, copy=False)

@@ -70,7 +70,7 @@ class Profile(ProfileData):
     'Display P3'
     """
 
-    __slots__ = ("__weakref__", "_handle")
+    __slots__ = ("__weakref__", "_handle", "_source_space")
 
     def __init__(
         self,
@@ -81,12 +81,14 @@ class Profile(ProfileData):
         temperature: float | None = None,
     ) -> None:
         self._handle = _open_source(source, white_point, degrees, temperature)
+        self._source_space: Any = None
 
     # ---- Construction ----
     @classmethod
     def _from_handle(cls, handle: Any, description: str | None = None) -> Profile:
         self = cls.__new__(cls)
         self._handle = handle
+        self._source_space = None
         if description is not None:
             self.description = description
         return self
@@ -135,7 +137,9 @@ class Profile(ProfileData):
             return data
         if isinstance(data, dict):  # ColorSpace.to_icc_profile() -> {"bytes", "method", "notes"}
             data = data["bytes"]
-        return cls.from_bytes(data)
+        profile = cls.from_bytes(data)
+        profile._source_space = space
+        return profile
 
     @classmethod
     def builtin(cls, name: str) -> Profile:
