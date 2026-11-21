@@ -79,7 +79,7 @@ def cube(t: ArrayLike) -> np.ndarray:
     return np.asarray(t, dtype=np.float64) ** 3
 
 
-def write_clut(ctx: Context, tags: dict, notes: list) -> None:
+def write_clut(ctx: Context, tags: dict, notes: list, a2b_only: bool = False) -> None:
     """Write sampled A2B0/B2A0 lookup tables for any space."""
     a2b_grid = ctx.grid_size or _A2B_GRID.get(ctx.n, _A2B_GRID_DEFAULT)
     b2a_grid = ctx.grid_size or _B2A_GRID
@@ -107,6 +107,9 @@ def write_clut(ctx: Context, tags: dict, notes: list) -> None:
         if use_shaping:
             a2b_elems.append(mpe.encode_curveset_element([cv.power_curve(3.0, signed=True)] * 3))
         tags[b"A2B0"] = mpe.encode_mpet(ctx.n, 3, a2b_elems)
+        if a2b_only:
+            notes.append(f"sampled onto a {a2b_grid}^{ctx.n} A2B0 grid")
+            return
         tags[b"B2A0"] = mpe.encode_mpet(
             3,
             ctx.n,
@@ -136,6 +139,9 @@ def write_clut(ctx: Context, tags: dict, notes: list) -> None:
         a2b_enc = np.clip(a2b / pcs_max, 0.0, 1.0)
         b2a_enc = np.clip(np.nan_to_num(b2a), 0.0, 1.0)
         tags[b"A2B0"] = encode_lut_tag(ctx, False, None, a2b_enc, [out_curve] * 3 if use_shaping else None)
+        if a2b_only:
+            notes.append(f"sampled onto a {a2b_grid}^{ctx.n} A2B0 grid")
+            return
         tags[b"B2A0"] = encode_lut_tag(ctx, True, b_curves, b2a_enc, None)
     shaping = "cube-root-shaped " if use_shaping else ""
     notes.append(f"sampled onto a {shaping}{a2b_grid}^{ctx.n} A2B0 grid and a {b2a_grid}^3 B2A0 grid")

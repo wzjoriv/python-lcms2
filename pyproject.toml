@@ -25,6 +25,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Multimedia :: Graphics :: Graphics Conversion",
     "Topic :: Scientific/Engineering :: Image Processing",
     "Typing :: Typed",
@@ -45,7 +46,7 @@ dev = [
     "pytest-cov",
     "ruff>=0.6",
     "typer>=0.12",
-    "stubpy>=0.8.2",
+    "stubpy>=0.11.3",
     "nbformat>=5",
     "nbclient>=0.10",
     "ipykernel>=6",
@@ -134,7 +135,7 @@ help = "The whole suite with a coverage report."
 args = ["tests", "-q", "--cov=lcms2", "--cov-report=term-missing"]
 
 [tool.cibuildwheel]
-build = "cp310-* cp311-* cp312-* cp313-* cp314-* cp314t-*"
+build = "cp310-* cp311-* cp312-* cp313-* cp314-* cp314t-* cp315-* cp315t-*"
 skip = ["cp310-win_arm64", "*-musllinux_i686", "*-manylinux_i686"]
 build-frontend = "build"
 test-requires = ["pytest"]
