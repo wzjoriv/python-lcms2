@@ -136,6 +136,13 @@ class Context:
         rng = np.random.default_rng(0)
         self.device_samples = rng.random((N_VERIFY, self.n))
         self._sample()
+        #: why ``from_xyz`` is unusable (only A2B is written), or None
+        self.one_way: str | None = None
+        try:
+            self.bwd(self.xyz_finite[:8])
+        except ICCWriteError as e:
+            self.one_way = str(e)
+            self.bwd = _Pixelwise(lambda xyz: np.zeros(np.shape(xyz)[:-1] + (self.n,)), 3, self.n, "from_xyz")
         self._unstable = self._unstable_directions()
         for name, fn, sample in (
             ("to_xyz", self.fwd, self.device_samples[:24]),
