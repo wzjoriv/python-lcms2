@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="lcms2.CGATS" href="lcms2.CGATS.html"><link rel="prev" title="lcms2.CMSError" href="lcms2.CMSError.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.ToneCurve - python-lcms2 0.3.0</title>
+        <title>lcms2.ToneCurve - python-lcms2 0.3.1</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.3.0</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.3.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +189,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.3.0</span>
+  <span class="sidebar-brand-text">python-lcms2 0.3.1</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.3.0</span>
+  <span class="sidebar-versions-label">0.3.1</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -562,7 +562,9 @@ would not be monotonic).</p>
 <dd><p>Estimate the gamma that best matches the curve.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Maximum acceptable mean error; raises <code class="docutils literal notranslate"><span class="pre">CMSError</span></code> when not reachable.</p>
+<dd class="field-odd"><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Maximum acceptable mean error. When no single gamma reaches it (as for the sRGB
+curve), the tolerance is relaxed step by step up to 0.5 before <code class="xref py py-class docutils literal notranslate"><span class="pre">LCMSError</span></code> is
+raised.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -702,7 +704,7 @@ would not be monotonic).</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=f129cdf0"></script>
+</div><script src="../../_static/documentation_options.js?v=5869b996"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

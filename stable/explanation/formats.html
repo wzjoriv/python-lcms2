@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Architecture" href="architecture.html"><link rel="prev" title="Measurement files (CGATS / IT8)" href="../guides/cgats.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>How arrays become pixel formats - python-lcms2 0.3.0</title>
+        <title>How arrays become pixel formats - python-lcms2 0.3.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">python-lcms2 0.3.0</div></a>
+      <a href="../index.html"><div class="brand">python-lcms2 0.3.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +189,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.3.0</span>
+  <span class="sidebar-brand-text">python-lcms2 0.3.1</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.3.0</span>
+  <span class="sidebar-versions-label">0.3.1</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
@@ -265,12 +265,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/explanation/formats.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/explanation/formats.rst?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/explanation/formats.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/explanation/formats.rst" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -292,8 +292,12 @@
 <p>LittleCMS describes pixels with a 32-bit format word: color space, channels, extra (alpha) channels, bytes
 per sample, float or integer, planar or interleaved. python-lcms2 derives it from your array so you never
 write one.</p>
-<div class="table-wrapper colwidths-auto docutils container">
+<div class="table-wrapper colwidths-given docutils container">
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 40.0%" />
+<col style="width: 60.0%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Array</p></th>
 <th class="head"><p>Format</p></th>
@@ -324,6 +328,9 @@ write one.</p>
 <p>Python lists: all integers → <code class="docutils literal notranslate"><span class="pre">uint8</span></code> (or <code class="docutils literal notranslate"><span class="pre">uint16</span></code> past 255); any float → <code class="docutils literal notranslate"><span class="pre">float64</span></code>.</p>
 <p><strong>Value ranges</strong> follow LittleCMS: integer RGB/CMYK use the full integer range; float RGB is 0–1; float CMYK is
 0–100 (percent ink); float Lab is real L*a*b* (L 0–100); float XYZ has Y = 1 for the white.</p>
+<p>Profiles generated from a <a class="reference internal" href="../reference/generated/lcms2.spaces.html#module-lcms2.spaces" title="lcms2.spaces"><code class="xref py py-mod docutils literal notranslate"><span class="pre">lcms2.spaces</span></code></a> color space are the exception: they take that space’s own
+values (<code class="docutils literal notranslate"><span class="pre">spaces.cmyk</span></code> ink is 0–1, OKLab a/b about ±0.4, hue in degrees), the same values
+<a class="reference internal" href="../reference/generated/lcms2.convert.html#lcms2.convert" title="lcms2.convert"><code class="xref py py-func docutils literal notranslate"><span class="pre">lcms2.convert()</span></code></a> uses.</p>
 <p><strong>Output dtype</strong>: the input dtype, except integer input converted to Lab or XYZ gives <code class="docutils literal notranslate"><span class="pre">float64</span></code>, since encoded
 integer Lab is rarely what you want. <code class="docutils literal notranslate"><span class="pre">out_dtype=</span></code> overrides.</p>
 <p><strong>Memory layout</strong>: any strides work; non-contiguous input is copied once. Output is C-contiguous with the
@@ -381,7 +388,7 @@ it, so calling the same <code class="docutils literal notranslate"><span class="
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=f129cdf0"></script>
+</div><script src="../_static/documentation_options.js?v=5869b996"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

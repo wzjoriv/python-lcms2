@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="API reference" href="../reference/api.html"><link rel="prev" title="How arrays become pixel formats" href="formats.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>Architecture - python-lcms2 0.3.0</title>
+        <title>Architecture - python-lcms2 0.3.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">python-lcms2 0.3.0</div></a>
+      <a href="../index.html"><div class="brand">python-lcms2 0.3.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +189,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.3.0</span>
+  <span class="sidebar-brand-text">python-lcms2 0.3.1</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.3.0</span>
+  <span class="sidebar-versions-label">0.3.1</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
@@ -265,12 +265,12 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/explanation/architecture.md?plain=true" title="View this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/explanation/architecture.rst?plain=true" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
 </div><div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/explanation/architecture.md" rel="edit" title="Edit this page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/explanation/architecture.rst" rel="edit" title="Edit this page">
     <svg><use href="#svg-pencil"></use></svg>
     <span class="visually-hidden">Edit this page</span>
   </a>
@@ -289,15 +289,15 @@
         <article role="main" id="furo-main-content">
           <section id="architecture">
 <h1>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">¶</a></h1>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lcms2</span><span class="o">/</span>
-  <span class="n">_ext</span><span class="o">/</span>          <span class="n">C</span> <span class="n">extension</span><span class="p">:</span> <span class="n">one</span> <span class="n">file</span> <span class="n">per</span> <span class="n">LittleCMS</span> <span class="n">area</span><span class="p">,</span> <span class="n">handles</span> <span class="n">passed</span> <span class="k">as</span> <span class="n">capsules</span>
-  <span class="n">_profile</span><span class="o">.</span><span class="n">py</span>    <span class="n">Profile</span>            <span class="n">_transform</span><span class="o">.</span><span class="n">py</span>  <span class="n">Transform</span>        <span class="n">_convert</span><span class="o">.</span><span class="n">py</span>  <span class="n">convert</span>
-  <span class="n">_formats</span><span class="o">.</span><span class="n">py</span>    <span class="nb">format</span> <span class="n">inference</span>   <span class="n">_constants</span><span class="o">.</span><span class="n">py</span>  <span class="n">Intent</span><span class="p">,</span> <span class="n">Flag</span>     <span class="n">_curves</span><span class="o">.</span><span class="n">py</span>   <span class="n">ToneCurve</span>
-  <span class="n">colorimetry</span>    <span class="n">ΔE</span><span class="p">,</span> <span class="n">CIECAM02</span><span class="p">,</span> <span class="n">Lab</span><span class="o">/</span><span class="n">LCh</span><span class="o">/</span><span class="n">xyY</span><span class="p">,</span> <span class="n">white</span> <span class="n">points</span>
-  <span class="n">cgats</span><span class="o">.</span><span class="n">py</span>       <span class="n">CGATS</span> <span class="o">/</span> <span class="n">IT8</span>
-  <span class="n">spaces</span><span class="o">/</span>        <span class="n">ColorSpace</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">analytic</span> <span class="n">spaces</span> <span class="p">(</span><span class="n">pure</span> <span class="n">NumPy</span><span class="p">)</span>
-  <span class="n">icc</span><span class="o">/</span>           <span class="n">pure</span><span class="o">-</span><span class="n">Python</span> <span class="n">ICC</span> <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span> <span class="ow">and</span> <span class="n">tracer</span>
-  <span class="n">colormap</span><span class="o">/</span>      <span class="n">Colormap</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>lcms2/
+  _ext/          C extension: one file per LittleCMS area, handles passed as capsules
+  _profile.py    Profile            _transform.py  Transform        _convert.py  convert
+  _formats.py    format inference   _constants.py  Intent, Flag     _curves.py   ToneCurve
+  colorimetry    ΔE, CIECAM02, Lab/LCh/xyY, white points
+  cgats.py       CGATS / IT8
+  spaces/        ColorSpace and the analytic spaces (pure NumPy)
+  icc/           pure-Python ICC reader, writer and tracer
+  colormap/      Colormap
 </pre></div>
 </div>
 <p><strong>Binding.</strong> The extension is hand-written C. Each LittleCMS object (profile, transform, tone curve, IT8
@@ -364,7 +364,7 @@ pixel-format table and lists API functions added or removed.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=f129cdf0"></script>
+</div><script src="../_static/documentation_options.js?v=5869b996"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/scripts/furo.js?v=46bd48cc"></script>

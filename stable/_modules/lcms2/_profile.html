@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2._profile - python-lcms2 0.3.0</title>
+        <title>lcms2._profile - python-lcms2 0.3.1</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.3.0</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.3.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.3.0</span>
+  <span class="sidebar-brand-text">python-lcms2 0.3.1</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.3.0</span>
+  <span class="sidebar-versions-label">0.3.1</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -351,7 +351,7 @@
 <span class="sd">    'Display P3'</span>
 <span class="sd">    """</span>
 
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"__weakref__"</span><span class="p">,</span> <span class="s2">"_handle"</span><span class="p">)</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"__weakref__"</span><span class="p">,</span> <span class="s2">"_handle"</span><span class="p">,</span> <span class="s2">"_source_space"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Profile.__init__">
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.__init__">[docs]</a>
@@ -363,7 +363,8 @@
         <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">_open_source</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">_open_source</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_space</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
     <span class="c1"># ---- Construction ----</span>
@@ -371,6 +372,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_from_handle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">handle</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
         <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle</span> <span class="o">=</span> <span class="n">handle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_space</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
         <span class="k">return</span> <span class="bp">self</span>
@@ -427,7 +429,9 @@
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># ColorSpace.to_icc_profile() -&gt; {"bytes", "method", "notes"}</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"bytes"</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+        <span class="n">profile</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">profile</span><span class="o">.</span><span class="n">_source_space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="k">return</span> <span class="n">profile</span></div>
 
 
 <div class="viewcode-block" id="Profile.builtin">
@@ -512,10 +516,13 @@
 <span class="sd">        gamma : float, ToneCurve, (type, params) or a sequence of 3 of those</span>
 <span class="sd">            Transfer function(s) from encoded to linear values.</span>
 <span class="sd">        description : str, optional</span>
-<span class="sd">            Profile description text.</span>
+<span class="sd">            Profile description text. Defaults to one naming the white point and gamma,</span>
+<span class="sd">            such as ``"RGB (D65, gamma 2.2)"``.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.rgb("D65", gamma=2.2).description</span>
+<span class="sd">        'RGB (D65, gamma 2.2)'</span>
 <span class="sd">        &gt;&gt;&gt; p = Profile.rgb("D65", gamma=2.2, description="my RGB")</span>
 <span class="sd">        &gt;&gt;&gt; p.description, p.is_matrix_shaper</span>
 <span class="sd">        ('my RGB', True)</span>
@@ -531,6 +538,10 @@
             <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
         <span class="p">)</span>
         <span class="n">curves</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_parametric</span> <span class="k">else</span> <span class="p">[</span><span class="n">gamma</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wp_name</span> <span class="o">=</span> <span class="n">white_point</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">white_point</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"custom white"</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"gamma </span><span class="si">{</span><span class="n">gamma</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">else</span> <span class="s2">"custom curves"</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"RGB (</span><span class="si">{</span><span class="n">wp_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">)"</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_rgb</span><span class="p">(</span><span class="n">wp</span><span class="p">,</span> <span class="n">prims</span><span class="p">,</span> <span class="n">curves</span><span class="p">),</span> <span class="n">description</span><span class="p">)</span></div>
 
 
@@ -817,7 +828,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=f129cdf0"></script>
+</div><script src="../../_static/documentation_options.js?v=5869b996"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
