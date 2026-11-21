@@ -346,10 +346,11 @@
 </section>
 <section id="inspecting">
 <h2>Inspecting<a class="headerlink" href="#inspecting" title="Link to this heading">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">lcms2</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s2">"tests/data/CMYK.icm"</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">lcms2</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s2">"FOGRA39L_coated.icc"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span>
-<span class="go">&lt;Profile 'Fogra27L CMYK Coated Press' CMYK output v2.2&gt;</span>
+<span class="go">&lt;Profile 'FOGRA39L Coated' CMYK output v2.2&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">color_space</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">pcs</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">device_class</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">channels</span>
+<span class="go">('CMYK', 'Lab', 'output', 4)</span>
 </pre></div>
 </div>
 <p>Header: <code class="docutils literal notranslate"><span class="pre">version</span></code>, <code class="docutils literal notranslate"><span class="pre">device_class</span></code>, <code class="docutils literal notranslate"><span class="pre">color_space</span></code>, <code class="docutils literal notranslate"><span class="pre">pcs</span></code>, <code class="docutils literal notranslate"><span class="pre">rendering_intent</span></code>, <code class="docutils literal notranslate"><span class="pre">creation_date</span></code>, <code class="docutils literal notranslate"><span class="pre">profile_id</span></code>,
