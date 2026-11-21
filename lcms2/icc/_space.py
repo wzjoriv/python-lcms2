@@ -17,6 +17,9 @@ from ._io.profile import ICCProfile
 from ._reader import build_transform, read_circular_channels, read_device_domain
 from ._versions import normalize_icc_version
 
+# Ink spaces whose device values are percent of ink, as in Little CMS and Photoshop.
+_INK_SPACES = frozenset({b"CMY ", b"CMYK"} | {f"{c}CLR".encode() for c in "56789ABCDEF"})
+
 __all__ = ["ICCSpace"]
 
 
@@ -48,6 +51,8 @@ class ICCSpace(ColorSpace):
         to_xyz, from_xyz = built.to_xyz, built.from_xyz
 
         domain = read_device_domain(self.icc, built.n_channels)
+        if domain is None and self.icc.header.data_colour_space in _INK_SPACES:
+            domain = [(0.0, 100.0)] * built.n_channels
         if domain is not None:
             lo = np.array([p[0] for p in domain])
             span = np.array([p[1] - p[0] for p in domain])

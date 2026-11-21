@@ -11,15 +11,17 @@ from ._srgb import srgb
 
 
 class CMYKSpace(ColorSpace):
-    """CMYK from the complement of sRGB with ``K = min(C, M, Y)``; not an ink model."""
+    """CMYK ink in percent (0..100, as in Photoshop and Little CMS) from the complement of sRGB
+    with ``K = min(C, M, Y)``; not an ink model."""
 
     name = "cmyk"
     n_channels = 4
     icc_colour_space_signature = b"CMYK"
+    device_domain = [(0.0, 100.0)] * 4
 
     def to_xyz(self, cmyk: np.ndarray) -> np.ndarray:
         """Convert CMYK to CIE XYZ (D50)."""
-        cmyk = np.asarray(cmyk, dtype=np.float64)
+        cmyk = np.asarray(cmyk, dtype=np.float64) / 100.0
         k = 1.0 - cmyk[..., 3]
         rgb = np.stack([(1.0 - cmyk[..., i]) * k for i in range(3)], axis=-1)
         return srgb.to_xyz(rgb)
@@ -31,7 +33,7 @@ class CMYKSpace(ColorSpace):
         ink = k < 1.0 - 1e-12
         denom = np.where(ink, 1.0 - k, 1.0)
         c, m, y = (np.where(ink, (cmy[..., i] - k) / denom, 0.0) for i in range(3))
-        return np.stack([c, m, y, k], axis=-1)
+        return np.stack([c, m, y, k], axis=-1) * 100.0
 
 
 cmyk = CMYKSpace()
