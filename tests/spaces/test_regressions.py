@@ -58,12 +58,12 @@ def test_oklch_is_the_polar_form_of_oklab():
         assert abs(out[0] - L) < 1e-6
         assert abs(out[1] - np.hypot(a, b)) < 1e-6
         if np.hypot(a, b) > 1e-3:
-            assert abs(out[2] - (np.arctan2(b, a) / (2 * np.pi)) % 1.0) < 1e-5
+            assert abs(out[2] - np.degrees(np.arctan2(b, a)) % 360.0) < 360 * 1e-5
 
 
 def test_oklch_red_reference():
     out = srgb.to(oklch, [1.0, 0.0, 0.0])
-    np.testing.assert_allclose(out, [0.627955, 0.257683, 29.2339 / 360.0], atol=2e-5)
+    np.testing.assert_allclose(out, [0.627955, 0.257683, 29.2339], atol=2e-5)
 
 
 # 2. user spaces accept lists ----------------------------------------------------------------------

@@ -43,3 +43,22 @@ def test_raw_tag_write_then_cooked_and_raw_reads():
 def test_repr_hides_the_internal_nocache_flag():
     assert "flags" not in repr(Transform("sRGB", "Lab"))
     assert "BLACKPOINTCOMPENSATION" in repr(Transform("sRGB", "Lab", bpc=True))
+
+
+def test_proofing_through_a_matrix_profile_clips_to_its_gamut():
+    t = Transform("Display P3", "Display P3", proof="sRGB")
+    x = np.array([[1.0, 0.0, 0.0], [0.5, 0.5, 0.5]])
+    want = lcms2.convert(np.clip(lcms2.convert(x, "Display P3", "sRGB"), 0, 1), "sRGB", "Display P3")
+    np.testing.assert_allclose(t.apply(x), want, atol=1e-6)
+    assert t.apply(np.array([[255, 0, 0]], np.uint8)).dtype == np.uint8
+    assert (
+        Transform("Display P3", "Lab", proof="sRGB").apply(np.array([[255, 0, 0]], np.uint8)).dtype
+        == np.float64
+    )
+
+
+@pytest.mark.parametrize("name", ["hsv", "hwb", "lch", "oklch"])
+def test_hue_is_in_degrees(name):
+    hue = spaces.get(name).from_xyz(spaces.srgb.to_xyz(np.array([0.0, 0.0, 1.0])))
+    h = hue[0] if name in ("hsv", "hwb") else hue[2]
+    assert 200.0 < h < 320.0

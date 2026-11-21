@@ -270,6 +270,7 @@ def test_hsv_v5_calc_roundtrips_via_crs_reader_self_consistency_only():
         reloaded = ICCSpace(path)
         rng = np.random.default_rng(42)
         x = np.stack([rng.uniform(0, 1, 500) for _ in range(3)], axis=-1)
+        x[:, 0] *= 360.0
         xyz_ref = cs.to_xyz(x)
         xyz_got = reloaded.to_xyz(x)
         assert np.allclose(xyz_ref, xyz_got, atol=1e-5), "to_xyz calc round trip mismatch"
@@ -278,7 +279,7 @@ def test_hsv_v5_calc_roundtrips_via_crs_reader_self_consistency_only():
         dev_ref = cs.from_xyz(xyz2)
         dev_got = reloaded.from_xyz(xyz2)
         d_ = np.abs(dev_ref - dev_got)
-        d_[:, 0] = np.minimum(d_[:, 0], 1 - d_[:, 0])
+        d_[:, 0] = np.minimum(d_[:, 0], 360.0 - d_[:, 0]) / 360.0
         assert np.max(d_) < 1e-4, "from_xyz calc round trip mismatch"
 
 
@@ -385,6 +386,7 @@ def test_hsv_v5_icc2_calc_matches_pure_numpy_across_many_samples():
         rng = np.random.default_rng(123)
         n = 2000
         hsv = np.stack([rng.uniform(0, 1, n) for _ in range(3)], axis=-1)
+        hsv[:, 0] *= 360.0
         xyz_ref = cs.to_xyz(hsv)
         xyz_got = reloaded.to_xyz(hsv)
         assert np.allclose(xyz_ref, xyz_got, atol=1e-5)
@@ -394,7 +396,7 @@ def test_hsv_v5_icc2_calc_matches_pure_numpy_across_many_samples():
         dev_ref = cs.from_xyz(xyz2)
         dev_got = reloaded.from_xyz(xyz2)
         d_ = np.abs(dev_ref - dev_got)
-        d_[:, 0] = np.minimum(d_[:, 0], 1 - d_[:, 0])
+        d_[:, 0] = np.minimum(d_[:, 0], 360.0 - d_[:, 0]) / 360.0
         assert np.max(d_) < 1e-4
 
 

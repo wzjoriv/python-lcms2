@@ -11,8 +11,8 @@ from ._srgb import srgb
 
 
 def hsv_to_rgb(hsv: np.ndarray) -> np.ndarray:
-    """Convert HSV (hue as a fraction of a turn) to RGB."""
-    h, s, v = hsv[..., 0] * 6.0, hsv[..., 1], hsv[..., 2]
+    """Convert HSV (hue in degrees) to RGB."""
+    h, s, v = hsv[..., 0] / 60.0, hsv[..., 1], hsv[..., 2]
     sector = np.floor(h)
     f = h - sector
     i = np.mod(sector, 6.0)
@@ -27,7 +27,7 @@ def hsv_to_rgb(hsv: np.ndarray) -> np.ndarray:
 
 
 def rgb_to_hsv(rgb: np.ndarray) -> np.ndarray:
-    """Convert RGB to HSV (hue as a fraction of a turn); hue is 0 for grays."""
+    """Convert RGB to HSV (hue in degrees, 0..360); hue is 0 for grays."""
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     maxc = np.maximum(np.maximum(r, g), b)
     minc = np.minimum(np.minimum(r, g), b)
@@ -39,17 +39,18 @@ def rgb_to_hsv(rgb: np.ndarray) -> np.ndarray:
     gc = (maxc - g) / safe_delta
     bc = (maxc - b) / safe_delta
     h = np.select([maxc == r, maxc == g], [bc - gc, 2.0 + rc - bc], default=4.0 + gc - rc)
-    h = np.where(chromatic, np.mod(h / 6.0, 1.0), 0.0)
+    h = np.where(chromatic, np.mod(h * 60.0, 360.0), 0.0)
     return np.stack([h, s, maxc], axis=-1)
 
 
 class HSVSpace(ColorSpace):
-    """HSV over sRGB; hue is a fraction of a turn and circular."""
+    """HSV over sRGB; hue in degrees (circular), saturation and value in 0..1."""
 
     name = "hsv"
     n_channels = 3
     icc_colour_space_signature = b"HSV "
     circular_device_channels = frozenset({0})
+    device_domain = [(0.0, 360.0), (0.0, 1.0), (0.0, 1.0)]
 
     def to_xyz(self, hsv: np.ndarray) -> np.ndarray:
         """Convert HSV to CIE XYZ (D50)."""

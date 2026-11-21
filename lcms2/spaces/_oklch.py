@@ -12,12 +12,12 @@ from ._oklab import oklab
 
 
 class OKLChSpace(ColorSpace):
-    """Cylindrical OKLab (CSS ``oklch``); hue as a fraction of a turn."""
+    """Cylindrical OKLab (CSS ``oklch``); hue in degrees."""
 
     name = "oklch"
     icc_colour_space_signature = b"3CLR"
     circular_device_channels = frozenset({2})
-    device_domain = [(0.0, 1.0), (0.0, 0.5), (0.0, 1.0)]
+    device_domain = [(0.0, 1.0), (0.0, 0.5), (0.0, 360.0)]
 
     def to_xyz(self, oklch: np.ndarray) -> np.ndarray:
         """Convert OKLCh to CIE XYZ (D50)."""

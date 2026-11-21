@@ -156,7 +156,7 @@ def test_lch_known_points():
     L, C, h = lch.from_xyz(red_xyz)
     assert L == pytest.approx(54.3, abs=1.0)
     assert C == pytest.approx(106.8, abs=2.0)
-    assert h * 360 == pytest.approx(40.8, abs=2.0)
+    assert h == pytest.approx(40.8, abs=2.0)
 
 
 def test_lch_write_tier():
@@ -239,7 +239,9 @@ def test_oklch_exact_calc_roundtrip():
 
         y = oklch.from_xyz(expected_xyz)
         got_y = reloaded.from_xyz(expected_xyz)
-        assert np.allclose(got_y, y, atol=1e-4)
+        d = np.abs(got_y - y)
+        d[:, 2] = np.minimum(d[:, 2], 360.0 - d[:, 2]) / 360.0
+        assert d.max() <= 1e-4
 
 
 def test_oklch_through_to():

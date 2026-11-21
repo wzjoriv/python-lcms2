@@ -19,7 +19,7 @@ print(spaces.get("oklab"), spaces.oklab.n_channels, spaces.oklab.device_domain)
 
 # %% [markdown]
 # `space.to(target, values)` converts, with the target a name or a space. Values are shaped
-# `(..., n_channels)` and in the space's own range. Hue channels (HSV, HWB, LCh, OKLCh) are a fraction of a turn.
+# `(..., n_channels)` and in the space's own range. Hue channels (HSV, HWB, LCh, OKLCh) are in degrees, 0..360, as in CSS.
 
 # %%
 orange = np.array([1.0, 0.5, 0.0])
