@@ -8,7 +8,7 @@ Examples
 array([54.29, 80.81, 69.89])
 """
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 __author__ = "Josue N Rivera"
 
 from . import _lcms2, cgats, colorimetry, colormap, icc, spaces
