@@ -55,3 +55,6 @@ pixels or more runs in parallel chunks on a shared pool of `min(os.cpu_count(), 
 is identical to a single-threaded run; on a 20-core machine a 4-megapixel float64 sRGB → Display P3 conversion drops from about
 730 ms to 110 ms. Use `lcms2.set_threads(1)` when you already parallelise at a higher level, and
 `lcms2.get_threads()` to read the setting.
+
+Free-threaded CPython (3.14t) is supported and the module does not re-enable the GIL. Reading a `Profile`
+from many threads is fine; don't modify one (headers, tags) while another thread uses it.

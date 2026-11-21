@@ -53,6 +53,9 @@ PyInit__lcms2(void)
     PyObject *m = PyModule_Create(&lcms2_def);
     if (m == NULL)
         return NULL;
+#ifdef Py_GIL_DISABLED
+    PyUnstable_Module_SetGIL(m, Py_MOD_GIL_NOT_USED);
+#endif
 
     lcms2_Error = PyErr_NewException("lcms2._lcms2.LCMSError", PyExc_ValueError, NULL);
     if (lcms2_Error == NULL || PyModule_AddObjectRef(m, "LCMSError", lcms2_Error) < 0)
