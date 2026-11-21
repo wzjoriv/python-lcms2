@@ -140,5 +140,5 @@ class DiagnosticsMixin:
         if severity == 0:
             return type(self)(self.colors, name=self.name, space=self.space)
         lin = srgb.to(srgb_linear, np.clip(self.colors, 0.0, 1.0))
-        out = srgb_linear.to(srgb, np.clip(lin @ m.T, 0.0, 1.0))
+        out = np.clip(srgb_linear.to(srgb, np.clip(lin @ m.T, 0.0, 1.0)), 0.0, 1.0)
         return type(self)(out, name=f"{self.name} ({deficiency} {severity:g})", space=self.space)
