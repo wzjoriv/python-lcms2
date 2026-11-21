@@ -72,13 +72,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - if: hashFiles('docs/conf.py') != ''
-        uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@v8
         with:
           name: html
           path: html
       - name: Assemble site
-        if: hashFiles('docs/conf.py') != ''
         env:
           REPO: ${{ github.repository }}
           EVENT: ${{ github.event_name }}
@@ -97,8 +95,7 @@ jobs:
           fi
           printf '<!doctype html><meta http-equiv="refresh" content="0; url=%s/"><link rel="canonical" href="%s/">\n' "$target" "$target" > site/index.html
           touch site/.nojekyll
-      - if: hashFiles('docs/conf.py') != ''
-        uses: peaceiris/actions-gh-pages@v4
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: site
