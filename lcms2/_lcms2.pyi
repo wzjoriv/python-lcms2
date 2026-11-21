@@ -216,6 +216,9 @@ def delta_e(
 ) -> NDArray[Any]:
     """Color difference over two equally-shaped (..., 3) Lab arrays. method: 0=76, 1=94, 2=2000 (p0..p2 = Kl, Kc, Kh), 3=CMC (p0, p1 = l, c), 4=BFD."""
 
+def mat3(matrix: Any, values: Any) -> NDArray[Any]:
+    """Apply a (3, 3) matrix to every row of a (..., 3) float64 array (``values @ matrix.T``) without BLAS and without the GIL."""
+
 def cam02(
     values: Any, white: Any, yb: float, la: float, surround: int, d: float, reverse: bool
 ) -> NDArray[Any]:
