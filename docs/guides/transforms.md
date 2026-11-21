@@ -7,7 +7,7 @@ Both take the same options.
 
 | Option | Meaning |
 |---|---|
-| `intent` | `"perceptual"` (default), `"relative"`, `"saturation"`, `"absolute"`, the K-preserving intents, or {class}`lcms2.Intent`. |
+| `intent` | `"relative"` (default; in-gamut colors are kept exactly), `"perceptual"` (compresses the gamut, for photos through printer profiles), `"saturation"`, `"absolute"`, the K-preserving intents, or {class}`lcms2.Intent`. |
 | `bpc` | Black-point compensation. |
 | `proof`, `proof_intent`, `gamut_check` | Soft proofing through a third profile; `gamut_check=True` paints out-of-gamut pixels with the alarm color. |
 | `optimize` | `False` disables LittleCMS optimization (slower, sometimes more exact). |
