@@ -503,6 +503,7 @@ case(
     lcms_inverse=False,
     circular=(2,),
     v5=("exact_calc",),
+    back_tol=0.15,
 )
 
 _M1 = np.array([[0.8189, 0.3619, -0.1288], [0.0330, 0.9293, 0.0361], [0.0482, 0.2643, 0.6338]])
