@@ -45,7 +45,7 @@ dev = [
     "pytest-cov",
     "ruff>=0.6",
     "typer>=0.12",
-    "stubpy>=0.8.2",
+    "stubpy>=0.11.3",
     "nbformat>=5",
     "nbclient>=0.10",
     "ipykernel>=6",

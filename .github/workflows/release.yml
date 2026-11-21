@@ -38,7 +38,7 @@ jobs:
 
       - name: Generate type stubs
         run: |
-          python -m pip install "stubpy>=0.8.2"
+          python -m pip install "stubpy>=0.11.3"
           python -m stubpy generate lcms2
 
       - name: Build wheels
@@ -78,7 +78,7 @@ jobs:
 
       - name: Generate type stubs
         run: |
-          python -m pip install "stubpy>=0.8.2"
+          python -m pip install "stubpy>=0.11.3"
           python -m stubpy generate lcms2
 
       - name: Build Pyodide wheels
@@ -106,7 +106,7 @@ jobs:
 
       - name: Generate type stubs
         run: |
-          python -m pip install "stubpy>=0.8.2"
+          python -m pip install "stubpy>=0.11.3"
           python -m stubpy generate lcms2
 
       - name: Build sdist
