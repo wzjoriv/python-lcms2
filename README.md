@@ -28,7 +28,7 @@ all backed by [LittleCMS 2](https://github.com/mm2/Little-CMS).
 | Colormaps | Perceptually uniform colormaps in OKLab, gamut-mapped, color-vision-deficiency simulation, matplotlib export. |
 | Measurement data | Read and write CGATS / IT8 files. |
 
-Wheels for Windows, Linux and macOS (x86-64 and ARM64) on Python 3.10 and later. NumPy is the only dependency.
+Wheels for Windows, Linux and macOS (x86-64 and ARM64) on Python 3.10 and later, including free-threaded 3.14t and 3.15t. NumPy is the only dependency.
 
 ## Install
 
