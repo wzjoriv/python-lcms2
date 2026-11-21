@@ -242,6 +242,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference/generated/lcms2.to_hex.html">lcms2.to_hex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/generated/lcms2.get_version.html">lcms2.get_version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/generated/lcms2.set_alarm_codes.html">lcms2.set_alarm_codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/generated/lcms2.supported_intents.html">lcms2.supported_intents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/generated/lcms2.get_alarm_codes.html">lcms2.get_alarm_codes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/generated/lcms2.set_adaptation_state.html">lcms2.set_adaptation_state</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/generated/lcms2.colorimetry.html">lcms2.colorimetry</a></li>
@@ -319,8 +320,12 @@ libraries), the writer falls back to a CLUT and says why in <code class="docutil
 <p>Spaces with a circular hue channel (HSV, HSL, HWB, LCh, OKLCh) are sampled into a CLUT. ICC
 interpolation is linear and does not wrap hue, so colours whose hue lies between the last grid point
 and 360° are interpolated through the whole hue range. Expect small errors near hue 0/360 in such
-profiles. Converting with the space itself (<code class="docutils literal notranslate"><span class="pre">lcms2.convert(x,</span> <span class="pre">&quot;sRGB&quot;,</span> <span class="pre">&quot;oklch&quot;)</span></code>) is exact.</p>
+profiles. Converting with the space itself (<code class="docutils literal notranslate"><span class="pre">lcms2.convert(x,</span> <span class="pre">&quot;sRGB&quot;,</span> <span class="pre">&quot;oklch&quot;)</span></code>) is exact, and so is a
+transform into <code class="docutils literal notranslate"><span class="pre">space.profile</span></code>, which finishes with the space’s own math.</p>
 </div>
+<p>Sampled grids are accurate to about 1–2 dE2000 for HSV, HWB, LCh and OKLCh at the default 33 points per
+axis. <code class="docutils literal notranslate"><span class="pre">to_icc_profile(grid_size=65)</span></code> roughly halves that, at about 3 MB per profile. Profiles that only
+convert one way (no <code class="docutils literal notranslate"><span class="pre">from_xyz</span></code>) are written as input profiles with an A2B0 table only.</p>
 </section>
 <section id="device-values">
 <h2>Device values<a class="headerlink" href="#device-values" title="Link to this heading">¶</a></h2>

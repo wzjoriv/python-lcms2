@@ -6,9 +6,12 @@ Installation
    pip install python-lcms2
    pip install "python-lcms2[plot]"     # adds matplotlib for colormap export
 
-Wheels are published for Windows, Linux and macOS on x86-64 and ARM64, Python 3.10 and later. NumPy (2.0+) is
-the only runtime dependency. LittleCMS is compiled into the extension; nothing else needs to be installed.
+Wheels are published for Windows, Linux and macOS on x86-64 and ARM64: CPython 3.10 and later (including the
+free-threaded 3.14t and 3.15t builds) and PyPy 3.11. NumPy (2.0+) is the only runtime dependency. LittleCMS is compiled into the extension; nothing else needs to be installed.
 python-lcms2 is released under the MIT license, like the LittleCMS it bundles.
+
+In the browser, Pyodide wheels are attached to each `GitHub release <https://github.com/wzjoriv/python-lcms2/releases>`_;
+install one with ``micropip.install("<wheel URL>")``.
 
 Check what you got:
 
