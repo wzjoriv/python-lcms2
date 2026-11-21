@@ -296,7 +296,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..._errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICCWriteError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D50</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._io</span><span class="w"> </span><span class="kn">import</span> <span class="n">tagtypes</span> <span class="k">as</span> <span class="n">tt</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.._io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CLASS_COLORSPACE</span><span class="p">,</span> <span class="n">CLASS_DISPLAY</span><span class="p">,</span> <span class="n">CS_GRAY</span><span class="p">,</span> <span class="n">CS_RGB</span><span class="p">,</span> <span class="n">CS_XYZ</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CLASS_COLORSPACE</span><span class="p">,</span> <span class="n">CLASS_DISPLAY</span><span class="p">,</span> <span class="n">CLASS_INPUT</span><span class="p">,</span> <span class="n">CS_GRAY</span><span class="p">,</span> <span class="n">CS_RGB</span><span class="p">,</span> <span class="n">CS_XYZ</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._io.profile</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICCProfile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.clut</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_clut</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">Context</span>
@@ -409,9 +409,15 @@
     <span class="n">tags</span><span class="p">[</span><span class="sa">b</span><span class="s2">"wtpt"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tt</span><span class="o">.</span><span class="n">encode_XYZType</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">D50</span><span class="p">)])</span>
     <span class="n">notes</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">if</span> <span class="n">strict</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_clut</span><span class="p">:</span>
-        <span class="n">_require_traceable</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
     <span class="n">method</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">one_way</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ICCWriteError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"cannot write an exact profile: </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">one_way</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">write_clut</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">notes</span><span class="p">,</span> <span class="n">a2b_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"A2B0 only (an input profile): </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">one_way</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">force_clut</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"clut_fallback"</span>
+    <span class="k">elif</span> <span class="n">strict</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_clut</span><span class="p">:</span>
+        <span class="n">_require_traceable</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">force_clut</span><span class="p">:</span>
         <span class="n">ctx</span><span class="o">.</span><span class="n">fwd_root</span>  <span class="c1"># noqa: B018 - traces, so `trace_failures` is complete</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">force_clut</span> <span class="ow">and</span> <span class="n">ctx</span><span class="o">.</span><span class="n">deterministic</span><span class="p">:</span>
@@ -452,7 +458,11 @@
     <span class="n">raw</span> <span class="o">=</span> <span class="n">ICCProfile</span><span class="o">.</span><span class="n">build_bytes</span><span class="p">(</span>
         <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
         <span class="n">device_class</span><span class="o">=</span><span class="p">(</span>
-            <span class="n">CLASS_DISPLAY</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"exact_matrix_trc"</span><span class="p">,</span> <span class="s2">"exact_gray_trc"</span><span class="p">)</span> <span class="k">else</span> <span class="n">CLASS_COLORSPACE</span>
+            <span class="n">CLASS_INPUT</span>
+            <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">one_way</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">CLASS_DISPLAY</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"exact_matrix_trc"</span><span class="p">,</span> <span class="s2">"exact_gray_trc"</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">CLASS_COLORSPACE</span>
         <span class="p">),</span>
         <span class="n">data_colour_space</span><span class="o">=</span><span class="n">_colour_space_signature</span><span class="p">(</span><span class="n">colorspace</span><span class="p">),</span>
         <span class="n">pcs</span><span class="o">=</span><span class="n">CS_XYZ</span><span class="p">,</span>
