@@ -109,7 +109,9 @@ def interpolate(
 ) -> np.ndarray:
     """Sample ``n`` colours along control ``colors`` (sRGB) interpolated in ``space``."""
     same = type(space) is type(srgb)
-    vals = np.array(colors, dtype=np.float64) if same else np.asarray(srgb.to(space, colors), dtype=np.float64)
+    vals = (
+        np.array(colors, dtype=np.float64) if same else np.asarray(srgb.to(space, colors), dtype=np.float64)
+    )
     t = np.linspace(0.0, 1.0, n)
     circular = sorted(space.circular_device_channels)
     out = np.empty((n, vals.shape[1]))
