@@ -289,6 +289,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColorSpace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._rgb</span><span class="w"> </span><span class="kn">import</span> <span class="n">mat3</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._srgb</span><span class="w"> </span><span class="kn">import</span> <span class="n">D65_TO_D50</span><span class="p">,</span> <span class="n">SRGB_TO_XYZ_D65</span>
 
 <span class="n">OKLAB_M1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -324,16 +325,15 @@
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLabSpace.to_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oklab</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Convert OKLab to CIE XYZ (D50)."""</span>
-        <span class="n">lms_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">oklab</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">@</span> <span class="n">_M2_INV</span><span class="o">.</span><span class="n">T</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">lms_</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">@</span> <span class="n">_LMS_TO_XYZ_D50</span><span class="o">.</span><span class="n">T</span></div>
+        <span class="n">lms_</span> <span class="o">=</span> <span class="n">mat3</span><span class="p">(</span><span class="n">_M2_INV</span><span class="p">,</span> <span class="n">oklab</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mat3</span><span class="p">(</span><span class="n">_LMS_TO_XYZ_D50</span><span class="p">,</span> <span class="n">lms_</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OKLabSpace.from_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLabSpace.from_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Convert CIE XYZ (D50) to OKLab."""</span>
-        <span class="n">lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">@</span> <span class="n">_XYZ_D50_TO_LMS</span><span class="o">.</span><span class="n">T</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">lms</span><span class="p">)</span> <span class="o">@</span> <span class="n">OKLAB_M2</span><span class="o">.</span><span class="n">T</span></div>
+        <span class="k">return</span> <span class="n">mat3</span><span class="p">(</span><span class="n">OKLAB_M2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">mat3</span><span class="p">(</span><span class="n">_XYZ_D50_TO_LMS</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)))</span></div>
 </div>
 
 
