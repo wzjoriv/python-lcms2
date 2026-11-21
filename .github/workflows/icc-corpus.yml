@@ -1,0 +1,39 @@
+# Monthly: check python-lcms2 against real-world ICC profiles (public-domain Compact-ICC-Profiles plus
+# the LittleCMS test profiles in tests/data/profiles): the NumPy evaluator against LittleCMS, colors
+# after use, and re-authoring with the writer. Manual equivalent: LCMS2_ICC_CORPUS=<folder> pytest tests/icc/test_corpus.py
+
+name: ICC corpus
+
+on:
+  schedule:
+    - cron: "41 6 3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  corpus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install
+        run: pip install -e ".[test]"
+
+      - name: Download profiles
+        run: |
+          git clone --depth 1 https://github.com/saucecontrol/Compact-ICC-Profiles corpus/compact
+          cp tests/data/profiles/*.icc corpus/
+
+      - name: Corpus tests
+        env:
+          LCMS2_ICC_CORPUS: corpus
+        run: pytest -q tests/icc/test_corpus.py
