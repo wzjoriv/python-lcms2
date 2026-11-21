@@ -933,9 +933,9 @@ def test_method_is_the_most_exact_available(c):
 @pytest.mark.parametrize("c", CASES, ids=ids(CASES))
 def test_lcms_reproduces_numpy_forward(c):
     space, result = write(c, 4)
-    g01, _, want = samples(c, space)
+    _, dev, want = samples(c, space)
     profile = lcms2.Profile(result["bytes"])
-    got = lcms2.convert(g01, profile, "XYZ", intent="relative", bpc=False).reshape(want.shape)
+    got = lcms2.convert(dev, profile, "XYZ", intent="relative", bpc=False).reshape(want.shape)
     assert np.max(np.abs(got - want)) <= (c.tol or TOL[result["method"]])
 
 
@@ -944,13 +944,11 @@ def test_lcms_inverse_matches_numpy(c):
     if not c.lcms_inverse:
         pytest.skip("circular channel: Little CMS does not wrap hue when interpolating")
     space, result = write(c, 4)
-    g01, _, xyz = samples(c, space)
+    _, dev, xyz = samples(c, space)
     profile = lcms2.Profile(result["bytes"])
-    back01 = lcms2.convert(xyz, "XYZ", profile, intent="relative", bpc=False).reshape(g01.shape)
-    lo = np.array([p[0] for p in pairs(c)])
-    span = np.array([p[1] - p[0] for p in pairs(c)])
+    back = lcms2.convert(xyz, "XYZ", profile, intent="relative", bpc=False).reshape(dev.shape)
     tol = c.back_tol or 4 * (c.tol or TOL[result["method"]])
-    assert back_error(c, space, xyz, lo + back01 * span) <= tol
+    assert back_error(c, space, xyz, back) <= tol
 
 
 @pytest.mark.parametrize("c", CASES, ids=ids(CASES))
