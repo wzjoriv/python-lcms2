@@ -32,7 +32,12 @@ libraries), the writer falls back to a CLUT and says why in ``notes``. Pass ``st
    Spaces with a circular hue channel (HSV, HSL, HWB, LCh, OKLCh) are sampled into a CLUT. ICC
    interpolation is linear and does not wrap hue, so colours whose hue lies between the last grid point
    and 360° are interpolated through the whole hue range. Expect small errors near hue 0/360 in such
-   profiles. Converting with the space itself (``lcms2.convert(x, "sRGB", "oklch")``) is exact.
+   profiles. Converting with the space itself (``lcms2.convert(x, "sRGB", "oklch")``) is exact, and so is a
+   transform into ``space.profile``, which finishes with the space's own math.
+
+Sampled grids are accurate to about 1–2 dE2000 for HSV, HWB, LCh and OKLCh at the default 33 points per
+axis. ``to_icc_profile(grid_size=65)`` roughly halves that, at about 3 MB per profile. Profiles that only
+convert one way (no ``from_xyz``) are written as input profiles with an A2B0 table only.
 
 Device values
 -------------

@@ -1,0 +1,6 @@
+﻿lcms2.supported\_intents
+========================
+
+.. currentmodule:: lcms2
+
+.. autofunction:: supported_intents
