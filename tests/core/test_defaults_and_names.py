@@ -73,3 +73,14 @@ def test_using_a_profile_does_not_change_its_bytes():
     Transform(p, "Lab").apply(np.full((4, 4), 50.0))
     Transform("Lab", p).apply(np.array([[50.0, 10.0, -10.0]]))
     assert p.to_bytes() == raw
+
+
+def test_float_cmyk_is_percent_everywhere(data_dir):
+    from lcms2.icc import ICCSpace
+
+    assert np.allclose(spaces.srgb.to("cmyk", [1.0, 0.0, 0.0]), [0, 100, 100, 0], atol=1e-6)
+    path = data_dir / "profiles" / "test1.icc"
+    ink = np.array([[0.0, 100.0, 100.0, 0.0], [20.0, 10.0, 0.0, 5.0]])
+    via_lcms = Profile(path).transform(ink, "Lab")
+    via_numpy = lcms2.colorimetry.xyz_to_lab(ICCSpace(str(path)).to_xyz(ink))
+    assert lcms2.delta_e(via_lcms, via_numpy, method="2000").max() < 1.0

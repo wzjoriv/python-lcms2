@@ -108,9 +108,9 @@ def test_cmyk_known_points():
     black_xyz = srgb.to_xyz(np.array([0.0, 0.0, 0.0]))
     red_xyz = srgb.to_xyz(np.array([1.0, 0.0, 0.0]))
 
-    assert np.allclose(cmyk.from_xyz(white_xyz), [0, 0, 0, 0], atol=1e-4)
-    assert np.allclose(cmyk.from_xyz(black_xyz), [0, 0, 0, 1], atol=1e-4)
-    assert np.allclose(cmyk.from_xyz(red_xyz), [0, 1, 1, 0], atol=1e-4)
+    assert np.allclose(cmyk.from_xyz(white_xyz), [0, 0, 0, 0], atol=1e-2)
+    assert np.allclose(cmyk.from_xyz(black_xyz), [0, 0, 0, 100], atol=1e-2)
+    assert np.allclose(cmyk.from_xyz(red_xyz), [0, 100, 100, 0], atol=1e-2)
 
 
 def test_cmyk_write_tier():

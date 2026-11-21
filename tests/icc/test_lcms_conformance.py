@@ -51,11 +51,17 @@ def _lcms_lab_to_device(source, mode: str, lab: np.ndarray) -> np.ndarray:
     return out[..., None] if out.ndim == 2 else out
 
 
+def _range(cs) -> tuple[np.ndarray, np.ndarray]:
+    lo, hi = np.array(cs.device_domain, dtype=np.float64).T
+    return lo, hi - lo
+
+
 def _forward_error(source, cs, mode: str) -> np.ndarray:
     rng = np.random.default_rng(0)
     device8 = rng.integers(0, 255, size=(1, 400, cs.n_channels), dtype=np.uint8)
     lab_lcms = _lcms_device_to_lab(source, mode, device8)
-    lab_ours = colorimetry.xyz_to_lab(cs.to_xyz(device8 / 255.0))
+    lo, span = _range(cs)
+    lab_ours = colorimetry.xyz_to_lab(cs.to_xyz(lo + device8 / 255.0 * span))
     keep = np.all(np.abs(lab_lcms[..., 1:]) < 120, axis=-1)
     return np.abs(lab_lcms - lab_ours)[keep]
 
@@ -100,7 +106,9 @@ def test_written_cmyk_inverse_matches_lcms(version):
     lab = colorimetry.xyz_to_lab(S.srgb.to_xyz(rgb))
     lab_q = _decode_lab(_encode_lab(lab))
     expected = _lcms_lab_to_device(raw, "CMYK", lab_q[None])[0]
-    got = np.clip(ICCSpace(raw).from_xyz(colorimetry.lab_to_xyz(lab_q)), 0, 1)
+    space = ICCSpace(raw)
+    lo, span = _range(space)
+    got = np.clip((space.from_xyz(colorimetry.lab_to_xyz(lab_q)) - lo) / span, 0, 1)
     assert np.mean(np.abs(expected - got)) * 255 < 1.5
 
 
@@ -133,5 +141,6 @@ def test_real_profile_inverse_matches_lcms(path, cs, mode):
         expected = _lcms_lab_to_device(path, mode, lab_q[None])[0]
     except ImageCms.PyCMSError:
         pytest.skip("Little CMS cannot build an inverse transform for this profile")
-    got = np.clip(cs.from_xyz(colorimetry.lab_to_xyz(lab_q)), 0, 1)
+    lo, span = _range(cs)
+    got = np.clip((cs.from_xyz(colorimetry.lab_to_xyz(lab_q)) - lo) / span, 0, 1)
     assert np.mean(np.abs(expected - got)) * 255 < 1.5
