@@ -162,4 +162,6 @@ jobs:
           name: dist
           path: dist
 
+      - run: rm -rf dist/pyodide
+
       - uses: pypa/gh-action-pypi-publish@release/v1
