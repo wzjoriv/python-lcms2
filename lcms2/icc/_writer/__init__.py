@@ -13,7 +13,7 @@ import numpy as np
 from ..._errors import ICCWriteError
 from ...colorimetry import D50
 from .._io import tagtypes as tt
-from .._io.constants import CLASS_COLORSPACE, CLASS_DISPLAY, CS_GRAY, CS_RGB, CS_XYZ
+from .._io.constants import CLASS_COLORSPACE, CLASS_DISPLAY, CLASS_INPUT, CS_GRAY, CS_RGB, CS_XYZ
 from .._io.profile import ICCProfile
 from .clut import write_clut
 from .context import Context
@@ -124,9 +124,15 @@ def write_icc_bytes(
     tags[b"wtpt"] = tt.encode_XYZType([tuple(D50)])
     notes = []
 
-    if strict and not force_clut:
-        _require_traceable(ctx)
     method = None
+    if ctx.one_way is not None:
+        if strict:
+            raise ICCWriteError(f"cannot write an exact profile: {ctx.one_way}")
+        write_clut(ctx, tags, notes, a2b_only=True)
+        notes.append(f"A2B0 only (an input profile): {ctx.one_way}")
+        force_clut, method = True, "clut_fallback"
+    elif strict and not force_clut:
+        _require_traceable(ctx)
     if not force_clut:
         ctx.fwd_root  # noqa: B018 - traces, so `trace_failures` is complete
     if not force_clut and ctx.deterministic:
@@ -167,7 +173,11 @@ def write_icc_bytes(
     raw = ICCProfile.build_bytes(
         version=version,
         device_class=(
-            CLASS_DISPLAY if method in ("exact_matrix_trc", "exact_gray_trc") else CLASS_COLORSPACE
+            CLASS_INPUT
+            if ctx.one_way is not None
+            else CLASS_DISPLAY
+            if method in ("exact_matrix_trc", "exact_gray_trc")
+            else CLASS_COLORSPACE
         ),
         data_colour_space=_colour_space_signature(colorspace),
         pcs=CS_XYZ,
