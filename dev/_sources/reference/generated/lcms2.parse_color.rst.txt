@@ -1,0 +1,6 @@
+﻿lcms2.parse\_color
+==================
+
+.. currentmodule:: lcms2
+
+.. autofunction:: parse_color

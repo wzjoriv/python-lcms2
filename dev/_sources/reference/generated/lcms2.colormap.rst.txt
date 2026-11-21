@@ -1,0 +1,7 @@
+﻿lcms2.colormap
+==============
+
+.. automodule:: lcms2.colormap
+   :members:
+   :undoc-members: False
+   :show-inheritance:

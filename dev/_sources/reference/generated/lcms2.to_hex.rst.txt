@@ -1,0 +1,6 @@
+﻿lcms2.to\_hex
+=============
+
+.. currentmodule:: lcms2
+
+.. autofunction:: to_hex

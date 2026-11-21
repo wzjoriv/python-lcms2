@@ -1,0 +1,6 @@
+﻿lcms2.convert
+=============
+
+.. currentmodule:: lcms2
+
+.. autofunction:: convert

@@ -1,0 +1,59 @@
+﻿lcms2.Flag
+==========
+
+.. currentmodule:: lcms2
+
+.. autoclass:: Flag
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Flag.conjugate
+      ~Flag.bit_length
+      ~Flag.bit_count
+      ~Flag.to_bytes
+      ~Flag.from_bytes
+      ~Flag.as_integer_ratio
+      ~Flag.is_integer
+      ~Flag.grid_points
+      ~Flag.parse
+      ~Flag.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Flag.real
+      ~Flag.imag
+      ~Flag.numerator
+      ~Flag.denominator
+      ~Flag.NONE
+      ~Flag.CLUT_POST_LINEARIZATION
+      ~Flag.FORCE_CLUT
+      ~Flag.NOWHITEONWHITEFIXUP
+      ~Flag.EIGHTBITS_DEVICELINK
+      ~Flag.CLUT_PRE_LINEARIZATION
+      ~Flag.GUESSDEVICECLASS
+      ~Flag.NOCACHE
+      ~Flag.KEEP_SEQUENCE
+      ~Flag.NOOPTIMIZE
+      ~Flag.NULLTRANSFORM
+      ~Flag.HIGHRESPRECALC
+      ~Flag.LOWRESPRECALC
+      ~Flag.GAMUTCHECK
+      ~Flag.BLACKPOINTCOMPENSATION
+      ~Flag.SOFTPROOFING
+      ~Flag.NONEGATIVES
+      ~Flag.NODEFAULTRESOURCEDEF
+      ~Flag.COPY_ALPHA
+   
+   

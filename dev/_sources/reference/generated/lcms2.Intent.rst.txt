@@ -1,0 +1,49 @@
+﻿lcms2.Intent
+============
+
+.. currentmodule:: lcms2
+
+.. autoclass:: Intent
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Intent.conjugate
+      ~Intent.bit_length
+      ~Intent.bit_count
+      ~Intent.to_bytes
+      ~Intent.from_bytes
+      ~Intent.as_integer_ratio
+      ~Intent.is_integer
+      ~Intent.parse
+      ~Intent.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Intent.real
+      ~Intent.imag
+      ~Intent.numerator
+      ~Intent.denominator
+      ~Intent.PERCEPTUAL
+      ~Intent.RELATIVE_COLORIMETRIC
+      ~Intent.SATURATION
+      ~Intent.ABSOLUTE_COLORIMETRIC
+      ~Intent.PRESERVE_K_ONLY_PERCEPTUAL
+      ~Intent.PRESERVE_K_ONLY_RELATIVE_COLORIMETRIC
+      ~Intent.PRESERVE_K_ONLY_SATURATION
+      ~Intent.PRESERVE_K_PLANE_PERCEPTUAL
+      ~Intent.PRESERVE_K_PLANE_RELATIVE_COLORIMETRIC
+      ~Intent.PRESERVE_K_PLANE_SATURATION
+   
+   
