@@ -1,0 +1,7 @@
+﻿lcms2.icc
+=========
+
+.. automodule:: lcms2.icc
+   :members:
+   :undoc-members: False
+   :show-inheritance:

@@ -1,0 +1,6 @@
+﻿lcms2.CMSError
+==============
+
+.. currentmodule:: lcms2
+
+.. autoexception:: CMSError

@@ -1,0 +1,6 @@
+﻿lcms2.set\_adaptation\_state
+============================
+
+.. currentmodule:: lcms2
+
+.. autofunction:: set_adaptation_state

@@ -1,0 +1,851 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="lcms2.Transform" href="lcms2.Transform.html"><link rel="prev" title="API reference" href="../api.html">
+
+    <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
+        <title>lcms2.Profile - python-lcms2 0.3.0</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=daf686e3" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f0f0f0;
+  --color-code-foreground: black;
+  --color-brand-primary: #c2410c;
+  --color-brand-content: #9a3412;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #fb923c;
+  --color-brand-content: #fdba74;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  --color-brand-primary: #fb923c;
+  --color-brand-content: #fdba74;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">python-lcms2 0.3.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">python-lcms2 0.3.0</span>
+  
+</a><div class="sidebar-versions">
+  <span class="sidebar-versions-label">0.3.0</span>
+  <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
+  <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
+</div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Start</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../start/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../start/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../start/examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/profiles.html">Profiles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/spaces.html">Color spaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/icc-authoring.html">ICC authoring</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/colorimetry.html">Colorimetry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/colormaps.html">Colormaps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/cgats.html">Measurement files (CGATS / IT8)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/formats.html">How arrays become pixel formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">API reference</a><input aria-label="Toggle navigation of API reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">lcms2.Profile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.Transform.html">lcms2.Transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.convert.html">lcms2.convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.Intent.html">lcms2.Intent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.Flag.html">lcms2.Flag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.CMSError.html">lcms2.CMSError</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.ToneCurve.html">lcms2.ToneCurve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.CGATS.html">lcms2.CGATS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.parse_color.html">lcms2.parse_color</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.parse_colors.html">lcms2.parse_colors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.to_hex.html">lcms2.to_hex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.get_version.html">lcms2.get_version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.set_alarm_codes.html">lcms2.set_alarm_codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.get_alarm_codes.html">lcms2.get_alarm_codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.set_adaptation_state.html">lcms2.set_adaptation_state</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.colorimetry.html">lcms2.colorimetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.spaces.html">lcms2.spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.icc.html">lcms2.icc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lcms2.colormap.html">lcms2.colormap</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/blob/main/docs/reference/generated/lcms2.Profile.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/wzjoriv/python-lcms2/edit/main/docs/reference/generated/lcms2.Profile.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="lcms2-profile">
+<h1>lcms2.Profile<a class="headerlink" href="#lcms2-profile" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="lcms2.Profile">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">white_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ProfileData</span></code></p>
+<p>An ICC profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.15)"><em>os.PathLike</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><a class="reference internal" href="#lcms2.Profile" title="lcms2.Profile"><em>Profile</em></a><em>, </em><em>colour space</em><em> or </em><em>None</em>) – A built-in name (case-insensitive, lenient: <code class="docutils literal notranslate"><span class="pre">&quot;adobe</span> <span class="pre">rgb&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;display</span> <span class="pre">p3&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;prophoto&quot;</span></code>;
+see <a class="reference internal" href="#lcms2.Profile.builtins" title="lcms2.Profile.builtins"><code class="xref py py-meth docutils literal notranslate"><span class="pre">builtins()</span></code></a>), a path to an <code class="docutils literal notranslate"><span class="pre">.icc</span></code>/<code class="docutils literal notranslate"><span class="pre">.icm</span></code> file, raw profile bytes, an object with
+<code class="docutils literal notranslate"><span class="pre">to_icc_profile()</span></code> (a <code class="docutils literal notranslate"><span class="pre">ColorSpace</span></code>) or None for the NULL profile.</p></li>
+<li><p><strong>white_point</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – For <code class="docutils literal notranslate"><span class="pre">&quot;Lab&quot;</span></code> only: illuminant name (<code class="docutils literal notranslate"><span class="pre">&quot;D65&quot;</span></code>) or xyY of the Lab white (D50 by default).</p></li>
+<li><p><strong>degrees</strong> (<em>{2</em><em>, </em><em>10}</em>) – Observer for illuminant names.</p></li>
+<li><p><strong>temperature</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – For <code class="docutils literal notranslate"><span class="pre">&quot;Lab&quot;</span></code> only: white point as a daylight colour temperature in kelvin.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#FileNotFoundError" title="(in Python v3.15)"><strong>FileNotFoundError</strong></a> – For a string that is neither a built-in name nor an existing file.</p></li>
+<li><p><strong>CMSError</strong> – When the data is not a valid ICC profile.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">lcms2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">lcms2</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s2">"sRGB"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">color_space</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">device_class</span>
+<span class="go">(&lt;ColorSpaceSignature.RGB: 'RGB'&gt;, &lt;DeviceClass.DISPLAY: 'display'&gt;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lcms2</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s2">"display p3"</span><span class="p">)</span><span class="o">.</span><span class="n">description</span>
+<span class="go">'Display P3'</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">white_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.__init__" title="lcms2.Profile.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([source, white_point, degrees, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.abstract" title="lcms2.Profile.abstract"><code class="xref py py-obj docutils literal notranslate"><span class="pre">abstract</span></code></a>([brightness, contrast, hue, ...])</p></td>
+<td><p>Abstract Lab profile adjusting brightness, contrast, hue, saturation and white temperature.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">black_point</span></code>([intent, destination])</p></td>
+<td><p>Detected black point XYZ (Y = 1 white) or None.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.builtin" title="lcms2.Profile.builtin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">builtin</span></code></a>(name)</p></td>
+<td><p>A built-in profile by (lenient) name; see <a class="reference internal" href="#lcms2.Profile.builtins" title="lcms2.Profile.builtins"><code class="xref py py-meth docutils literal notranslate"><span class="pre">builtins()</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.builtins" title="lcms2.Profile.builtins"><code class="xref py py-obj docutils literal notranslate"><span class="pre">builtins</span></code></a>()</p></td>
+<td><p>Names of the built-in profiles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.compute_id" title="lcms2.Profile.compute_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_id</span></code></a>()</p></td>
+<td><p>Compute the MD5 profile ID, store it in the header and return it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.from_bytes" title="lcms2.Profile.from_bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_bytes</span></code></a>(data)</p></td>
+<td><p>Parse a profile from memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.from_space" title="lcms2.Profile.from_space"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_space</span></code></a>(space[, strict])</p></td>
+<td><p>An exact profile of a colour space object (anything with <code class="docutils literal notranslate"><span class="pre">to_icc_profile()</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.gray" title="lcms2.Profile.gray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gray</span></code></a>([white_point, gamma, degrees])</p></td>
+<td><p>Gray profile from a white point and a transfer function (gamma, ToneCurve or (type, params)).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_tag</span></code>(sig)</p></td>
+<td><p>Whether the profile has tag <code class="docutils literal notranslate"><span class="pre">sig</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.ink_limiting" title="lcms2.Profile.ink_limiting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ink_limiting</span></code></a>([limit, color_space])</p></td>
+<td><p>CMYK device link limiting total ink coverage to <code class="docutils literal notranslate"><span class="pre">limit</span></code> percent.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_clut</span></code>([intent, direction])</p></td>
+<td><p>Whether <code class="docutils literal notranslate"><span class="pre">intent</span></code> is implemented by a CLUT in <code class="docutils literal notranslate"><span class="pre">direction</span></code> (input/output/proof).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_intent_supported</span></code>(intent[, direction])</p></td>
+<td><p>Whether the profile implements <code class="docutils literal notranslate"><span class="pre">intent</span></code> in <code class="docutils literal notranslate"><span class="pre">direction</span></code> (input/output/proof).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.lab" title="lcms2.Profile.lab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lab</span></code></a>([white_point, version, degrees, temperature])</p></td>
+<td><p>Lab identity profile (v4 or v2) relative to a white point (D50 by default).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.linearization" title="lcms2.Profile.linearization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linearization</span></code></a>(curves[, color_space])</p></td>
+<td><p>Device link applying one curve (gamma, ToneCurve or (type, params)) per channel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.open" title="lcms2.Profile.open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open</span></code></a>(path)</p></td>
+<td><p>Read a profile file (any path, including non-ASCII ones on Windows).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_tag_raw</span></code>(sig)</p></td>
+<td><p>Serialised tag data including its 8-byte type header.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.rgb" title="lcms2.Profile.rgb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rgb</span></code></a>([white_point, primaries, gamma, ...])</p></td>
+<td><p>Matrix-shaper RGB profile.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.save" title="lcms2.Profile.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>(path)</p></td>
+<td><p>Write the profile to a file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.set_header" title="lcms2.Profile.set_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_header</span></code></a>(**fields)</p></td>
+<td><p>Change header fields: device_class, color_space, pcs, version, rendering_intent, flags, manufacturer, model, attributes, profile_id.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.srgb" title="lcms2.Profile.srgb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">srgb</span></code></a>()</p></td>
+<td><p>LittleCMS's built-in sRGB profile.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.to_bytes" title="lcms2.Profile.to_bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_bytes</span></code></a>()</p></td>
+<td><p>The profile as ICC bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.transform" title="lcms2.Profile.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(data, to, *[, intent, bpc, proof, ...])</p></td>
+<td><p>Convert <code class="docutils literal notranslate"><span class="pre">data</span></code> from this profile to <code class="docutils literal notranslate"><span class="pre">to</span></code>; same keywords as <a class="reference internal" href="lcms2.convert.html#lcms2.convert" title="lcms2.convert"><code class="xref py py-func docutils literal notranslate"><span class="pre">lcms2.convert()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_tag_raw</span></code>(sig, data)</p></td>
+<td><p>Store raw tag data (with its type header) under <code class="docutils literal notranslate"><span class="pre">sig</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.xyz" title="lcms2.Profile.xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz</span></code></a>()</p></td>
+<td><p>XYZ identity profile (D50 PCS, Y = 1 for the white).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.channels" title="lcms2.Profile.channels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">channels</span></code></a></p></td>
+<td><p>Number of channels of the data colour space.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">chromatic_adaptation</span></code></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">chad</span></code> 3x3 matrix, or None.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.color_space" title="lcms2.Profile.color_space"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_space</span></code></a></p></td>
+<td><p>Data colour space (<code class="docutils literal notranslate"><span class="pre">&quot;RGB&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;CMYK&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Lab&quot;</span></code> ...).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">colorants</span></code></p></td>
+<td><p>3x3 array of the rXYZ, gXYZ, bXYZ rows, or None when not a matrix-shaper.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.copyright" title="lcms2.Profile.copyright"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyright</span></code></a></p></td>
+<td><p>Copyright text (settable).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.creation_date" title="lcms2.Profile.creation_date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_date</span></code></a></p></td>
+<td><p>Creation date from the header.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.description" title="lcms2.Profile.description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">description</span></code></a></p></td>
+<td><p>Profile description text (settable).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.device_class" title="lcms2.Profile.device_class"><code class="xref py py-obj docutils literal notranslate"><span class="pre">device_class</span></code></a></p></td>
+<td><p>Profile class (<code class="docutils literal notranslate"><span class="pre">display</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span></code>, <code class="docutils literal notranslate"><span class="pre">link</span></code> ...).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.header" title="lcms2.Profile.header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">header</span></code></a></p></td>
+<td><p>Raw header fields (signatures as 4-character strings).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_matrix_shaper</span></code></p></td>
+<td><p>Whether the profile is a matrix-shaper.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">luminance</span></code></p></td>
+<td><p>XYZ of the luminance tag (cd/m²), or None.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.manufacturer" title="lcms2.Profile.manufacturer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">manufacturer</span></code></a></p></td>
+<td><p>Device manufacturer text (settable).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">media_white_point</span></code></p></td>
+<td><p>XYZ of the media white point tag, or None.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.model" title="lcms2.Profile.model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">model</span></code></a></p></td>
+<td><p>Device model text (settable).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">named_colors</span></code></p></td>
+<td><p>Named colours <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">prefix,</span> <span class="pre">suffix,</span> <span class="pre">pcs,</span> <span class="pre">colorants)</span></code> or None.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.pcs" title="lcms2.Profile.pcs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pcs</span></code></a></p></td>
+<td><p>Profile connection space (<code class="docutils literal notranslate"><span class="pre">&quot;XYZ&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;Lab&quot;</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.profile_id" title="lcms2.Profile.profile_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">profile_id</span></code></a></p></td>
+<td><p>The 16-byte MD5 profile ID (zeros when unset); see <a class="reference internal" href="#lcms2.Profile.compute_id" title="lcms2.Profile.compute_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_id()</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.rendering_intent" title="lcms2.Profile.rendering_intent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rendering_intent</span></code></a></p></td>
+<td><p>Header rendering intent (settable).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#lcms2.Profile.space" title="lcms2.Profile.space"><code class="xref py py-obj docutils literal notranslate"><span class="pre">space</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace" title="lcms2.spaces.ColorSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">lcms2.spaces.ColorSpace</span></code></a> view of this profile (pure NumPy evaluation).</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">supported_intents</span></code></p></td>
+<td><p>ICC intents the profile implements as input or output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tac</span></code></p></td>
+<td><p>Total area coverage (max ink sum, percent) of an output profile; 0 when not applicable.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>Tag signatures present in the profile (4-character strings).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">trc</span></code></p></td>
+<td><p>Tone curves by tag (<code class="docutils literal notranslate"><span class="pre">rTRC</span></code>, <code class="docutils literal notranslate"><span class="pre">gTRC</span></code>, <code class="docutils literal notranslate"><span class="pre">bTRC</span></code>, <code class="docutils literal notranslate"><span class="pre">kTRC</span></code>) that are present.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#lcms2.Profile.version" title="lcms2.Profile.version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></a></p></td>
+<td><p>ICC version, e.g. 4.3 or 2.1 (settable).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.open">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.15)"><span class="pre">PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.open" title="Link to this definition">¶</a></dt>
+<dd><p>Read a profile file (any path, including non-ASCII ones on Windows).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.from_bytes">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytearray" title="(in Python v3.15)"><span class="pre">bytearray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#memoryview" title="(in Python v3.15)"><span class="pre">memoryview</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.from_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.from_bytes" title="Link to this definition">¶</a></dt>
+<dd><p>Parse a profile from memory.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Profile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">Profile</span><span class="p">(</span><span class="s2">"sRGB"</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">description</span>
+<span class="go">'sRGB built-in'</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.from_space">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.from_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.from_space" title="Link to this definition">¶</a></dt>
+<dd><p>An exact profile of a colour space object (anything with <code class="docutils literal notranslate"><span class="pre">to_icc_profile()</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>space</strong> (<a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace" title="lcms2.spaces.ColorSpace"><em>ColorSpace</em></a>) – The space; its NumPy <code class="docutils literal notranslate"><span class="pre">to_xyz</span></code>/<code class="docutils literal notranslate"><span class="pre">from_xyz</span></code> are traced into an exact profile.</p></li>
+<li><p><strong>strict</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – Raise <code class="xref py py-class docutils literal notranslate"><span class="pre">ICCWriteError</span></code> instead of falling back to sampled lookup
+tables when the functions cannot be traced (data-dependent branching, <code class="docutils literal notranslate"><span class="pre">float()</span></code>,
+random numbers, non-NumPy libraries). Default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="lcms2.icc.html#lcms2.icc.ICCWriteError" title="lcms2.icc.ICCWriteError"><strong>ICCWriteError</strong></a> – With <code class="docutils literal notranslate"><span class="pre">strict=True</span></code>, naming the operation that prevents an exact profile.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.builtin">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">builtin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.builtin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.builtin" title="Link to this definition">¶</a></dt>
+<dd><p>A built-in profile by (lenient) name; see <a class="reference internal" href="#lcms2.Profile.builtins" title="lcms2.Profile.builtins"><code class="xref py py-meth docutils literal notranslate"><span class="pre">builtins()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.builtins">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">builtins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.builtins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.builtins" title="Link to this definition">¶</a></dt>
+<dd><p>Names of the built-in profiles.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="s2">"Display P3"</span> <span class="ow">in</span> <span class="n">Profile</span><span class="o">.</span><span class="n">builtins</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.srgb">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">srgb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.srgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.srgb" title="Link to this definition">¶</a></dt>
+<dd><p>LittleCMS’s built-in sRGB profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.lab">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.lab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.lab" title="Link to this definition">¶</a></dt>
+<dd><p>Lab identity profile (v4 or v2) relative to a white point (D50 by default).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Profile</span><span class="o">.</span><span class="n">lab</span><span class="p">(</span><span class="s2">"D65"</span><span class="p">)</span><span class="o">.</span><span class="n">color_space</span>
+<span class="go">&lt;ColorSpaceSignature.LAB: 'Lab'&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.xyz">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">xyz</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.xyz" title="Link to this definition">¶</a></dt>
+<dd><p>XYZ identity profile (D50 PCS, Y = 1 for the white).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.rgb">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rgb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primaries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.15)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.15)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">((0.64,</span> <span class="pre">0.33),</span> <span class="pre">(0.3,</span> <span class="pre">0.6),</span> <span class="pre">(0.15,</span> <span class="pre">0.06))</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.2</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.rgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.rgb" title="Link to this definition">¶</a></dt>
+<dd><p>Matrix-shaper RGB profile.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>white_point</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Illuminant name or xyY.</p></li>
+<li><p><strong>primaries</strong> (<em>three</em><em> (</em><em>x</em><em>, </em><em>y</em><em>) or </em><em>(</em><em>x</em><em>, </em><em>y</em><em>, </em><em>Y</em><em>) </em><em>sequences</em>) – Red, green and blue chromaticities.</p></li>
+<li><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><a class="reference internal" href="lcms2.ToneCurve.html#lcms2.ToneCurve" title="lcms2.ToneCurve"><em>ToneCurve</em></a><em>, </em><em>(</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><em>type</em></a><em>, </em><em>params</em><em>) or </em><em>a sequence</em><em> of </em><em>3</em><em> of </em><em>those</em>) – Transfer function(s) from encoded to linear values.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Profile description text.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">Profile</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="s2">"D65"</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">2.2</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"my RGB"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">is_matrix_shaper</span>
+<span class="go">('my RGB', True)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.gray">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">gray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">white_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'D50'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2.2</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">degrees</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.gray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.gray" title="Link to this definition">¶</a></dt>
+<dd><p>Gray profile from a white point and a transfer function (gamma, ToneCurve or (type, params)).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.abstract">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">abstract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">brightness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contrast</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saturation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_src</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_dst</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">17</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.abstract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.abstract" title="Link to this definition">¶</a></dt>
+<dd><p>Abstract Lab profile adjusting brightness, contrast, hue, saturation and white temperature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.ink_limiting">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ink_limiting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'CMYK'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.ink_limiting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.ink_limiting" title="Link to this definition">¶</a></dt>
+<dd><p>CMYK device link limiting total ink coverage to <code class="docutils literal notranslate"><span class="pre">limit</span></code> percent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.linearization">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">linearization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curves</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.15)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'RGB'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.linearization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.linearization" title="Link to this definition">¶</a></dt>
+<dd><p>Device link applying one curve (gamma, ToneCurve or (type, params)) per channel.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.space">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">space</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="lcms2.icc.html#lcms2.icc.ICCSpace" title="lcms2.icc.ICCSpace"><span class="pre">ICCSpace</span></a></span><a class="headerlink" href="#lcms2.Profile.space" title="Link to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace" title="lcms2.spaces.ColorSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">lcms2.spaces.ColorSpace</span></code></a> view of this profile (pure NumPy evaluation).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">lcms2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lcms2</span><span class="o">.</span><span class="n">Profile</span><span class="p">(</span><span class="s2">"sRGB"</span><span class="p">)</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">n_channels</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.to_bytes">
+<span class="sig-name descname"><span class="pre">to_bytes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.to_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.to_bytes" title="Link to this definition">¶</a></dt>
+<dd><p>The profile as ICC bytes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.15)"><span class="pre">PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.save" title="Link to this definition">¶</a></dt>
+<dd><p>Write the profile to a file.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.description">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">description</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#lcms2.Profile.description" title="Link to this definition">¶</a></dt>
+<dd><p>Profile description text (settable).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.manufacturer">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">manufacturer</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#lcms2.Profile.manufacturer" title="Link to this definition">¶</a></dt>
+<dd><p>Device manufacturer text (settable).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.model">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">model</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#lcms2.Profile.model" title="Link to this definition">¶</a></dt>
+<dd><p>Device model text (settable).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.copyright">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">copyright</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#lcms2.Profile.copyright" title="Link to this definition">¶</a></dt>
+<dd><p>Copyright text (settable).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.header">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">header</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#lcms2.Profile.header" title="Link to this definition">¶</a></dt>
+<dd><p>Raw header fields (signatures as 4-character strings).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.set_header">
+<span class="sig-name descname"><span class="pre">set_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.set_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.set_header" title="Link to this definition">¶</a></dt>
+<dd><p>Change header fields: device_class, color_space, pcs, version, rendering_intent, flags,
+manufacturer, model, attributes, profile_id.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.color_space">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">color_space</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ColorSpaceSignature</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#lcms2.Profile.color_space" title="Link to this definition">¶</a></dt>
+<dd><p>Data colour space (<code class="docutils literal notranslate"><span class="pre">&quot;RGB&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;CMYK&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Lab&quot;</span></code> …).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.pcs">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">pcs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ColorSpaceSignature</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#lcms2.Profile.pcs" title="Link to this definition">¶</a></dt>
+<dd><p>Profile connection space (<code class="docutils literal notranslate"><span class="pre">&quot;XYZ&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;Lab&quot;</span></code>).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.device_class">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">device_class</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DeviceClass</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#lcms2.Profile.device_class" title="Link to this definition">¶</a></dt>
+<dd><p>Profile class (<code class="docutils literal notranslate"><span class="pre">display</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span></code>, <code class="docutils literal notranslate"><span class="pre">link</span></code> …).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.version">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">version</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><a class="headerlink" href="#lcms2.Profile.version" title="Link to this definition">¶</a></dt>
+<dd><p>ICC version, e.g. 4.3 or 2.1 (settable).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.channels">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#lcms2.Profile.channels" title="Link to this definition">¶</a></dt>
+<dd><p>Number of channels of the data colour space.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.rendering_intent">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rendering_intent</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="lcms2.Intent.html#lcms2.Intent" title="lcms2._constants.Intent"><span class="pre">Intent</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#lcms2.Profile.rendering_intent" title="Link to this definition">¶</a></dt>
+<dd><p>Header rendering intent (settable).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.creation_date">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">creation_date</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#lcms2.Profile.creation_date" title="Link to this definition">¶</a></dt>
+<dd><p>Creation date from the header.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lcms2.Profile.profile_id">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">profile_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a></span><a class="headerlink" href="#lcms2.Profile.profile_id" title="Link to this definition">¶</a></dt>
+<dd><p>The 16-byte MD5 profile ID (zeros when unset); see <a class="reference internal" href="#lcms2.Profile.compute_id" title="lcms2.Profile.compute_id"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_id()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.compute_id">
+<span class="sig-name descname"><span class="pre">compute_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.compute_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.compute_id" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the MD5 profile ID, store it in the header and return it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lcms2.Profile.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">intent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'relative'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bpc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proof</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamut_check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DTypeLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_profile.html#Profile.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Profile.transform" title="Link to this definition">¶</a></dt>
+<dd><p>Convert <code class="docutils literal notranslate"><span class="pre">data</span></code> from this profile to <code class="docutils literal notranslate"><span class="pre">to</span></code>; same keywords as <a class="reference internal" href="lcms2.convert.html#lcms2.convert" title="lcms2.convert"><code class="xref py py-func docutils literal notranslate"><span class="pre">lcms2.convert()</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Profile</span><span class="p">(</span><span class="s2">"sRGB"</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span> <span class="s2">"Lab"</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0</span>
+<span class="go">array([100.,   0.,   0.])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="lcms2.Transform.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">lcms2.Transform</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../api.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">API reference</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Josue N Rivera
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">lcms2.Profile</a><ul>
+<li><a class="reference internal" href="#lcms2.Profile"><code class="docutils literal notranslate"><span class="pre">Profile</span></code></a><ul>
+<li><a class="reference internal" href="#lcms2.Profile.__init__"><code class="docutils literal notranslate"><span class="pre">Profile.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.open"><code class="docutils literal notranslate"><span class="pre">Profile.open()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.from_bytes"><code class="docutils literal notranslate"><span class="pre">Profile.from_bytes()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.from_space"><code class="docutils literal notranslate"><span class="pre">Profile.from_space()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.builtin"><code class="docutils literal notranslate"><span class="pre">Profile.builtin()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.builtins"><code class="docutils literal notranslate"><span class="pre">Profile.builtins()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.srgb"><code class="docutils literal notranslate"><span class="pre">Profile.srgb()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.lab"><code class="docutils literal notranslate"><span class="pre">Profile.lab()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.xyz"><code class="docutils literal notranslate"><span class="pre">Profile.xyz()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.rgb"><code class="docutils literal notranslate"><span class="pre">Profile.rgb()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.gray"><code class="docutils literal notranslate"><span class="pre">Profile.gray()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.abstract"><code class="docutils literal notranslate"><span class="pre">Profile.abstract()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.ink_limiting"><code class="docutils literal notranslate"><span class="pre">Profile.ink_limiting()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.linearization"><code class="docutils literal notranslate"><span class="pre">Profile.linearization()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.space"><code class="docutils literal notranslate"><span class="pre">Profile.space</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.to_bytes"><code class="docutils literal notranslate"><span class="pre">Profile.to_bytes()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.save"><code class="docutils literal notranslate"><span class="pre">Profile.save()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.description"><code class="docutils literal notranslate"><span class="pre">Profile.description</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.manufacturer"><code class="docutils literal notranslate"><span class="pre">Profile.manufacturer</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.model"><code class="docutils literal notranslate"><span class="pre">Profile.model</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.copyright"><code class="docutils literal notranslate"><span class="pre">Profile.copyright</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.header"><code class="docutils literal notranslate"><span class="pre">Profile.header</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.set_header"><code class="docutils literal notranslate"><span class="pre">Profile.set_header()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.color_space"><code class="docutils literal notranslate"><span class="pre">Profile.color_space</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.pcs"><code class="docutils literal notranslate"><span class="pre">Profile.pcs</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.device_class"><code class="docutils literal notranslate"><span class="pre">Profile.device_class</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.version"><code class="docutils literal notranslate"><span class="pre">Profile.version</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.channels"><code class="docutils literal notranslate"><span class="pre">Profile.channels</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.rendering_intent"><code class="docutils literal notranslate"><span class="pre">Profile.rendering_intent</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.creation_date"><code class="docutils literal notranslate"><span class="pre">Profile.creation_date</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.profile_id"><code class="docutils literal notranslate"><span class="pre">Profile.profile_id</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.compute_id"><code class="docutils literal notranslate"><span class="pre">Profile.compute_id()</span></code></a></li>
+<li><a class="reference internal" href="#lcms2.Profile.transform"><code class="docutils literal notranslate"><span class="pre">Profile.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=f129cdf0"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

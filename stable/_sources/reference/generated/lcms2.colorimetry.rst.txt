@@ -1,0 +1,7 @@
+﻿lcms2.colorimetry
+=================
+
+.. automodule:: lcms2.colorimetry
+   :members:
+   :undoc-members: False
+   :show-inheritance:

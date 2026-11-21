@@ -1,0 +1,7 @@
+﻿lcms2.spaces
+============
+
+.. automodule:: lcms2.spaces
+   :members:
+   :undoc-members: False
+   :show-inheritance:

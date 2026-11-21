@@ -1,0 +1,45 @@
+﻿lcms2.CGATS
+===========
+
+.. currentmodule:: lcms2
+
+.. autoclass:: CGATS
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CGATS.__init__
+      ~CGATS.add_table
+      ~CGATS.column
+      ~CGATS.define_table
+      ~CGATS.from_bytes
+      ~CGATS.from_columns
+      ~CGATS.get
+      ~CGATS.load
+      ~CGATS.save
+      ~CGATS.select
+      ~CGATS.set
+      ~CGATS.to_bytes
+      ~CGATS.to_dict
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CGATS.columns
+      ~CGATS.data
+      ~CGATS.n_rows
+      ~CGATS.patches
+      ~CGATS.sheet_type
+      ~CGATS.table
+   
+   
