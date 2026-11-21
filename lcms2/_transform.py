@@ -489,6 +489,27 @@ def _out_shape(arr: np.ndarray, fin: Any, fout: Any) -> tuple[int, ...]:
     return (*lead, fout.channels) if fout.channels > 1 or keep else tuple(lead)
 
 
+def supported_intents() -> dict[Intent | int, str]:
+    """Every rendering intent the LittleCMS engine implements, with its description.
+
+    Includes intents added by plugins; :attr:`Profile.supported_intents` lists the ones a
+    given profile supports.
+
+    Examples
+    --------
+    >>> import lcms2
+    >>> lcms2.supported_intents()[lcms2.Intent.PERCEPTUAL]
+    'Perceptual'
+    """
+    out: dict[Intent | int, str] = {}
+    for code, desc in _lcms2.get_supported_intents():
+        try:
+            out[Intent(code)] = desc
+        except ValueError:
+            out[code] = desc
+    return out
+
+
 def get_alarm_codes() -> tuple[int, ...]:
     """The 16 gamut-check alarm values (process-wide), in 16-bit output encoding."""
     return _lcms2.get_alarm_codes()

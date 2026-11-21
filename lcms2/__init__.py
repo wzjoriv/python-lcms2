@@ -26,6 +26,7 @@ from ._transform import (
     get_alarm_codes,
     set_adaptation_state,
     set_alarm_codes,
+    supported_intents,
 )
 from .cgats import CGATS
 from .colorimetry import CIECAM02, delta_e
@@ -68,6 +69,7 @@ __all__ = [
     "WHITE_POINTS",
     "convert",
     "get_alarm_codes",
+    "supported_intents",
     "get_version",
     "set_adaptation_state",
     "set_alarm_codes",

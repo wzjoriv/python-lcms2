@@ -303,17 +303,6 @@ py_apply(PyObject *self, PyObject *args)
 /* Misc ------------------------------------------------------------------------------------------- */
 
 static PyObject *
-py_formats(PyObject *self, PyObject *arg)
-{
-    (void)self;
-    cmsHTRANSFORM t = lcms2_get_transform(arg);
-    if (t == NULL)
-        return NULL;
-    return Py_BuildValue("(kk)", (unsigned long)cmsGetTransformInputFormat(t),
-                         (unsigned long)cmsGetTransformOutputFormat(t));
-}
-
-static PyObject *
 py_to_device_link(PyObject *self, PyObject *args)
 {
     (void)self;
@@ -415,8 +404,6 @@ PyMethodDef lcms2_transform_methods[] = {
     {"transform_apply", py_apply, METH_VARARGS,
      "transform_apply(transform, src, dst) -> None\n\n"
      "Transform contiguous `src` into `dst` (dtypes and sizes checked against the formats)."},
-    {"transform_formats", py_formats, METH_O,
-     "transform_formats(transform) -> tuple[int, int]\n\nInput and output pixel formats."},
     {"transform_to_device_link", py_to_device_link, METH_VARARGS,
      "transform_to_device_link(transform, version, flags) -> object\n\nDevice link profile of a transform."},
     {"get_alarm_codes", py_get_alarm_codes, METH_NOARGS,

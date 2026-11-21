@@ -23,6 +23,7 @@ Core
    to_hex
    get_version
    set_alarm_codes
+   supported_intents
    get_alarm_codes
    set_adaptation_state
 
