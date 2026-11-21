@@ -31,21 +31,44 @@ _A2B_GRID_DEFAULT = 17
 _B2A_GRID = 33
 
 
+def _neutral_axis(grid: int) -> tuple[np.ndarray, float]:
+    """PCS white per channel and the scale that puts white on a grid node.
+
+    Each B2A input curve is ``t = scale * cbrt(u / white)``, the same for all channels, so the
+    neutral axis is the grid diagonal: white lands on a node and tetrahedral interpolation
+    between diagonal nodes keeps grays neutral.
+    """
+    white = D50 / XYZ_U1F15_SCALE
+    return white, float(np.floor(np.cbrt(white.min()) * (grid - 1)) / (grid - 1))
+
+
+def _warp(u: np.ndarray, axis: tuple[np.ndarray, float], i: int) -> np.ndarray:
+    """B2A input curve of PCS channel ``i``."""
+    white, scale = axis
+    return np.clip(scale * cube_root(np.asarray(u, dtype=np.float64) / white[i]), 0.0, 1.0)
+
+
+def _unwarp(t: np.ndarray, axis: tuple[np.ndarray, float]) -> np.ndarray:
+    """Inverse of `_warp` for all three channels (last axis): grid coordinates to PCS values."""
+    white, scale = axis
+    return white * (np.asarray(t, dtype=np.float64) / scale) ** 3
+
+
 def _white_knots(grid: int) -> tuple[np.ndarray, np.ndarray]:
     """Cube-root PCS white per channel and the grid node it is moved onto."""
     white = cube_root(D50 / XYZ_U1F15_SCALE)
     return white, np.round(white * (grid - 1)) / (grid - 1)
 
 
-def _warp(s: np.ndarray, knots: tuple[np.ndarray, np.ndarray], i: int) -> np.ndarray:
+def _white_warp(s: np.ndarray, knots: tuple[np.ndarray, np.ndarray], i: int) -> np.ndarray:
     """Piecewise-linear map of cube-root PCS channel ``i`` that puts white on a grid node."""
     w, k = knots[0][i], knots[1][i]
     s = np.asarray(s, dtype=np.float64)
     return np.where(s <= w, s * (k / w), k + (s - w) * ((1.0 - k) / (1.0 - w)))
 
 
-def _unwarp(t: np.ndarray, knots: tuple[np.ndarray, np.ndarray]) -> np.ndarray:
-    """Inverse of `_warp` for all three channels (last axis)."""
+def _white_unwarp(t: np.ndarray, knots: tuple[np.ndarray, np.ndarray]) -> np.ndarray:
+    """Inverse of `_white_warp` for all three channels (last axis)."""
     w, k = knots
     t = np.asarray(t, dtype=np.float64)
     return np.where(t <= k, t * (w / k), w + (t - k) * ((1.0 - w) / (1.0 - k)))
@@ -97,10 +120,21 @@ def write_clut(ctx: Context, tags: dict, notes: list, a2b_only: bool = False) ->
             ],
         )
     else:
-        knots = _white_knots(b2a_grid)
-        b2a = sample_grid(
-            lambda t: ctx.bwd(_unwarp(t, knots) ** 3 * XYZ_U1F15_SCALE), [(0.0, 1.0)] * 3, b2a_grid
-        )
+        if ctx.periods:
+            knots = _white_knots(b2a_grid)
+            b_curves = [lambda u, i=i: _white_warp(cube_root(u), knots, i) for i in range(3)]
+
+            def from_grid(t: np.ndarray) -> np.ndarray:
+                return _white_unwarp(t, knots) ** 3
+
+        else:
+            axis = _neutral_axis(b2a_grid)
+            b_curves = [lambda u, i=i: _warp(u, axis, i) for i in range(3)]
+
+            def from_grid(t: np.ndarray) -> np.ndarray:
+                return _unwarp(t, axis)
+
+        b2a = sample_grid(lambda t: ctx.bwd(from_grid(t) * XYZ_U1F15_SCALE), [(0.0, 1.0)] * 3, b2a_grid)
         pcs_max = cube_root(XYZ_U1F15_SCALE) if use_shaping else XYZ_U1F15_SCALE
         a2b_enc = np.clip(a2b / pcs_max, 0.0, 1.0)
         b2a_enc = np.clip(np.nan_to_num(b2a), 0.0, 1.0)
@@ -108,7 +142,6 @@ def write_clut(ctx: Context, tags: dict, notes: list, a2b_only: bool = False) ->
         if a2b_only:
             notes.append(f"sampled onto a {a2b_grid}^{ctx.n} A2B0 grid")
             return
-        b_curves = [lambda u, i=i: _warp(cube_root(u), knots, i) for i in range(3)]
         tags[b"B2A0"] = encode_lut_tag(ctx, True, b_curves, b2a_enc, None)
     shaping = "cube-root-shaped " if use_shaping else ""
     notes.append(f"sampled onto a {shaping}{a2b_grid}^{ctx.n} A2B0 grid and a {b2a_grid}^3 B2A0 grid")

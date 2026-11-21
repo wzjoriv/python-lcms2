@@ -80,3 +80,12 @@ def test_loaded_cmyk_profile_maps_white_to_no_ink():
     loaded = Profile.from_bytes(spaces.cmyk.to_icc_profile()["bytes"])
     white = Profile("sRGB").transform(np.array([[255, 255, 255]], np.uint8), loaded)
     np.testing.assert_array_equal(white, [[0, 0, 0, 0]])
+
+
+def test_loaded_cmyk_profile_prints_grays_with_black_only():
+    loaded = Profile.from_bytes(spaces.cmyk.to_icc_profile()["bytes"])
+    grays = np.array([[v, v, v] for v in (255, 200, 128, 60, 0)], np.uint8)
+    cmyk = Profile("sRGB").transform(grays, loaded)
+    assert np.all(cmyk[:, :3] == 0)
+    want = np.rint(spaces.srgb.to("cmyk", grays / 255.0)[:, 3] * 2.55)
+    assert np.abs(cmyk[:, 3].astype(int) - want).max() <= 1
