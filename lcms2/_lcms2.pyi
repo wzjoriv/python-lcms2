@@ -158,9 +158,6 @@ def transform_create_extended(
 def transform_apply(transform: Any, src: NDArray[Any], dst: NDArray[Any]) -> None:
     """Transform contiguous `src` into `dst` (dtypes and sizes checked against the formats)."""
 
-def transform_formats(transform: Any) -> tuple[int, int]:
-    """Input and output pixel formats."""
-
 def transform_to_device_link(transform: Any, version: float, flags: int) -> Handle:
     """Device link profile of a transform."""
 

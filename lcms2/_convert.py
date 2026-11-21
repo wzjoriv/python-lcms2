@@ -29,20 +29,13 @@ def _is_space(obj: Any) -> bool:
 
 
 def _lookup_space_name(name: str) -> Any:
-    """A registered ColorSpace by name, when the ``lcms2.spaces`` package provides one."""
+    """The registered ColorSpace called ``name``, or None."""
+    from . import spaces
+
     try:
-        from . import spaces  # type: ignore[attr-defined]
-    except ImportError:
+        return spaces.get(name)
+    except (KeyError, TypeError):
         return None
-    for getter in ("get", "get_space", "lookup"):
-        fn = getattr(spaces, getter, None)
-        if callable(fn):
-            try:
-                space = fn(name)
-            except (KeyError, LookupError, ValueError, TypeError):
-                return None
-            return space if _is_space(space) else None
-    return None
 
 
 def _builtin(name: str) -> Profile:
