@@ -16,7 +16,7 @@ def data_dir() -> Path:
 def cmyk():
     import lcms2
 
-    return lcms2.Profile(DATA / "CMYK.icm")
+    return lcms2.Profile(DATA / "profiles" / "test1.icc")
 
 
 @pytest.fixture

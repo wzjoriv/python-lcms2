@@ -67,7 +67,7 @@ def test_hue_is_in_degrees(name):
 
 
 def test_using_a_profile_does_not_change_its_bytes():
-    path = Path(__file__).resolve().parents[1] / "data" / "CMYK.icm"
+    path = Path(__file__).resolve().parents[1] / "data" / "profiles" / "test1.icc"
     raw = path.read_bytes()
     p = Profile.from_bytes(raw)
     Transform(p, "Lab").apply(np.full((4, 4), 50.0))
