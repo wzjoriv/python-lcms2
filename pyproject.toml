@@ -39,7 +39,6 @@ test = ["pytest>=7.0", "pillow>=10", "typer>=0.12"]
 docs = [
     "sphinx>=7.0",
     "furo>=2024.1.29",
-    "myst-parser>=2.0",
 ]
 dev = [
     "python-lcms2[docs,test,plot]",

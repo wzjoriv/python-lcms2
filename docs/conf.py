@@ -25,7 +25,6 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
-    "myst_parser",
 ]
 
 autodoc_default_options = {
@@ -51,8 +50,6 @@ intersphinx_mapping = (
     if os.environ.get("SPHINX_INTERSPHINX", "1") != "0"
     else {}
 )
-
-myst_enable_extensions = ["colon_fence", "deflist"]
 
 html_theme = "furo"
 html_title = f"python-lcms2 {release}"
@@ -93,7 +90,7 @@ if DOCS_CHANNEL == "dev":
         f'Development docs for the next release. <a href="{DOCS_BASE_URL}/stable/">Stable docs</a>.'
     )
 
-source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
+source_suffix = {".rst": "restructuredtext"}
 root_doc = "index"
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 pygments_style = "friendly"
