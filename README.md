@@ -128,17 +128,9 @@ A numbered learning path from first conversions to ICC authoring, each as a scri
 
 Guides and the API reference: <https://wzjoriv.github.io/python-lcms2>.
 
-## Building from source
+## Contributing
 
-```bash
-git clone --recurse-submodules https://github.com/wzjoriv/python-lcms2.git
-cd python-lcms2
-pip install -e ".[dev]"
-python scripts/dev.py check                   # lint + tests
-```
-
-A C compiler is needed (MSVC on Windows, gcc/clang elsewhere). LittleCMS is vendored as a git submodule in
-`vendor/Little-CMS`; `python scripts/dev.py lcms2 update` moves it to the newest release.
+Building from source and the developer commands are in [docs/contributing.rst](docs/contributing.rst).
 
 ## License
 
