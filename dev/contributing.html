@@ -301,7 +301,9 @@
 pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev]"</span>
 </pre></div>
 </div>
-<p>After changing C code in <code class="docutils literal notranslate"><span class="pre">lcms2/_ext</span></code>, rebuild with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span> <span class="pre">--no-build-isolation</span></code>.</p>
+<p>A C compiler is needed (MSVC on Windows, gcc or clang elsewhere). LittleCMS is vendored as a git submodule in
+<code class="docutils literal notranslate"><span class="pre">vendor/Little-CMS</span></code>; <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/dev.py</span> <span class="pre">lcms2</span> <span class="pre">update</span></code> moves it to the newest release. After changing C
+code in <code class="docutils literal notranslate"><span class="pre">lcms2/_ext</span></code>, rebuild with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span> <span class="pre">--no-build-isolation</span></code>.</p>
 </section>
 <section id="developer-commands">
 <h2>Developer commands<a class="headerlink" href="#developer-commands" title="Link to this heading">¶</a></h2>
