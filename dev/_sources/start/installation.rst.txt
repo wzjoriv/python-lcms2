@@ -10,8 +10,8 @@ Wheels are published for Windows, Linux and macOS on x86-64 and ARM64: CPython 3
 free-threaded 3.14t and 3.15t builds) and PyPy 3.11. NumPy (2.0+) is the only runtime dependency. LittleCMS is compiled into the extension; nothing else needs to be installed.
 python-lcms2 is released under the MIT license, like the LittleCMS it bundles.
 
-In the browser, Pyodide wheels are attached to each `GitHub release <https://github.com/wzjoriv/python-lcms2/releases>`_;
-install one with ``micropip.install("<wheel URL>")``.
+In the browser (Pyodide), ``await micropip.install("python-lcms2")`` installs the Pyodide wheel from PyPI; it is
+also attached to each `GitHub release <https://github.com/wzjoriv/python-lcms2/releases>`_.
 
 Check what you got:
 
