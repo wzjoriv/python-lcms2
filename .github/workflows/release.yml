@@ -84,7 +84,8 @@ jobs:
       - name: Build Pyodide wheels
         run: python -m cibuildwheel --platform pyodide --output-dir wheelhouse
         env:
-          CIBW_BUILD: "cp312-* cp313-*"
+          CIBW_BUILD: "cp312-* cp313-* cp314-*"
+          CIBW_ENABLE: "pyodide-eol"
 
       - uses: actions/upload-artifact@v7
         with:
