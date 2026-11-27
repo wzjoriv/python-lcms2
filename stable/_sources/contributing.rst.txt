@@ -10,7 +10,9 @@ Setup
    cd python-lcms2
    pip install -e ".[dev]"
 
-After changing C code in ``lcms2/_ext``, rebuild with ``pip install -e . --no-build-isolation``.
+A C compiler is needed (MSVC on Windows, gcc or clang elsewhere). LittleCMS is vendored as a git submodule in
+``vendor/Little-CMS``; ``python scripts/dev.py lcms2 update`` moves it to the newest release. After changing C
+code in ``lcms2/_ext``, rebuild with ``pip install -e . --no-build-isolation``.
 
 Developer commands
 ------------------
