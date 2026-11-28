@@ -85,7 +85,7 @@ _INDEX = _build_index()
 
 def builtin_names() -> list[str]:
     """Canonical names of the built-in profiles."""
-    return list(_FACTORIES)
+    return [n for n in _FACTORIES if not n.startswith("_")]
 
 
 def lookup_builtin(name: str) -> str | None:
