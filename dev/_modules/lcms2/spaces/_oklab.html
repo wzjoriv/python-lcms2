@@ -317,7 +317,19 @@
 <div class="viewcode-block" id="OKLabSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLabSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OKLabSpace</span><span class="p">(</span><span class="n">ColorSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""OKLab (Ottosson 2020) on linear sRGB primaries, adapted to D50."""</span>
+<span class="w">    </span><span class="sd">"""OKLab (Ottosson 2020) on linear sRGB primaries, adapted to D50.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Passed to `ColorSpace`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb, oklab</span>
+<span class="sd">    &gt;&gt;&gt; srgb.to(oklab, [1.0, 1.0, 1.0]).round(2).tolist()</span>
+<span class="sd">    [1.0, 0.0, 0.0]</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"oklab"</span>
     <span class="n">icc_colour_space_signature</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"3CLR"</span>
@@ -326,7 +338,6 @@
 <div class="viewcode-block" id="OKLabSpace.to_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLabSpace.to_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oklab</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert OKLab to CIE XYZ (D50)."""</span>
         <span class="n">lms_</span> <span class="o">=</span> <span class="n">mat3</span><span class="p">(</span><span class="n">_M2_INV</span><span class="p">,</span> <span class="n">oklab</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">mat3</span><span class="p">(</span><span class="n">_LMS_TO_XYZ_D50</span><span class="p">,</span> <span class="n">lms_</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span></div>
 
@@ -334,7 +345,6 @@
 <div class="viewcode-block" id="OKLabSpace.from_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLabSpace.from_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert CIE XYZ (D50) to OKLab."""</span>
         <span class="k">return</span> <span class="n">mat3</span><span class="p">(</span><span class="n">OKLAB_M2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="n">mat3</span><span class="p">(</span><span class="n">_XYZ_D50_TO_LMS</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)))</span></div>
 </div>
 

@@ -314,7 +314,25 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">srgb_decode</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""sRGB transfer function, device to linear; linear extension below 0."""</span>
+<span class="w">    </span><span class="sd">"""Apply the sRGB transfer function from device values to linear light.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    v : ndarray</span>
+<span class="sd">        Device values, 0..1; the curve extends linearly below 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The transformed values, same shape as `v`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces._srgb import srgb_decode</span>
+<span class="sd">    &gt;&gt;&gt; srgb_decode(np.array([0.5, 1.0])).round(4).tolist()</span>
+<span class="sd">    [0.214, 1.0]</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="n">v</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">0.04045</span><span class="p">,</span> <span class="n">v</span> <span class="o">/</span> <span class="mf">12.92</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">((</span><span class="n">v</span> <span class="o">+</span> <span class="mf">0.055</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1.055</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">))</span>
@@ -327,7 +345,25 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">srgb_encode</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""sRGB transfer function, linear to device; linear extension below 0."""</span>
+<span class="w">    </span><span class="sd">"""Apply the inverse sRGB transfer function from linear light to device values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    v : ndarray</span>
+<span class="sd">        Linear-light values, 0..1; the curve extends linearly below 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The transformed values, same shape as `v`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces._srgb import srgb_encode</span>
+<span class="sd">    &gt;&gt;&gt; srgb_encode(np.array([0.5, 1.0])).round(4).tolist()</span>
+<span class="sd">    [0.7354, 1.0]</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="n">v</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">v</span> <span class="o">&lt;=</span> <span class="mf">0.0031308</span><span class="p">,</span> <span class="n">v</span> <span class="o">*</span> <span class="mf">12.92</span><span class="p">,</span> <span class="mf">1.055</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.4</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.055</span><span class="p">)</span>
@@ -341,7 +377,19 @@
 <div class="viewcode-block" id="SRGBSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.SRGBSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SRGBSpace</span><span class="p">(</span><span class="n">RGBSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""sRGB: IEC 61966-2-1 primaries and transfer function, D65 adapted to D50."""</span>
+<span class="w">    </span><span class="sd">"""sRGB: IEC 61966-2-1 primaries and transfer function, D65 adapted to D50.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Passed to `ColorSpace`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb, xyz_d50</span>
+<span class="sd">    &gt;&gt;&gt; srgb.to(xyz_d50, [1.0, 0.0, 0.0]).round(2).tolist()</span>
+<span class="sd">    [0.44, 0.22, 0.01]</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"srgb"</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">D65_TO_D50</span> <span class="o">@</span> <span class="n">SRGB_TO_XYZ_D65</span>

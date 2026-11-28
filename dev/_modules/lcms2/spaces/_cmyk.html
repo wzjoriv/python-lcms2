@@ -297,8 +297,21 @@
 <div class="viewcode-block" id="CMYKSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.CMYKSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CMYKSpace</span><span class="p">(</span><span class="n">ColorSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""CMYK ink in percent (0..100, as in Photoshop and Little CMS) from the complement of sRGB</span>
-<span class="sd">    with ``K = min(C, M, Y)``; not an ink model."""</span>
+<span class="w">    </span><span class="sd">"""Formula CMYK over sRGB, with ink in percent (0..100) as in Photoshop and Little CMS.</span>
+
+<span class="sd">    Derived from the complement of sRGB with ``K = min(C, M, Y)``; not an ink model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Passed to `ColorSpace`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb, cmyk</span>
+<span class="sd">    &gt;&gt;&gt; srgb.to(cmyk, [1.0, 0.0, 0.0]).round(2).tolist()</span>
+<span class="sd">    [0.0, 100.0, 100.0, 0.0]</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"cmyk"</span>
     <span class="n">n_channels</span> <span class="o">=</span> <span class="mi">4</span>
@@ -308,7 +321,6 @@
 <div class="viewcode-block" id="CMYKSpace.to_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.CMYKSpace.to_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmyk</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert CMYK to CIE XYZ (D50)."""</span>
         <span class="n">cmyk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cmyk</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
         <span class="n">k</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">cmyk</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">cmyk</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">k</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -318,7 +330,6 @@
 <div class="viewcode-block" id="CMYKSpace.from_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.CMYKSpace.from_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert CIE XYZ (D50) to CMYK."""</span>
         <span class="n">cmy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">srgb</span><span class="o">.</span><span class="n">from_xyz</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">cmy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">cmy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">cmy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
         <span class="n">ink</span> <span class="o">=</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">1e-12</span>

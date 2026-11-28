@@ -311,9 +311,9 @@
 <span class="sd">    ----------</span>
 <span class="sd">    lab1, lab2 : array_like</span>
 <span class="sd">        Lab values of shape ``(..., 3)``; the two operands broadcast against each other.</span>
-<span class="sd">    method : {"2000", "76", "94", "cmc", "bfd"}</span>
-<span class="sd">        CIEDE2000 (default), CIE76 (Euclidean), CIE94, CMC l:c or BFD. A leading "de" or</span>
-<span class="sd">        "cie" is accepted ("de2000").</span>
+<span class="sd">    method : {"2000", "76", "94", "cmc", "bfd"}, optional</span>
+<span class="sd">        CIEDE2000, CIE76 (Euclidean), CIE94, CMC l:c or BFD. A leading "de" or</span>
+<span class="sd">        "cie" is accepted ("de2000"). Defaults to ``"2000"``.</span>
 <span class="sd">    **params</span>
 <span class="sd">        ``Kl``, ``Kc``, ``Kh`` (all default 1) for ``"2000"``; ``l`` (2) and ``c`` (1) for</span>
 <span class="sd">        ``"cmc"``.</span>
@@ -329,6 +329,10 @@
 <span class="sd">        For an unknown method or an array whose last axis is not 3.</span>
 <span class="sd">    TypeError</span>
 <span class="sd">        For a parameter the chosen method does not take.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lcms2.colorimetry.xyz_to_lab : Get Lab values from XYZ.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>

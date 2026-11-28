@@ -322,7 +322,16 @@
 <span class="sd">    xyz : array_like</span>
 <span class="sd">        XYZ of shape ``(..., 3)`` with ``Y = 1`` at the white.</span>
 <span class="sd">    white : array_like, optional</span>
-<span class="sd">        Reference white XYZ; defaults to D50.</span>
+<span class="sd">        Reference white XYZ. Defaults to D50.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Lab of shape ``(..., 3)``, with L in 0..100 at the white.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lab_to_xyz : The inverse.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -343,6 +352,22 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">lab_to_xyz</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span> <span class="n">white</span><span class="p">:</span> <span class="n">ArrayLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""CIELAB to XYZ; inverse of :func:`xyz_to_lab`.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lab : array_like</span>
+<span class="sd">        Lab of shape ``(..., 3)``, with L in 0..100.</span>
+<span class="sd">    white : array_like, optional</span>
+<span class="sd">        Reference white XYZ. Defaults to D50.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        XYZ of shape ``(..., 3)`` with ``Y = 1`` at the white.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    xyz_to_lab : The inverse.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from lcms2.colorimetry import lab_to_xyz</span>
@@ -362,6 +387,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">lab_to_lch</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""CIELAB to LCh (hue in degrees, 0..360).</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lab : array_like</span>
+<span class="sd">        Lab of shape ``(..., 3)``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        LCh of shape ``(..., 3)``: lightness, chroma and hue in degrees.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lch_to_lab : The inverse.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from lcms2.colorimetry import lab_to_lch</span>
@@ -379,6 +418,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">lch_to_lab</span><span class="p">(</span><span class="n">lch</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""LCh to CIELAB; inverse of :func:`lab_to_lch`.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lch : array_like</span>
+<span class="sd">        LCh of shape ``(..., 3)``, with hue in degrees.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Lab of shape ``(..., 3)``.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lab_to_lch : The inverse.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from lcms2.colorimetry import lch_to_lab</span>
@@ -395,6 +448,20 @@
 <a class="viewcode-back" href="../../../reference/generated/lcms2.colorimetry.html#lcms2.colorimetry.xyz_to_xyy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_xyy</span><span class="p">(</span><span class="n">xyz</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""XYZ to xyY. Black (XYZ all zero) gets the D50 chromaticity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xyz : array_like</span>
+<span class="sd">        XYZ of shape ``(..., 3)``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        xyY of shape ``(..., 3)``.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    xyy_to_xyz : The inverse.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -414,6 +481,20 @@
 <a class="viewcode-back" href="../../../reference/generated/lcms2.colorimetry.html#lcms2.colorimetry.xyy_to_xyz">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">xyy_to_xyz</span><span class="p">(</span><span class="n">xyy</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""xyY to XYZ. A zero ``y`` gives black.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xyy : array_like</span>
+<span class="sd">        xyY of shape ``(..., 3)``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        XYZ of shape ``(..., 3)``.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    xyz_to_xyy : The inverse.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -453,8 +534,8 @@
 <span class="sd">    ----------</span>
 <span class="sd">    src_white, dst_white : array_like</span>
 <span class="sd">        XYZ of the source and destination whites.</span>
-<span class="sd">    method : {"bradford", "von_kries", "xyz_scaling"}</span>
-<span class="sd">        Adaptation transform.</span>
+<span class="sd">    method : {"bradford", "von_kries", "xyz_scaling"}, optional</span>
+<span class="sd">        Adaptation transform. Defaults to ``"bradford"``.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -466,6 +547,10 @@
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        If `method` is unknown.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    adapt : Apply the adaptation to colors.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -493,8 +578,22 @@
 <span class="sd">        XYZ of shape ``(..., 3)``.</span>
 <span class="sd">    src_white, dst_white : array_like</span>
 <span class="sd">        XYZ of the source and destination whites.</span>
-<span class="sd">    method : {"bradford", "von_kries", "xyz_scaling"}</span>
-<span class="sd">        Adaptation transform.</span>
+<span class="sd">    method : {"bradford", "von_kries", "xyz_scaling"}, optional</span>
+<span class="sd">        Adaptation transform. Defaults to ``"bradford"``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Adapted XYZ of shape ``(..., 3)``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `method` is unknown.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    adaptation_matrix : The underlying matrix.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>

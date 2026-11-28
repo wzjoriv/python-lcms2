@@ -378,19 +378,19 @@
 <span class="sd">    colorspace : ColorSpace</span>
 <span class="sd">        The space to write.</span>
 <span class="sd">    version : tuple of int, optional</span>
-<span class="sd">        ``(major, minor, bugfix)``. Default ``(4, 4, 0)``.</span>
+<span class="sd">        ``(major, minor, bugfix)``. Defaults to ``(4, 4, 0)``.</span>
 <span class="sd">    rendering_intent : int, optional</span>
-<span class="sd">        Header rendering intent. Default 1.</span>
+<span class="sd">        Header rendering intent. Defaults to 1.</span>
 <span class="sd">    grid_size : int, optional</span>
-<span class="sd">        CLUT grid points per axis for a sampled fallback.</span>
+<span class="sd">        CLUT grid points per axis for a sampled fallback. Defaults to a size chosen from the channel count.</span>
 <span class="sd">    description, copyright : str, optional</span>
-<span class="sd">        Profile description and copyright text.</span>
+<span class="sd">        Profile description and copyright text. Default to the class name and a generic notice.</span>
 <span class="sd">    force_clut : bool, optional</span>
-<span class="sd">        Always write sampled CLUTs.</span>
+<span class="sd">        Always write sampled CLUTs. Defaults to False.</span>
 <span class="sd">    strict : bool, optional</span>
 <span class="sd">        Require an exact profile built from traced functions: raise `ICCWriteError`, naming the</span>
 <span class="sd">        operation that could not be traced, instead of falling back to sampled CLUTs (or to</span>
-<span class="sd">        probing the functions numerically).</span>
+<span class="sd">        probing the functions numerically). Defaults to False.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -403,6 +403,17 @@
 <span class="sd">    ICCWriteError</span>
 <span class="sd">        If the space cannot be written at all, or with ``strict=True`` when only a sampled</span>
 <span class="sd">        fallback would be possible.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lcms2.spaces.ColorSpace.to_icc_profile : Method form, optionally writing a file.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.icc import write_icc_bytes</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">    &gt;&gt;&gt; write_icc_bytes(srgb)["method"]</span>
+<span class="sd">    'exact_matrix_trc'</span>
 <span class="sd">    """</span>
     <span class="n">ctx</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="n">colorspace</span><span class="p">,</span> <span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">grid_size</span><span class="p">)</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">description</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">colorspace</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> (python-lcms2)"</span>

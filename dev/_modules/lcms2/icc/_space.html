@@ -325,11 +325,45 @@
 <span class="sd">        The profile's description text.</span>
 <span class="sd">    kind : str</span>
 <span class="sd">        ``'matrix_trc'``, ``'gray_trc'`` or ``'lut'``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ICCParseError</span>
+<span class="sd">        If the profile cannot be parsed or evaluated.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lcms2.icc.ICCProfile : The parsed container.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">    &gt;&gt;&gt; space = ICCSpace(srgb.to_icc_profile()["bytes"])</span>
+<span class="sd">    &gt;&gt;&gt; space.n_channels, space.kind</span>
+<span class="sd">    (3, 'matrix_trc')</span>
 <span class="sd">    """</span>
 
     <span class="n">_abstract</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="n">ICCProfile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Read a color space from a profile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source : str, bytes or ICCProfile</span>
+<span class="sd">            Path to a profile, its bytes, or a parsed `ICCProfile`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ICCParseError</span>
+<span class="sd">            If the profile cannot be parsed or evaluated.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; ICCSpace(srgb.to_icc_profile()["bytes"]).n_channels</span>
+<span class="sd">        3</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">icc</span> <span class="o">=</span> <span class="n">source</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">ICCProfile</span><span class="p">)</span> <span class="k">else</span> <span class="n">ICCProfile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_description</span><span class="p">()</span>
         <span class="n">built</span> <span class="o">=</span> <span class="n">build_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">icc</span><span class="p">)</span>
@@ -398,6 +432,21 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            ``{'bytes': bytes, 'method': str, 'notes': list of str}``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ICCWriteError</span>
+<span class="sd">            If the version is invalid, or the space cannot be written.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        lcms2.spaces.ColorSpace.to_icc_profile : The general writer.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; ICCSpace(srgb.to_icc_profile(version=2)["bytes"]).to_icc_profile(version=2)["method"]</span>
+<span class="sd">        'verbatim_tags'</span>
 <span class="sd">        """</span>
         <span class="n">version</span> <span class="o">=</span> <span class="n">normalize_icc_version</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"version"</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icc</span><span class="o">.</span><span class="n">header</span>

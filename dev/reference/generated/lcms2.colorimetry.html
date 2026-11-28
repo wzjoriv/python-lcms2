@@ -307,11 +307,18 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>white_point</strong> (<em>array_like</em>) – XYZ of the adopted white, with <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">1</span></code> (for example <code class="xref py py-data docutils literal notranslate"><span class="pre">D65</span></code>).</p></li>
-<li><p><strong>adapting_luminance</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Luminance of the adapting field <code class="docutils literal notranslate"><span class="pre">La</span></code> in cd/m2 (typically 20% of the white’s).</p></li>
-<li><p><strong>background</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Relative luminance of the background <code class="docutils literal notranslate"><span class="pre">Yb</span></code> in percent of the white (20 is typical).</p></li>
-<li><p><strong>surround</strong> (<em>{&quot;average&quot;</em><em>, </em><em>&quot;dim&quot;</em><em>, </em><em>&quot;dark&quot;</em><em>, </em><em>&quot;cutsheet&quot;}</em>) – Viewing surround.</p></li>
-<li><p><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> or </em><em>&quot;auto&quot;</em>) – Degree of adaptation D in 0..1, or <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> to compute it from <code class="docutils literal notranslate"><span class="pre">La</span></code> and the surround.</p></li>
+<li><p><strong>adapting_luminance</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Luminance of the adapting field <code class="docutils literal notranslate"><span class="pre">La</span></code> in cd/m2 (typically 20% of the white’s).
+Defaults to 64.</p></li>
+<li><p><strong>background</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Relative luminance of the background <code class="docutils literal notranslate"><span class="pre">Yb</span></code> in percent of the white (20 is typical).
+Defaults to 20.</p></li>
+<li><p><strong>surround</strong> (<em>{&quot;average&quot;</em><em>, </em><em>&quot;dim&quot;</em><em>, </em><em>&quot;dark&quot;</em><em>, </em><em>&quot;cutsheet&quot;}</em><em>, </em><em>optional</em>) – Viewing surround. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;average&quot;</span></code>.</p></li>
+<li><p><strong>degree</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> or </em><em>&quot;auto&quot;</em><em>, </em><em>optional</em>) – Degree of adaptation D in 0..1, or <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code> to compute it from <code class="docutils literal notranslate"><span class="pre">La</span></code> and the surround.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <cite>white_point</cite> is not an XYZ triple with <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, <cite>surround</cite> is unknown, or
+    <cite>degree</cite> is outside 0..1.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -325,10 +332,28 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="lcms2.colorimetry.CIECAM02.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colorimetry/_ciecam02.html#CIECAM02.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colorimetry.CIECAM02.forward" title="Link to this definition">¶</a></dt>
 <dd><p>XYZ (<code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">1</span></code> scale) to JCh (lightness, chroma, hue in degrees).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xyz</strong> (<em>array_like</em>) – XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – JCh of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the last axis is not of length 3.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.CIECAM02.reverse" title="lcms2.colorimetry.CIECAM02.reverse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CIECAM02.reverse</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">CIECAM02</span><span class="p">,</span> <span class="n">D65</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">CIECAM02</span><span class="p">(</span><span class="n">D65</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span><span class="o">.</span><span class="n">forward</span><span class="p">([[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">D65</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(2, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CIECAM02</span><span class="p">(</span><span class="n">D65</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span><span class="o">.</span><span class="n">forward</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="go">[41.82, 6.42, 29.64]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -337,6 +362,24 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="lcms2.colorimetry.CIECAM02.reverse">
 <span class="sig-name descname"><span class="pre">reverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colorimetry/_ciecam02.html#CIECAM02.reverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colorimetry.CIECAM02.reverse" title="Link to this definition">¶</a></dt>
 <dd><p>JCh back to XYZ (<code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">1</span></code> scale).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>jch</strong> (<em>array_like</em>) – JCh of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>, with hue in degrees.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If the last axis is not of length 3.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.CIECAM02.forward" title="lcms2.colorimetry.CIECAM02.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CIECAM02.forward</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">CIECAM02</span><span class="p">,</span> <span class="n">D65</span>
@@ -359,10 +402,23 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <li><p><strong>xyz</strong> (<em>array_like</em>) – XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p></li>
 <li><p><strong>src_white</strong> (<em>array_like</em>) – XYZ of the source and destination whites.</p></li>
 <li><p><strong>dst_white</strong> (<em>array_like</em>) – XYZ of the source and destination whites.</p></li>
-<li><p><strong>method</strong> (<em>{&quot;bradford&quot;</em><em>, </em><em>&quot;von_kries&quot;</em><em>, </em><em>&quot;xyz_scaling&quot;}</em>) – Adaptation transform.</p></li>
+<li><p><strong>method</strong> (<em>{&quot;bradford&quot;</em><em>, </em><em>&quot;von_kries&quot;</em><em>, </em><em>&quot;xyz_scaling&quot;}</em><em>, </em><em>optional</em>) – Adaptation transform. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;bradford&quot;</span></code>.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – Adapted XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <cite>method</cite> is unknown.</p>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.adaptation_matrix" title="lcms2.colorimetry.adaptation_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adaptation_matrix</span></code></a></dt><dd><p>The underlying matrix.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D50</span><span class="p">,</span> <span class="n">D65</span><span class="p">,</span> <span class="n">adapt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">adapt</span><span class="p">(</span><span class="n">D65</span><span class="p">,</span> <span class="n">D65</span><span class="p">,</span> <span class="n">D50</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -380,7 +436,7 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>src_white</strong> (<em>array_like</em>) – XYZ of the source and destination whites.</p></li>
 <li><p><strong>dst_white</strong> (<em>array_like</em>) – XYZ of the source and destination whites.</p></li>
-<li><p><strong>method</strong> (<em>{&quot;bradford&quot;</em><em>, </em><em>&quot;von_kries&quot;</em><em>, </em><em>&quot;xyz_scaling&quot;}</em>) – Adaptation transform.</p></li>
+<li><p><strong>method</strong> (<em>{&quot;bradford&quot;</em><em>, </em><em>&quot;von_kries&quot;</em><em>, </em><em>&quot;xyz_scaling&quot;}</em><em>, </em><em>optional</em>) – Adaptation transform. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;bradford&quot;</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -391,6 +447,13 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <cite>method</cite> is unknown.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.adapt" title="lcms2.colorimetry.adapt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adapt</span></code></a></dt><dd><p>Apply the adaptation to colors.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D50</span><span class="p">,</span> <span class="n">D65</span><span class="p">,</span> <span class="n">adaptation_matrix</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">adaptation_matrix</span><span class="p">(</span><span class="n">D65</span><span class="p">,</span> <span class="n">D50</span><span class="p">)</span> <span class="o">@</span> <span class="n">D65</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -408,8 +471,8 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lab1</strong> (<em>array_like</em>) – Lab values of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>; the two operands broadcast against each other.</p></li>
 <li><p><strong>lab2</strong> (<em>array_like</em>) – Lab values of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>; the two operands broadcast against each other.</p></li>
-<li><p><strong>method</strong> (<em>{&quot;2000&quot;</em><em>, </em><em>&quot;76&quot;</em><em>, </em><em>&quot;94&quot;</em><em>, </em><em>&quot;cmc&quot;</em><em>, </em><em>&quot;bfd&quot;}</em>) – CIEDE2000 (default), CIE76 (Euclidean), CIE94, CMC l:c or BFD. A leading “de” or
-“cie” is accepted (“de2000”).</p></li>
+<li><p><strong>method</strong> (<em>{&quot;2000&quot;</em><em>, </em><em>&quot;76&quot;</em><em>, </em><em>&quot;94&quot;</em><em>, </em><em>&quot;cmc&quot;</em><em>, </em><em>&quot;bfd&quot;}</em><em>, </em><em>optional</em>) – CIEDE2000, CIE76 (Euclidean), CIE94, CMC l:c or BFD. A leading “de” or
+“cie” is accepted (“de2000”). Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;2000&quot;</span></code>.</p></li>
 <li><p><strong>**params</strong> – <code class="docutils literal notranslate"><span class="pre">Kl</span></code>, <code class="docutils literal notranslate"><span class="pre">Kc</span></code>, <code class="docutils literal notranslate"><span class="pre">Kh</span></code> (all default 1) for <code class="docutils literal notranslate"><span class="pre">&quot;2000&quot;</span></code>; <code class="docutils literal notranslate"><span class="pre">l</span></code> (2) and <code class="docutils literal notranslate"><span class="pre">c</span></code> (1) for
 <code class="docutils literal notranslate"><span class="pre">&quot;cmc&quot;</span></code>.</p></li>
 </ul>
@@ -424,6 +487,13 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 </ul>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.xyz_to_lab" title="lcms2.colorimetry.xyz_to_lab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.colorimetry.xyz_to_lab</span></code></a></dt><dd><p>Get Lab values from XYZ.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">delta_e</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">delta_e</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span> <span class="mf">2.6772</span><span class="p">,</span> <span class="o">-</span><span class="mf">79.7751</span><span class="p">],</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">82.7485</span><span class="p">])),</span> <span class="mi">4</span><span class="p">)</span>
@@ -438,6 +508,21 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="lcms2.colorimetry.lab_to_lch">
 <span class="sig-name descname"><span class="pre">lab_to_lch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colorimetry/_convert.html#lab_to_lch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colorimetry.lab_to_lch" title="Link to this definition">¶</a></dt>
 <dd><p>CIELAB to LCh (hue in degrees, 0..360).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lab</strong> (<em>array_like</em>) – Lab of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – LCh of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>: lightness, chroma and hue in degrees.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.lch_to_lab" title="lcms2.colorimetry.lch_to_lab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lch_to_lab</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">lab_to_lch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lab_to_lch</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -450,6 +535,24 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="lcms2.colorimetry.lab_to_xyz">
 <span class="sig-name descname"><span class="pre">lab_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">white</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colorimetry/_convert.html#lab_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colorimetry.lab_to_xyz" title="Link to this definition">¶</a></dt>
 <dd><p>CIELAB to XYZ; inverse of <a class="reference internal" href="#lcms2.colorimetry.xyz_to_lab" title="lcms2.colorimetry.xyz_to_lab"><code class="xref py py-func docutils literal notranslate"><span class="pre">xyz_to_lab()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lab</strong> (<em>array_like</em>) – Lab of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>, with L in 0..100.</p></li>
+<li><p><strong>white</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Reference white XYZ. Defaults to D50.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code> with <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">1</span></code> at the white.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.xyz_to_lab" title="lcms2.colorimetry.xyz_to_lab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_lab</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">lab_to_xyz</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lab_to_xyz</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -462,6 +565,21 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="lcms2.colorimetry.lch_to_lab">
 <span class="sig-name descname"><span class="pre">lch_to_lab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colorimetry/_convert.html#lch_to_lab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colorimetry.lch_to_lab" title="Link to this definition">¶</a></dt>
 <dd><p>LCh to CIELAB; inverse of <a class="reference internal" href="#lcms2.colorimetry.lab_to_lch" title="lcms2.colorimetry.lab_to_lch"><code class="xref py py-func docutils literal notranslate"><span class="pre">lab_to_lch()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lch</strong> (<em>array_like</em>) – LCh of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>, with hue in degrees.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – Lab of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.lab_to_lch" title="lcms2.colorimetry.lab_to_lch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lab_to_lch</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">lch_to_lab</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lch_to_lab</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -482,6 +600,13 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dd class="field-even"><p><em>numpy.ndarray</em> – Temperature in kelvin (a scalar for a single white point).</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.white_point_from_temperature" title="lcms2.colorimetry.white_point_from_temperature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">white_point_from_temperature</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D65_xyY</span><span class="p">,</span> <span class="n">temperature_from_white_point</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">temperature_from_white_point</span><span class="p">(</span><span class="n">D65_xyY</span><span class="p">)))</span>
@@ -505,6 +630,13 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If a temperature is outside 4000-25000 K.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.temperature_from_white_point" title="lcms2.colorimetry.temperature_from_white_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">temperature_from_white_point</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">white_point_from_temperature</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">white_point_from_temperature</span><span class="p">(</span><span class="mi">6504</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -517,6 +649,21 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="lcms2.colorimetry.xyy_to_xyz">
 <span class="sig-name descname"><span class="pre">xyy_to_xyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colorimetry/_convert.html#xyy_to_xyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colorimetry.xyy_to_xyz" title="Link to this definition">¶</a></dt>
 <dd><p>xyY to XYZ. A zero <code class="docutils literal notranslate"><span class="pre">y</span></code> gives black.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xyy</strong> (<em>array_like</em>) – xyY of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.xyz_to_xyy" title="lcms2.colorimetry.xyz_to_xyy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_xyy</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D65_xyY</span><span class="p">,</span> <span class="n">xyy_to_xyz</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">xyy_to_xyz</span><span class="p">(</span><span class="n">D65_xyY</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -533,10 +680,20 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>xyz</strong> (<em>array_like</em>) – XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code> with <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">1</span></code> at the white.</p></li>
-<li><p><strong>white</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Reference white XYZ; defaults to D50.</p></li>
+<li><p><strong>white</strong> (<em>array_like</em><em>, </em><em>optional</em>) – Reference white XYZ. Defaults to D50.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – Lab of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>, with L in 0..100 at the white.</p>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.lab_to_xyz" title="lcms2.colorimetry.lab_to_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lab_to_xyz</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D50</span><span class="p">,</span> <span class="n">xyz_to_lab</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">xyz_to_lab</span><span class="p">(</span><span class="n">D50</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -549,6 +706,21 @@ the white point has <code class="docutils literal notranslate"><span class="pre"
 <dt class="sig sig-object py" id="lcms2.colorimetry.xyz_to_xyy">
 <span class="sig-name descname"><span class="pre">xyz_to_xyy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colorimetry/_convert.html#xyz_to_xyy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colorimetry.xyz_to_xyy" title="Link to this definition">¶</a></dt>
 <dd><p>XYZ to xyY. Black (XYZ all zero) gets the D50 chromaticity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>xyz</strong> (<em>array_like</em>) – XYZ of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>numpy.ndarray</em> – xyY of shape <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">3)</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colorimetry.xyy_to_xyz" title="lcms2.colorimetry.xyy_to_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyy_to_xyz</span></code></a></dt><dd><p>The inverse.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D65</span><span class="p">,</span> <span class="n">xyz_to_xyy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">xyz_to_xyy</span><span class="p">(</span><span class="n">D65</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>

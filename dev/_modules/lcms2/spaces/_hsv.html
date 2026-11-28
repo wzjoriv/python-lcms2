@@ -330,7 +330,19 @@
 <div class="viewcode-block" id="HSVSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.HSVSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HSVSpace</span><span class="p">(</span><span class="n">ColorSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""HSV over sRGB; hue in degrees (circular), saturation and value in 0..1."""</span>
+<span class="w">    </span><span class="sd">"""HSV over sRGB; hue in degrees (circular), saturation and value in 0..1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Passed to `ColorSpace`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb, hsv</span>
+<span class="sd">    &gt;&gt;&gt; srgb.to(hsv, [0.0, 1.0, 0.0]).round(2).tolist()</span>
+<span class="sd">    [120.0, 1.0, 1.0]</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"hsv"</span>
     <span class="n">n_channels</span> <span class="o">=</span> <span class="mi">3</span>
@@ -341,14 +353,12 @@
 <div class="viewcode-block" id="HSVSpace.to_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.HSVSpace.to_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hsv</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert HSV to CIE XYZ (D50)."""</span>
         <span class="k">return</span> <span class="n">srgb</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">hsv_to_rgb</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hsv</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="HSVSpace.from_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.HSVSpace.from_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert CIE XYZ (D50) to HSV."""</span>
         <span class="k">return</span> <span class="n">rgb_to_hsv</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">from_xyz</span><span class="p">(</span><span class="n">xyz</span><span class="p">))</span></div>
 </div>
 

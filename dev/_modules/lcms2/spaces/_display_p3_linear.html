@@ -295,7 +295,19 @@
 <div class="viewcode-block" id="DisplayP3LinearSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.DisplayP3LinearSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DisplayP3LinearSpace</span><span class="p">(</span><span class="n">RGBSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Display P3 primaries with linear-light values."""</span>
+<span class="w">    </span><span class="sd">"""Display P3 primaries with linear-light values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Passed to `ColorSpace`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb, display_p3_linear</span>
+<span class="sd">    &gt;&gt;&gt; srgb.to(display_p3_linear, [1.0, 0.0, 0.0]).round(2).tolist()</span>
+<span class="sd">    [0.82, 0.03, 0.02]</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"display-p3-linear"</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">DisplayP3Space</span><span class="o">.</span><span class="n">matrix</span></div>

@@ -298,7 +298,19 @@
 <div class="viewcode-block" id="OKLChSpace">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLChSpace">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OKLChSpace</span><span class="p">(</span><span class="n">ColorSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Cylindrical OKLab (CSS ``oklch``); hue in degrees."""</span>
+<span class="w">    </span><span class="sd">"""Cylindrical OKLab (CSS ``oklch``); hue in degrees.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Passed to `ColorSpace`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb, oklch</span>
+<span class="sd">    &gt;&gt;&gt; srgb.to(oklch, [1.0, 0.0, 0.0]).round(2).tolist()</span>
+<span class="sd">    [0.63, 0.26, 29.23]</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"oklch"</span>
     <span class="n">icc_colour_space_signature</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"3CLR"</span>
@@ -308,14 +320,12 @@
 <div class="viewcode-block" id="OKLChSpace.to_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLChSpace.to_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oklch</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert OKLCh to CIE XYZ (D50)."""</span>
         <span class="k">return</span> <span class="n">oklab</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">lch_to_lab</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">oklch</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="OKLChSpace.from_xyz">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.OKLChSpace.from_xyz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert CIE XYZ (D50) to OKLCh."""</span>
         <span class="k">return</span> <span class="n">lab_to_lch</span><span class="p">(</span><span class="n">oklab</span><span class="o">.</span><span class="n">from_xyz</span><span class="p">(</span><span class="n">xyz</span><span class="p">))</span></div>
 </div>
 

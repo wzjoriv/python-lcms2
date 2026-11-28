@@ -316,9 +316,14 @@
 <span class="sd">    colors : array_like, shape (n, 3)</span>
 <span class="sd">        sRGB floats in 0..1 (values outside are kept only with ``gamut="none"``).</span>
 <span class="sd">    name : str, optional</span>
-<span class="sd">        Display name.</span>
-<span class="sd">    space : str, optional</span>
-<span class="sd">        Name of the interpolation space the colours were built in (informational).</span>
+<span class="sd">        Display name. Defaults to ``"colormap"``.</span>
+<span class="sd">    space : str or ColorSpace, optional</span>
+<span class="sd">        The interpolation space the colours were built in (informational). Defaults to ``"oklab"``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If `colors` is not finite with shape ``(n, 3)`` and ``n &gt;= 1``.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -340,6 +345,28 @@
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"_colors"</span><span class="p">,</span> <span class="s2">"_name"</span><span class="p">,</span> <span class="s2">"_space"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">"oklab"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a colormap from sampled sRGB colours.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        colors : array_like, shape (n, 3)</span>
+<span class="sd">            sRGB floats in 0..1 (values outside are kept only with ``gamut="none"``).</span>
+<span class="sd">        name : str, optional</span>
+<span class="sd">            Display name. Defaults to ``"colormap"``.</span>
+<span class="sd">        space : str or ColorSpace, optional</span>
+<span class="sd">            The interpolation space the colours were built in (informational). Defaults to ``"oklab"``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If `colors` is not finite with shape ``(n, 3)`` and ``n &gt;= 1``.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.colormap import Colormap</span>
+<span class="sd">        &gt;&gt;&gt; Colormap([[0, 0, 0], [1, 1, 1]], name="bw").hex()</span>
+<span class="sd">        ['#000000', '#ffffff']</span>
+<span class="sd">        """</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"colors must have shape (n, 3) with n &gt;= 1, got </span><span class="si">{</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -373,29 +400,36 @@
 <span class="sd">        ----------</span>
 <span class="sd">        colors : sequence</span>
 <span class="sd">            Two or more colours in any form `lcms2._parse.parse_color` accepts.</span>
-<span class="sd">        space : str or ColorSpace, default "oklab"</span>
+<span class="sd">        space : str or ColorSpace, optional</span>
 <span class="sd">            Space the colours are interpolated in. Cylindrical spaces (``oklch``,</span>
-<span class="sd">            ``lch``, ``hsv``) interpolate hue along the shorter arc.</span>
-<span class="sd">        n : int, default 256</span>
-<span class="sd">            Number of samples.</span>
+<span class="sd">            ``lch``, ``hsv``) interpolate hue along the shorter arc. Defaults to ``"oklab"``.</span>
+<span class="sd">        n : int, optional</span>
+<span class="sd">            Number of samples. Defaults to 256.</span>
 <span class="sd">        positions : sequence of float or "uniform", optional</span>
 <span class="sd">            Increasing positions of the control colours; rescaled to span 0..1.</span>
-<span class="sd">            Default: evenly spaced (stops at 0, 1/(k-1), ..., 1). ``"uniform"`` places</span>
-<span class="sd">            each stop at its cumulative OKLab distance from the first, so the perceived</span>
-<span class="sd">            colour change per step is the same along the whole map.</span>
+<span class="sd">            ``"uniform"`` places each stop at its cumulative OKLab distance from the</span>
+<span class="sd">            first, so the perceived colour change per step is the same along the whole</span>
+<span class="sd">            map. Defaults to evenly spaced stops.</span>
 <span class="sd">        name : str, optional</span>
-<span class="sd">        gamut : {"chroma", "clip", "none"}, default "chroma"</span>
+<span class="sd">            Display name. Defaults to ``"custom"``.</span>
+<span class="sd">        gamut : {"chroma", "clip", "none"}, optional</span>
 <span class="sd">            ``"chroma"`` reduces OKLCh chroma at constant lightness and hue until the</span>
 <span class="sd">            colour fits sRGB; ``"clip"`` clips channels; ``"none"`` leaves them.</span>
+<span class="sd">            Defaults to ``"chroma"``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Colormap</span>
+<span class="sd">            The interpolated colormap.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            For fewer than two colours, bad positions, ``n &lt; 2`` or an unknown gamut mode.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Colormap.sequential : Design a lightness ramp from a hue.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -403,7 +437,9 @@
 <span class="sd">        &gt;&gt;&gt; cm = Colormap.from_colors(["#000", "#f80", "#fff"], n=3)</span>
 <span class="sd">        &gt;&gt;&gt; cm.hex()</span>
 <span class="sd">        ['#000000', '#ff8800', '#ffffff']</span>
-<span class="sd">        &gt;&gt;&gt; cm = Colormap.from_colors(["#000", "#f80", "#fff"], positions="uniform")</span>
+<span class="sd">        &gt;&gt;&gt; cm = Colormap.from_colors(["#000", "#f80", "#fff"], positions="uniform", n=3)</span>
+<span class="sd">        &gt;&gt;&gt; len(cm)</span>
+<span class="sd">        3</span>
 <span class="sd">        """</span>
         <span class="n">ctrl</span> <span class="o">=</span> <span class="n">parse_colors</span><span class="p">(</span><span class="n">colors</span><span class="p">)[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -439,10 +475,24 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Colormap</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""A built-in colormap by name (append ``_r`` to reverse); see `lcms2.colormap.list`.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Built-in name, case-insensitive, optionally ending in ``_r``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Colormap</span>
+<span class="sd">            The named colormap.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        KeyError</span>
 <span class="sd">            For an unknown name; the message lists the available ones.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        lcms2.colormap.list : The built-in names.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -491,6 +541,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">hex</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""The colours as ``"#rrggbb"`` strings.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            One hex string per entry.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from lcms2.colormap import Colormap</span>
@@ -504,6 +559,11 @@
 <a class="viewcode-back" href="../../../reference/generated/lcms2.colormap.html#lcms2.colormap.Colormap.reversed">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reversed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Colormap</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""A copy with the colours in reverse order.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Colormap</span>
+<span class="sd">            The reversed colormap, named with a ``_r`` suffix.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -519,6 +579,21 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">resampled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Colormap</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Linearly resample to ``n`` entries (endpoints preserved).</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Number of entries, at least 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Colormap</span>
+<span class="sd">            The resampled colormap.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``n &lt; 1``.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from lcms2.colormap import Colormap</span>
@@ -532,7 +607,31 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Colormap</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Slice into a sub-colormap, e.g. ``cm[64:192]`` or ``cm[::-1]``."""</span>
+<span class="w">        </span><span class="sd">"""Slice into a sub-colormap, e.g. ``cm[64:192]`` or ``cm[::-1]``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        key : slice</span>
+<span class="sd">            Which entries to keep.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Colormap</span>
+<span class="sd">            The selected entries.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If `key` is not a slice.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the slice selects nothing.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.colormap import Colormap</span>
+<span class="sd">        &gt;&gt;&gt; len(Colormap.from_colors(["red", "blue"], n=10)[2:5])</span>
+<span class="sd">        3</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"index a Colormap with a slice (cm[a:b]); use cm.colors[i] for one colour"</span><span class="p">)</span>
         <span class="n">sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
@@ -570,16 +669,19 @@
 <span class="sd">            already in 0..1; otherwise a missing limit defaults to the data minimum or</span>
 <span class="sd">            maximum. Values outside the range are clamped.</span>
 <span class="sd">        vmin, vmax : float, optional</span>
-<span class="sd">        bytes : bool, default False</span>
-<span class="sd">            Return ``uint8`` 0..255 instead of floats 0..1.</span>
+<span class="sd">            Data values mapped to the first and last colour. Default to 0 and 1, or to the</span>
+<span class="sd">            data minimum and maximum when the other limit is given.</span>
+<span class="sd">        bytes : bool, optional</span>
+<span class="sd">            Return ``uint8`` 0..255 instead of floats 0..1. Defaults to False.</span>
 <span class="sd">        alpha : float or array_like, optional</span>
-<span class="sd">            Append an alpha channel (broadcast against `values`).</span>
+<span class="sd">            Append an alpha channel (broadcast against `values`). Defaults to no alpha.</span>
 <span class="sd">        nan_color : colour, optional</span>
-<span class="sd">            Colour for NaN (default mid grey; fully transparent when `alpha` is given).</span>
+<span class="sd">            Colour for NaN. Defaults to mid grey, or fully transparent when `alpha` is given.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray, shape (..., 3) or (..., 4)</span>
+<span class="sd">            Colours, with an alpha channel when `alpha` is given.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>

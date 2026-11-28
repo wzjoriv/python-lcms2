@@ -308,14 +308,36 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A parsed ICC profile.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<em>ICCHeader</em>) – Decoded header.</p></li>
 <li><p><strong>tags</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em> of </em><em>bytes to bytes</em>) – Raw tag data keyed by 4-byte tag signature.</p></li>
 <li><p><strong>raw</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – The complete profile bytes.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>header</strong> (<em>ICCHeader</em>) – Decoded header.</p></li>
+<li><p><strong>tags</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em> of </em><em>bytes to bytes</em>) – Raw tag data keyed by 4-byte tag signature.</p></li>
+<li><p><strong>raw</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – The complete profile bytes.</p></li>
+</ul>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.ICCSpace" title="lcms2.icc.ICCSpace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.icc.ICCSpace</span></code></a></dt><dd><p>A color space read from a profile.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">srgb</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">()[</span><span class="s2">"bytes"</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span> <span class="o">=</span> <span class="n">ICCProfile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">data_colour_space</span>
+<span class="go">b'RGB '</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="lcms2.icc.ICCProfile.load">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_or_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/os.html#os.PathLike" title="(in Python v3.15)"><span class="pre">PathLike</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytearray" title="(in Python v3.15)"><span class="pre">bytearray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.icc.ICCProfile" title="lcms2.icc._io.profile.ICCProfile"><span class="pre">ICCProfile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/icc/_io/profile.html#ICCProfile.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.icc.ICCProfile.load" title="Link to this definition">¶</a></dt>
@@ -327,7 +349,26 @@
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>ICCProfile</em> – The parsed profile.</p>
 </dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#lcms2.icc.ICCParseError" title="lcms2.icc.ICCParseError"><strong>ICCParseError</strong></a> – If the data is not a valid ICC profile.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#OSError" title="(in Python v3.15)"><strong>OSError</strong></a> – If a path cannot be read.</p></li>
+</ul>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.ICCProfile.from_bytes" title="lcms2.icc.ICCProfile.from_bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ICCProfile.from_bytes</span></code></a></dt><dd><p>Parse bytes only.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ICCProfile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">()[</span><span class="s2">"bytes"</span><span class="p">])</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">4</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -347,6 +388,19 @@
     table.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.ICCProfile.load" title="lcms2.icc.ICCProfile.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ICCProfile.load</span></code></a></dt><dd><p>Accepts a path as well.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ICCProfile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="s2">"bytes"</span><span class="p">])</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">version_major</span>
+<span class="go">2</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -358,9 +412,23 @@
 <dd class="field-odd"><p><strong>sig4</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – 4-byte tag signature, e.g. <code class="docutils literal notranslate"><span class="pre">b'wtpt'</span></code>.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>bytes or None</em></p>
+<dd class="field-even"><p><em>bytes or None</em> – The tag data, or None when absent.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.ICCProfile.has_tag" title="lcms2.icc.ICCProfile.has_tag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ICCProfile.has_tag</span></code></a></dt><dd><p>Test for presence only.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span> <span class="o">=</span> <span class="n">ICCProfile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">()[</span><span class="s2">"bytes"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">profile</span><span class="o">.</span><span class="n">get_tag</span><span class="p">(</span><span class="sa">b</span><span class="s2">"nope"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -372,9 +440,22 @@
 <dd class="field-odd"><p><strong>sig4</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a>) – 4-byte tag signature.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>bool</em></p>
+<dd class="field-even"><p><em>bool</em> – True when the tag is present.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.ICCProfile.get_tag" title="lcms2.icc.ICCProfile.get_tag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ICCProfile.get_tag</span></code></a></dt><dd><p>Return the tag data.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ICCProfile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">()[</span><span class="s2">"bytes"</span><span class="p">])</span><span class="o">.</span><span class="n">has_tag</span><span class="p">(</span><span class="sa">b</span><span class="s2">"wtpt"</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -384,10 +465,42 @@
 <p>Identical tag payloads share one data block, every block is padded
 to 4 bytes, and v4+ profiles carry the MD5 profile ID of ICC.1.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><em>bytes</em></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>version</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – <code class="docutils literal notranslate"><span class="pre">(major,</span> <span class="pre">minor,</span> <span class="pre">bugfix)</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">4,</span> <span class="pre">0)</span></code>.</p></li>
+<li><p><strong>device_class</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Profile class signature. Defaults to <code class="docutils literal notranslate"><span class="pre">b'spac'</span></code>.</p></li>
+<li><p><strong>data_colour_space</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Device color space signature. Defaults to <code class="docutils literal notranslate"><span class="pre">b'RGB</span> <span class="pre">'</span></code>.</p></li>
+<li><p><strong>pcs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Profile connection space signature. Defaults to <code class="docutils literal notranslate"><span class="pre">b'XYZ</span> <span class="pre">'</span></code>.</p></li>
+<li><p><strong>rendering_intent</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Header rendering intent. Defaults to 1.</p></li>
+<li><p><strong>pcs_illuminant</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – XYZ of the PCS illuminant. Defaults to D50.</p></li>
+<li><p><strong>cmm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Four-byte header signatures. Default to zeros.</p></li>
+<li><p><strong>primary_platform</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Four-byte header signatures. Default to zeros.</p></li>
+<li><p><strong>manufacturer</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Four-byte header signatures. Default to zeros.</p></li>
+<li><p><strong>model</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Four-byte header signatures. Default to zeros.</p></li>
+<li><p><strong>attributes</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Header attribute flags. Defaults to 0.</p></li>
+<li><p><strong>flags</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Header profile flags. Defaults to 0.</p></li>
+<li><p><strong>creator</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#bytes" title="(in Python v3.15)"><em>bytes</em></a><em>, </em><em>optional</em>) – Creator signature. Defaults to <code class="docutils literal notranslate"><span class="pre">b'lcms'</span></code>.</p></li>
+<li><p><strong>created</strong> (<em>datetime</em><em>, </em><em>optional</em>) – Creation time. Defaults to now (UTC).</p></li>
+<li><p><strong>tags</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em> of </em><em>bytes to bytes</em><em>, </em><em>optional</em>) – Raw tag data keyed by 4-byte tag signature. Defaults to no tags.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bytes</em> – The complete profile file.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.write_icc_bytes" title="lcms2.icc.write_icc_bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.icc.write_icc_bytes</span></code></a></dt><dd><p>Write a color space as a profile.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">ICCProfile</span><span class="o">.</span><span class="n">build_bytes</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="sa">b</span><span class="s2">"test"</span><span class="p">:</span> <span class="sa">b</span><span class="s2">"abcd"</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ICCProfile</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">get_tag</span><span class="p">(</span><span class="sa">b</span><span class="s2">"test"</span><span class="p">)</span>
+<span class="go">b'abcd'</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -408,7 +521,24 @@ to 4 bytes, and v4+ profiles carry the MD5 profile ID of ICC.1.</p>
 <li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – <code class="docutils literal notranslate"><span class="pre">'matrix_trc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'gray_trc'</span></code> or <code class="docutils literal notranslate"><span class="pre">'lut'</span></code>.</p></li>
 </ul>
 </dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lcms2.icc.ICCParseError" title="lcms2.icc.ICCParseError"><strong>ICCParseError</strong></a> – If the profile cannot be parsed or evaluated.</p>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.ICCProfile" title="lcms2.icc.ICCProfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.icc.ICCProfile</span></code></a></dt><dd><p>The parsed container.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span> <span class="o">=</span> <span class="n">ICCSpace</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">()[</span><span class="s2">"bytes"</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">space</span><span class="o">.</span><span class="n">n_channels</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">kind</span>
+<span class="go">(3, 'matrix_trc')</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="lcms2.icc.ICCSpace.to_icc_profile">
 <span class="sig-name descname"><span class="pre">to_icc_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/icc/_space.html#ICCSpace.to_icc_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.icc.ICCSpace.to_icc_profile" title="Link to this definition">¶</a></dt>
@@ -427,7 +557,23 @@ the original tags are written unchanged with <code class="docutils literal notra
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>dict</em> – <code class="docutils literal notranslate"><span class="pre">{'bytes':</span> <span class="pre">bytes,</span> <span class="pre">'method':</span> <span class="pre">str,</span> <span class="pre">'notes':</span> <span class="pre">list</span> <span class="pre">of</span> <span class="pre">str}</span></code>.</p>
 </dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lcms2.icc.ICCWriteError" title="lcms2.icc.ICCWriteError"><strong>ICCWriteError</strong></a> – If the version is invalid, or the space cannot be written.</p>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace.to_icc_profile" title="lcms2.spaces.ColorSpace.to_icc_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.spaces.ColorSpace.to_icc_profile</span></code></a></dt><dd><p>The general writer.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ICCSpace</span><span class="p">(</span><span class="n">srgb</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="s2">"bytes"</span><span class="p">])</span><span class="o">.</span><span class="n">to_icc_profile</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="mi">2</span><span class="p">)[</span><span class="s2">"method"</span><span class="p">]</span>
+<span class="go">'verbatim_tags'</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -454,15 +600,15 @@ the original tags are written unchanged with <code class="docutils literal notra
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>colorspace</strong> (<a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace" title="lcms2.spaces.ColorSpace"><em>ColorSpace</em></a>) – The space to write.</p></li>
-<li><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – <code class="docutils literal notranslate"><span class="pre">(major,</span> <span class="pre">minor,</span> <span class="pre">bugfix)</span></code>. Default <code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">4,</span> <span class="pre">0)</span></code>.</p></li>
-<li><p><strong>rendering_intent</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Header rendering intent. Default 1.</p></li>
-<li><p><strong>grid_size</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – CLUT grid points per axis for a sampled fallback.</p></li>
-<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Profile description and copyright text.</p></li>
-<li><p><strong>copyright</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Profile description and copyright text.</p></li>
-<li><p><strong>force_clut</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – Always write sampled CLUTs.</p></li>
+<li><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – <code class="docutils literal notranslate"><span class="pre">(major,</span> <span class="pre">minor,</span> <span class="pre">bugfix)</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">(4,</span> <span class="pre">4,</span> <span class="pre">0)</span></code>.</p></li>
+<li><p><strong>rendering_intent</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Header rendering intent. Defaults to 1.</p></li>
+<li><p><strong>grid_size</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – CLUT grid points per axis for a sampled fallback. Defaults to a size chosen from the channel count.</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Profile description and copyright text. Default to the class name and a generic notice.</p></li>
+<li><p><strong>copyright</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Profile description and copyright text. Default to the class name and a generic notice.</p></li>
+<li><p><strong>force_clut</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – Always write sampled CLUTs. Defaults to False.</p></li>
 <li><p><strong>strict</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – Require an exact profile built from traced functions: raise <cite>ICCWriteError</cite>, naming the
 operation that could not be traced, instead of falling back to sampled CLUTs (or to
-probing the functions numerically).</p></li>
+probing the functions numerically). Defaults to False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -474,6 +620,20 @@ fallback is used, <cite>notes</cite> says why (naming the untraceable operation)
     fallback would be possible.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace.to_icc_profile" title="lcms2.spaces.ColorSpace.to_icc_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.spaces.ColorSpace.to_icc_profile</span></code></a></dt><dd><p>Method form, optionally writing a file.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.icc</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_icc_bytes</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">srgb</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">write_icc_bytes</span><span class="p">(</span><span class="n">srgb</span><span class="p">)[</span><span class="s2">"method"</span><span class="p">]</span>
+<span class="go">'exact_matrix_trc'</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -481,10 +641,32 @@ fallback is used, <cite>notes</cite> says why (naming the untraceable operation)
 <span class="sig-name descname"><span class="pre">normalize_icc_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/icc/_versions.html#normalize_icc_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.icc.normalize_icc_version" title="Link to this definition">¶</a></dt>
 <dd><p>Return <cite>version</cite> as a published <code class="docutils literal notranslate"><span class="pre">(major,</span> <span class="pre">minor,</span> <span class="pre">bugfix)</span></code> ICC revision.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">4</span></code> or <code class="docutils literal notranslate"><span class="pre">5</span></code> for that major version’s newest revision, or a
+published <code class="docutils literal notranslate"><span class="pre">(major,</span> <span class="pre">minor,</span> <span class="pre">bugfix)</span></code> revision.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple of int</em> – The <code class="docutils literal notranslate"><span class="pre">(major,</span> <span class="pre">minor,</span> <span class="pre">bugfix)</span></code> revision.</p>
+</dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#lcms2.icc.ICCWriteError" title="lcms2.icc.ICCWriteError"><strong>ICCWriteError</strong></a> – If the version is not ICC v2, v4 or v5, or not a published revision.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.icc.write_icc_bytes" title="lcms2.icc.write_icc_bytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.icc.write_icc_bytes</span></code></a></dt><dd><p>Writes a profile at this version.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.icc</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_icc_version</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_icc_version</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">(4, 4, 0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_icc_version</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="go">(2, 1, 0)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
