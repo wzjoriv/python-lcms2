@@ -126,8 +126,6 @@ def as_array(data: Any, dtype: Any = None) -> np.ndarray:
         arr = np.asarray(data, dtype=dtype)
     else:
         arr = np.asarray(data)
-        if not isinstance(data, (list, tuple)) and arr.dtype in _DTYPES:
-            pass
-        else:
+        if isinstance(data, (list, tuple)) or arr.dtype not in _DTYPES:
             arr = arr.astype(_infer_sequence_dtype(arr))
     return np.ascontiguousarray(arr)

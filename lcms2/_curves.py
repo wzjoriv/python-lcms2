@@ -180,8 +180,6 @@ class ToneCurve:
         arr = np.asarray(x)
         if arr.dtype == np.uint16:
             out = _lcms2.curve_eval16(self._handle, arr)
-        elif arr.dtype.kind == "f" or arr.dtype == np.bool_ or arr.dtype == object:
-            out = _lcms2.curve_eval(self._handle, arr)
         elif arr.dtype.kind in "iu":
             raise TypeError(
                 f"cannot evaluate a curve on {arr.dtype} data; pass floats in 0..1 or a uint16 array "
