@@ -6,21 +6,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from ..colorimetry import D50, lab_to_xyz, xyz_to_lab
+from ..colorimetry import D50, lab_to_lch, lab_to_xyz, lch_to_lab, xyz_to_lab
 from ._base import ColorSpace
-
-
-def lab_to_lch(lab: np.ndarray) -> np.ndarray:
-    """Convert (L, a, b) to (L, C, h) with hue in degrees, 0..360."""
-    L, a, b = lab[..., 0], lab[..., 1], lab[..., 2]
-    return np.stack([L, np.hypot(a, b), np.mod(np.arctan2(b, a) * (180.0 / np.pi) + 360.0, 360.0)], axis=-1)
-
-
-def lch_to_lab(lch: np.ndarray) -> np.ndarray:
-    """Convert (L, C, h) with hue in degrees to (L, a, b)."""
-    L, c, h = lch[..., 0], lch[..., 1], lch[..., 2]
-    angle = h * (np.pi / 180.0)
-    return np.stack([L, c * np.cos(angle), c * np.sin(angle)], axis=-1)
 
 
 class LChSpace(ColorSpace):

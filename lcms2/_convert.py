@@ -13,6 +13,7 @@ import numpy as np
 from numpy.typing import DTypeLike
 
 from ._builtins import lookup_builtin
+from ._parse import parse_color_text
 from ._profile import Profile
 from ._transform import Transform
 
@@ -99,13 +100,6 @@ def _transform(src: Profile, dst: Profile, options: dict[str, Any]) -> Transform
     return t
 
 
-def _is_color_text(data: Any) -> bool:
-    """A CSS colour string, or a non-empty list/tuple of them."""
-    if isinstance(data, str):
-        return True
-    return isinstance(data, (list, tuple)) and len(data) > 0 and all(isinstance(x, str) for x in data)
-
-
 def _xyz_profile() -> Profile:
     return _builtin("XYZ")
 
@@ -155,10 +149,7 @@ def convert(
     >>> lcms2.convert("#ffffff", "sRGB", "Lab").round(2) + 0.0
     array([100.,   0.,   0.])
     """
-    if _is_color_text(data):
-        from ._parse import parse_color, parse_colors
-
-        data = parse_color(data) if isinstance(data, str) else parse_colors(data)
+    data = parse_color_text(data)
     s, d = _resolve_space(src), _resolve_space(dst)
     s_profile, d_profile = isinstance(s, Profile), isinstance(d, Profile)
     if s_profile and d_profile:

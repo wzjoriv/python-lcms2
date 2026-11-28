@@ -8,6 +8,8 @@ from typing import Any
 
 import numpy as np
 
+from ..colorimetry import lab_to_lch
+from ..colorimetry import lch_to_lab as _lch_to_lab
 from ..spaces import ColorSpace, get, oklab, srgb
 
 GAMUTS = ("chroma", "clip", "none")
@@ -19,9 +21,8 @@ def resolve_space(space: Any) -> ColorSpace:
     if isinstance(space, ColorSpace):
         return space
     if isinstance(space, str):
-        key = space.lower().replace("_", "-")
         try:
-            return get(key)
+            return get(space)
         except KeyError:
             raise ValueError(f"unknown colour space {space!r}; registered: {ColorSpace.list()}") from None
         except TypeError as e:
@@ -67,20 +68,16 @@ def gamut_map_oklab(lab: np.ndarray, mode: str = "chroma") -> np.ndarray:
 
 def oklab_to_lch(lab: np.ndarray) -> np.ndarray:
     """(L, a, b) to (L, C, h) with h in turns."""
-    return np.stack(
-        [
-            lab[..., 0],
-            np.hypot(lab[..., 1], lab[..., 2]),
-            np.mod(np.arctan2(lab[..., 2], lab[..., 1]) / (2 * np.pi), 1.0),
-        ],
-        axis=-1,
-    )
+    lch = lab_to_lch(lab)
+    lch[..., 2] /= 360.0
+    return lch
 
 
 def lch_to_lab(lch: np.ndarray) -> np.ndarray:
     """(L, C, h) with h in turns to (L, a, b)."""
-    ang = 2 * np.pi * lch[..., 2]
-    return np.stack([lch[..., 0], lch[..., 1] * np.cos(ang), lch[..., 1] * np.sin(ang)], axis=-1)
+    deg = np.array(lch, dtype=np.float64)
+    deg[..., 2] *= 360.0
+    return _lch_to_lab(deg)
 
 
 def oklch_to_srgb(lch: np.ndarray, mode: str = "chroma") -> np.ndarray:

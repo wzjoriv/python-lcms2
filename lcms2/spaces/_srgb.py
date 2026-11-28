@@ -31,14 +31,27 @@ def d65_white_matrix(rgb_to_xyz_d65: np.ndarray) -> np.ndarray:
 
 def srgb_decode(v: np.ndarray) -> np.ndarray:
     """sRGB transfer function, device to linear; linear extension below 0."""
+    if not isinstance(v, np.ndarray) or v.ndim == 0:
+        with np.errstate(invalid="ignore"):
+            return np.where(v <= 0.04045, v / 12.92, np.power((v + 0.055) / 1.055, 2.4))
+    out = v + 0.055
+    out /= 1.055
     with np.errstate(invalid="ignore"):
-        return np.where(v <= 0.04045, v / 12.92, np.power((v + 0.055) / 1.055, 2.4))
+        np.power(out, 2.4, out=out)
+    np.divide(v, 12.92, out=out, where=v <= 0.04045)
+    return out
 
 
 def srgb_encode(v: np.ndarray) -> np.ndarray:
     """sRGB transfer function, linear to device; linear extension below 0."""
     with np.errstate(invalid="ignore"):
-        return np.where(v <= 0.0031308, v * 12.92, 1.055 * np.power(v, 1.0 / 2.4) - 0.055)
+        if not isinstance(v, np.ndarray) or v.ndim == 0:
+            return np.where(v <= 0.0031308, v * 12.92, 1.055 * np.power(v, 1.0 / 2.4) - 0.055)
+        out = np.power(v, 1.0 / 2.4)
+    out *= 1.055
+    out -= 0.055
+    np.multiply(v, 12.92, out=out, where=v <= 0.0031308)
+    return out
 
 
 class SRGBSpace(RGBSpace):

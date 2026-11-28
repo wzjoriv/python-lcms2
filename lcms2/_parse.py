@@ -188,6 +188,17 @@ def parse_colors(values: Any) -> np.ndarray:
     if isinstance(values, np.ndarray) and values.ndim == 2:
         if values.shape[1] not in (3, 4):
             raise ValueError(f"expected an (N, 3) or (N, 4) array, got shape {values.shape}")
+        kind = values.dtype.kind
+        if (
+            len(values)
+            and kind in "iuf"
+            and values.min() >= 0
+            and values.max() <= (1 if kind == "f" else 255)
+        ):
+            out = values.astype(np.float64)
+            if kind != "f":
+                out /= 255.0
+            return out
         return np.stack([_parse_numeric(row) for row in values]) if len(values) else values.reshape(0, 3)
     items = [parse_color(v) for v in values]
     if not items:
@@ -195,6 +206,15 @@ def parse_colors(values: Any) -> np.ndarray:
     if len({len(c) for c in items}) != 1:
         raise ValueError("cannot mix colours with and without alpha in one list")
     return np.stack(items)
+
+
+def parse_color_text(data: Any) -> Any:
+    """`data` parsed when it is a colour string or a non-empty list/tuple of strings, else unchanged."""
+    if isinstance(data, str):
+        return parse_color(data)
+    if isinstance(data, (list, tuple)) and len(data) > 0 and all(isinstance(x, str) for x in data):
+        return parse_colors(data)
+    return data
 
 
 def to_hex(rgb: Any) -> str | list[str]:

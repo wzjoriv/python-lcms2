@@ -77,7 +77,7 @@ def lab_to_lch(lab: ArrayLike) -> np.ndarray:
     [50.0, 10.0, 90.0]
     """
     lab = _triple(lab, "lab")
-    h = np.degrees(np.arctan2(lab[..., 2], lab[..., 1])) % 360.0
+    h = np.mod(np.degrees(np.arctan2(lab[..., 2], lab[..., 1])) + 360.0, 360.0)
     return np.stack([lab[..., 0], np.hypot(lab[..., 1], lab[..., 2]), h], axis=-1)
 
 
@@ -139,6 +139,7 @@ _CAT = {
     "von_kries": np.array([[0.4002, 0.7076, -0.0808], [-0.2263, 1.1653, 0.0457], [0.0, 0.0, 0.9182]]),
     "xyz_scaling": np.eye(3),
 }
+_CAT_INV = {key: np.linalg.inv(m) for key, m in _CAT.items()}
 
 
 def adaptation_matrix(src_white: ArrayLike, dst_white: ArrayLike, method: str = "bradford") -> np.ndarray:
@@ -173,7 +174,7 @@ def adaptation_matrix(src_white: ArrayLike, dst_white: ArrayLike, method: str = 
         raise ValueError(f"unknown adaptation method {method!r}; use one of {sorted(_CAT)}")
     m = _CAT[key]
     gain = (m @ _triple(dst_white, "dst_white")) / (m @ _triple(src_white, "src_white"))
-    return np.linalg.inv(m) @ np.diag(gain) @ m
+    return _CAT_INV[key] @ np.diag(gain) @ m
 
 
 def adapt(xyz: ArrayLike, src_white: ArrayLike, dst_white: ArrayLike, method: str = "bradford") -> np.ndarray:

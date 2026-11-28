@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from os import PathLike
 
 from ..._errors import ICCParseError
+from ...colorimetry import D50
 from . import binary as bn
 
 HEADER_SIZE = 128
@@ -227,7 +228,7 @@ class ICCProfile:
         data_colour_space: bytes = b"RGB ",
         pcs: bytes = b"XYZ ",
         rendering_intent: int = 1,
-        pcs_illuminant: Sequence[float] = (0.9642, 1.0, 0.8249),
+        pcs_illuminant: Sequence[float] = tuple(D50.tolist()),
         cmm: bytes = b"\x00\x00\x00\x00",
         primary_platform: bytes = b"\x00\x00\x00\x00",
         manufacturer: bytes = b"\x00\x00\x00\x00",
