@@ -26,7 +26,7 @@ Profiles
 
    srgb = lcms2.Profile("sRGB")                  # built-in name, case-insensitive
    cmyk = lcms2.Profile("press.icc")             # file
-   lcms2.Profile.builtins()                      # the 25 built-in names
+   lcms2.Profile.builtins()                      # the 24 built-in names
 
 ``Profile.transform`` converts from that profile to another:
 
