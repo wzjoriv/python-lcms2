@@ -22,7 +22,25 @@ REC2020_BETA = 0.018053968510807
 
 
 def rec2020_decode(v: np.ndarray) -> np.ndarray:
-    """BT.2020 transfer function, device to linear."""
+    """Apply the ITU-R BT.2020 transfer function from device values to linear light.
+
+    Parameters
+    ----------
+    v : ndarray
+        Device values, 0..1.
+
+    Returns
+    -------
+    ndarray
+        The transformed values, same shape as `v`.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from lcms2.spaces._rec2020 import rec2020_decode
+    >>> rec2020_decode(np.array([0.5, 1.0])).round(4).tolist()
+    [0.2597, 1.0]
+    """
     with np.errstate(invalid="ignore"):
         return np.where(
             v < REC2020_BETA * 4.5,
@@ -32,7 +50,25 @@ def rec2020_decode(v: np.ndarray) -> np.ndarray:
 
 
 def rec2020_encode(v: np.ndarray) -> np.ndarray:
-    """BT.2020 transfer function, linear to device."""
+    """Apply the inverse ITU-R BT.2020 transfer function from linear light to device values.
+
+    Parameters
+    ----------
+    v : ndarray
+        Linear-light values, 0..1.
+
+    Returns
+    -------
+    ndarray
+        The transformed values, same shape as `v`.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from lcms2.spaces._rec2020 import rec2020_encode
+    >>> rec2020_encode(np.array([0.5, 1.0])).round(4).tolist()
+    [0.7054, 1.0]
+    """
     with np.errstate(invalid="ignore"):
         return np.where(
             v < REC2020_BETA,
@@ -42,7 +78,19 @@ def rec2020_encode(v: np.ndarray) -> np.ndarray:
 
 
 class Rec2020Space(RGBSpace):
-    """ITU-R BT.2020 primaries and transfer function (CSS ``rec2020``)."""
+    """ITU-R BT.2020 primaries and transfer function (CSS ``rec2020``).
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, rec2020
+    >>> srgb.to(rec2020, [1.0, 0.0, 0.0]).round(2).tolist()
+    [0.79, 0.23, 0.07]
+    """
 
     name = "rec2020"
     matrix = D65_TO_D50 @ d65_white_matrix(REC2020_TO_XYZ_D65)

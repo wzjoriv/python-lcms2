@@ -54,18 +54,31 @@ class GeneratorsMixin:
             whose hue is used.
         hue_end : float or colour, optional
             Final hue; the hue sweeps linearly from `hue_start` to `hue_end` (the numbers
-            are used as given, so ``260`` to ``-100`` goes the other way round). Default:
+            are used as given, so ``260`` to ``-100`` goes the other way round). Defaults to
             a single hue.
-        lightness : (float, float), default (0.15, 0.97)
+        lightness : tuple of float, optional
             OKLab lightness at the two ends; ``(0.97, 0.15)`` gives a dark-high map.
-        chroma : float, default 0.12
-            Peak OKLCh chroma, reduced where sRGB cannot reach it.
-        n : int, default 256
+            Defaults to ``(0.15, 0.97)``.
+        chroma : float, optional
+            Peak OKLCh chroma, reduced where sRGB cannot reach it. Defaults to 0.12.
+        n : int, optional
+            Number of samples. Defaults to 256.
         name : str, optional
+            Display name. Defaults to ``"sequential-<hue>"``.
 
         Returns
         -------
         Colormap
+            The generated colormap.
+
+        Raises
+        ------
+        ValueError
+            If ``n < 2``.
+
+        See Also
+        --------
+        Colormap.diverging : A two-armed map with a neutral centre.
 
         Examples
         --------
@@ -101,14 +114,27 @@ class GeneratorsMixin:
         low, high : float or colour
             Hue in degrees, or a colour, for each arm. Both arms end at the same
             lightness (the mean of the two colours' lightness, or 0.4 for hues).
-        center : colour or None, default "#f2f2f2"
+        center : colour or None, optional
             Midpoint colour; ``None`` picks a neutral light grey automatically.
-        n : int, default 256
+            Defaults to ``"#f2f2f2"``.
+        n : int, optional
+            Number of samples. Defaults to 256.
         name : str, optional
+            Display name. Defaults to ``"diverging"``.
 
         Returns
         -------
         Colormap
+            The generated colormap.
+
+        Raises
+        ------
+        ValueError
+            If ``n < 2``.
+
+        See Also
+        --------
+        Colormap.sequential : A single-arm lightness ramp.
 
         Examples
         --------
@@ -144,17 +170,31 @@ class GeneratorsMixin:
 
         Parameters
         ----------
-        hue_start : float, default 0
+        hue_start : float, optional
             Hue in degrees of the first colour; the hue then rotates a full turn
-            (the end point is not repeated, so the map wraps seamlessly).
-        lightness, chroma : float
-            OKLCh lightness and chroma; chroma is reduced where sRGB cannot reach it.
-        n : int, default 256
+            (the end point is not repeated, so the map wraps seamlessly). Defaults to 0.
+        lightness : float, optional
+            OKLCh lightness. Defaults to 0.7.
+        chroma : float, optional
+            OKLCh chroma, reduced where sRGB cannot reach it. Defaults to 0.1.
+        n : int, optional
+            Number of samples. Defaults to 256.
         name : str, optional
+            Display name. Defaults to ``"cyclic"``.
 
         Returns
         -------
         Colormap
+            The generated colormap.
+
+        Raises
+        ------
+        ValueError
+            If ``n < 2``.
+
+        See Also
+        --------
+        Colormap.qualitative : Separate categorical colours.
 
         Examples
         --------
@@ -188,13 +228,28 @@ class GeneratorsMixin:
         ----------
         k : int
             Number of colours (at least 1).
-        lightness, chroma : float
-        hue_start : float, default 25
+        lightness : float, optional
+            OKLCh lightness. Defaults to 0.7.
+        chroma : float, optional
+            OKLCh chroma. Defaults to 0.12.
+        hue_start : float, optional
+            Hue in degrees of the first colour. Defaults to 25.
         name : str, optional
+            Display name. Defaults to ``"qualitative-<k>"``.
 
         Returns
         -------
         Colormap
+            A colormap with exactly `k` entries.
+
+        Raises
+        ------
+        ValueError
+            If ``k < 1``.
+
+        See Also
+        --------
+        Colormap.cyclic : A continuous hue wheel.
 
         Examples
         --------

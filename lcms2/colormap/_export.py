@@ -70,10 +70,19 @@ class ExportMixin:
     def to_matplotlib(self) -> Any:
         """Convert to a matplotlib ``ListedColormap``.
 
+        Returns
+        -------
+        matplotlib.colors.ListedColormap
+            The colormap, with colours clipped to 0..1.
+
         Raises
         ------
         ImportError
             If matplotlib is missing (``pip install python-lcms2[plot]``).
+
+        See Also
+        --------
+        Colormap.register : Also register it with matplotlib.
 
         Examples
         --------
@@ -93,11 +102,27 @@ class ExportMixin:
         Parameters
         ----------
         name : str, optional
-            Registry name; defaults to the colormap's own name. Re-registering replaces.
+            Registry name. Defaults to the colormap's own name. Re-registering replaces.
 
         Returns
         -------
         matplotlib.colors.ListedColormap
+            The registered colormap.
+
+        Raises
+        ------
+        ImportError
+            If matplotlib is missing.
+
+        See Also
+        --------
+        Colormap.to_matplotlib : Convert without registering.
+
+        Examples
+        --------
+        >>> from lcms2.colormap import Colormap
+        >>> Colormap.from_colors(["black", "white"]).register("ramp").name  # doctest: +SKIP
+        'ramp'
         """
         mpl = _matplotlib()
         cmap = self.to_matplotlib()
@@ -109,6 +134,27 @@ class ExportMixin:
     @classmethod
     def from_matplotlib(cls, name_or_cmap: Any, n: int = 256) -> Colormap:
         """Sample a matplotlib colormap (by name or instance) into a `Colormap`.
+
+        Parameters
+        ----------
+        name_or_cmap : str or matplotlib.colors.Colormap
+            Registered name or a colormap instance.
+        n : int, optional
+            Number of samples. Defaults to 256.
+
+        Returns
+        -------
+        Colormap
+            The sampled colormap.
+
+        Raises
+        ------
+        ImportError
+            If matplotlib is missing.
+
+        See Also
+        --------
+        Colormap.to_matplotlib : The reverse conversion.
 
         Examples
         --------
@@ -127,6 +173,25 @@ class ExportMixin:
 
         With ``vertical=True`` the map runs bottom (first colour) to top, and the
         image is still ``height`` rows by ``width`` columns.
+
+        Parameters
+        ----------
+        width : int, optional
+            Image width in pixels. Defaults to 256.
+        height : int, optional
+            Image height in pixels. Defaults to 32.
+        vertical : bool, optional
+            Run the map bottom to top instead of left to right. Defaults to False.
+
+        Returns
+        -------
+        ndarray, shape (height, width, 3)
+            The swatch as ``uint8``.
+
+        Raises
+        ------
+        ValueError
+            If `width` or `height` is not positive.
 
         Examples
         --------
@@ -160,6 +225,11 @@ class ExportMixin:
     def save(self, path: Any) -> Path:
         """Write to ``.png`` (swatch), ``.csv`` (r,g,b floats), ``.json`` or ``.txt`` (hex lines).
 
+        Parameters
+        ----------
+        path : str or path-like
+            Destination; the extension picks the format.
+
         Returns
         -------
         pathlib.Path
@@ -169,6 +239,10 @@ class ExportMixin:
         ------
         ValueError
             For any other extension.
+
+        See Also
+        --------
+        Colormap.load : Read a saved colormap back.
 
         Examples
         --------
@@ -205,6 +279,35 @@ class ExportMixin:
         """Read a colormap written by `save` (``.csv``, ``.json`` or ``.txt``).
 
         ``.txt`` holds one colour per line in any form `lcms2._parse.parse_color` accepts.
+
+        Parameters
+        ----------
+        path : str or path-like
+            File to read; the extension picks the format.
+
+        Returns
+        -------
+        Colormap
+            The loaded colormap, named after the file unless the file carries a name.
+
+        Raises
+        ------
+        ValueError
+            For any other extension.
+
+        See Also
+        --------
+        Colormap.save : Write a colormap.
+
+        Examples
+        --------
+        >>> import tempfile, pathlib
+        >>> from lcms2.colormap import Colormap
+        >>> path = pathlib.Path(tempfile.mkdtemp()) / "ramp.json"
+        >>> Colormap.from_colors(["black", "white"], n=3).save(path).name
+        'ramp.json'
+        >>> Colormap.load(path).hex()
+        ['#000000', '#636363', '#ffffff']
         """
         p = Path(path)
         ext = p.suffix.lower()

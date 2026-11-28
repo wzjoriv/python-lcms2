@@ -105,6 +105,7 @@ class ColorSpace:
     ... )
     >>> gray.to_xyz([0.5]).tolist()
     [0.5, 0.5, 0.5]
+
     """
 
     n_channels: int | None = None
@@ -121,6 +122,47 @@ class ColorSpace:
         name: str | None = None,
         device_domain: tuple | list | None = None,
     ):
+        """Create a color space from callables, or as a configured subclass.
+
+        Parameters
+        ----------
+        n_channels : int, optional
+            Number of device channels. Defaults to the class attribute, and to the
+            length of `device_domain` when that lists one pair per channel.
+        to_xyz : callable, optional
+            Maps ``(..., n_channels)`` device values to ``(..., 3)`` XYZ.
+            Required unless a subclass overrides `to_xyz`.
+        from_xyz : callable, optional
+            Maps ``(..., 3)`` XYZ to ``(..., n_channels)`` device values.
+            Required unless a subclass overrides `from_xyz`.
+        name : str, optional
+            Display name. Defaults to the registered name.
+        device_domain : tuple or list of tuple, optional
+            Device value range written to ICC profiles: one ``(lo, hi)`` pair
+            shared by every channel, or one pair per channel. Defaults to the
+            class attribute, ``(0.0, 1.0)``.
+
+        Raises
+        ------
+        TypeError
+            If a direction has no implementation, or has both an override and a
+            callable, or the channel count is neither declared nor implied by
+            `device_domain`.
+        ValueError
+            If `n_channels` disagrees with `device_domain` or a range is invalid.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import ColorSpace
+        >>> space = ColorSpace(
+        ...     to_xyz=lambda v: v,
+        ...     from_xyz=lambda xyz: xyz,
+        ...     device_domain=[(0.0, 1.0)] * 3,
+        ...     name="identity",
+        ... )
+        >>> space.n_channels
+        3
+        """
         cls = type(self)
         declared = n_channels if n_channels is not None else self.n_channels
         domain = device_domain if device_domain is not None else self.device_domain
@@ -178,6 +220,17 @@ class ColorSpace:
         Returns
         -------
         list of str
+            Registered names, lowercase with ``-`` separators.
+
+        See Also
+        --------
+        lcms2.spaces.get : Look a registered space up by name.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import ColorSpace
+        >>> "oklab" in ColorSpace.list()
+        True
         """
         return sorted(_REGISTRY)
 
@@ -198,8 +251,40 @@ class ColorSpace:
     ) -> np.ndarray:
         """Convert ``data`` from this space to ``to``, exactly like :meth:`lcms2.Profile.transform`.
 
-        ``to`` may be a colour space, a profile, a built-in profile name or an ICC file; see
-        :func:`lcms2.convert` for the keywords (they apply when a profile is involved).
+        Parameters
+        ----------
+        data : array_like, shape (..., n_channels)
+            Values in this space.
+        to : ColorSpace, Profile or str
+            Destination: a color space, a profile, a built-in profile name or an ICC file.
+        intent : int, str or Intent, optional
+            Rendering intent. Defaults to ``"relative"``.
+        bpc : bool, optional
+            Use black point compensation. Defaults to False.
+        proof : Profile or str, optional
+            Soft-proofing profile. Defaults to None.
+        gamut_check : bool, optional
+            Mark out-of-gamut colors with the alarm codes when proofing. Defaults to False.
+        optimize : bool, optional
+            Let Little CMS optimize the transform. Defaults to True.
+        precision : str, optional
+            ``"auto"``, ``"high"`` or ``"low"``. Defaults to ``"auto"``.
+        flags : int or Flag, optional
+            Extra Little CMS flags. Defaults to None.
+        out : ndarray, optional
+            Array to write the result into. Defaults to a new array.
+        out_dtype : dtype, optional
+            Output dtype. Defaults to following the input.
+
+        Returns
+        -------
+        ndarray, shape (..., n_out)
+            The converted values.
+
+        See Also
+        --------
+        lcms2.convert : The underlying function.
+        ColorSpace.to : Convert between color spaces in pure NumPy.
 
         Examples
         --------
@@ -237,13 +322,16 @@ class ColorSpace:
         Returns
         -------
         ndarray, shape (..., target.n_channels)
+            The converted values.
 
         Raises
         ------
-        KeyError
-            If `target` is an unregistered name.
         TypeError
             If `target` names a space that needs constructor arguments.
+
+        See Also
+        --------
+        ColorSpace.transform : Convert through ICC profiles.
 
         Examples
         --------
@@ -285,17 +373,29 @@ class ColorSpace:
 
         Parameters
         ----------
-        values : array_like, shape (..., n_channels)
+        values : array_like, shape (..., C)
+            Device values, with ``C = n_channels`` channels.
 
         Returns
         -------
         ndarray, shape (..., 3)
+            XYZ relative to D50, with Y 0..1 for the white point.
 
         Raises
         ------
         ValueError
             If the input's last dimension is not `n_channels`, or the result
             does not have shape ``(..., 3)``.
+
+        See Also
+        --------
+        ColorSpace.from_xyz : The inverse.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> srgb.to_xyz([1.0, 1.0, 1.0]).round(4).tolist()
+        [0.9642, 1.0, 0.8249]
         """
         raise NotImplementedError
 
@@ -305,22 +405,39 @@ class ColorSpace:
         Parameters
         ----------
         xyz : array_like, shape (..., 3)
+            XYZ relative to D50.
 
         Returns
         -------
-        ndarray, shape (..., n_channels)
+        ndarray, shape (..., C)
+            Device values, with ``C = n_channels`` channels.
 
         Raises
         ------
         ValueError
             If the input's last dimension is not 3, or the result does not
             have shape ``(..., n_channels)``.
+
+        See Also
+        --------
+        ColorSpace.to_xyz : The inverse.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> srgb.from_xyz([0.9642, 1.0, 0.8249]).round(2).tolist()
+        [1.0, 1.0, 1.0]
         """
         raise NotImplementedError
 
     @property
     def profile(self) -> Profile:
         """This space as an :class:`lcms2.Profile` (built once, exactly when possible).
+
+        Returns
+        -------
+        Profile
+            The cached profile.
 
         Examples
         --------
@@ -355,22 +472,23 @@ class ColorSpace:
             File to write the profile to.
         version : int or tuple of int, optional
             ``2``, ``4``, ``5`` or a published ``(major, minor, bugfix)``
-            revision such as ``(4, 2, 0)``. Default 4.
+            revision such as ``(4, 2, 0)``. Defaults to 4.
         rendering_intent : int, optional
-            Header rendering intent. Default 1 (relative colorimetric).
+            Header rendering intent. Defaults to 1 (relative colorimetric).
         grid_size : int, optional
-            Grid points per axis of sampled lookup tables.
+            Grid points per axis of sampled lookup tables. Defaults to a size chosen
+            from the channel count.
         description : str, optional
-            Profile description text.
+            Profile description text. Defaults to the class name.
         copyright : str, optional
-            Profile copyright text.
+            Profile copyright text. Defaults to a generic notice.
         force_clut : bool, optional
-            Always write sampled lookup tables.
+            Always write sampled lookup tables. Defaults to False.
         strict : bool, optional
             Raise :class:`~lcms2.ICCWriteError` instead of falling back to sampled lookup
             tables when `to_xyz` or `from_xyz` has no exact representation, for example
             because it branches on values or calls a non-NumPy library. The message names
-            the operation that could not be traced.
+            the operation that could not be traced. Defaults to False.
 
         Returns
         -------
@@ -392,6 +510,17 @@ class ColorSpace:
             If the version or `device_domain` is invalid, if `to_xyz` or `from_xyz`
             fails on every input, or with ``strict=True`` if there is no exact
             representation.
+
+        See Also
+        --------
+        lcms2.icc.write_icc_bytes : Function form that returns bytes only.
+        lcms2.icc.ICCSpace : Read a profile back as a color space.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> srgb.to_icc_profile()["method"]
+        'exact_matrix_trc'
         """
         from ..icc import normalize_icc_version, write_icc_bytes
 
@@ -427,10 +556,26 @@ def get(name: str) -> ColorSpace:
     The instance is shared: repeated calls return the same object until another class is
     registered under that name.
 
+    Parameters
+    ----------
+    name : str
+        Registered name, for example ``"oklab"`` or ``"display-p3"``.
+
+    Returns
+    -------
+    ColorSpace
+        The shared instance.
+
     Raises
     ------
     KeyError
         If no space is registered under `name`.
+    TypeError
+        If the space needs constructor arguments.
+
+    See Also
+    --------
+    lcms2.spaces.ColorSpace.list : The registered names.
 
     Examples
     --------

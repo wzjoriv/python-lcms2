@@ -11,8 +11,21 @@ from ._srgb import srgb
 
 
 class CMYKSpace(ColorSpace):
-    """CMYK ink in percent (0..100, as in Photoshop and Little CMS) from the complement of sRGB
-    with ``K = min(C, M, Y)``; not an ink model."""
+    """Formula CMYK over sRGB, with ink in percent (0..100) as in Photoshop and Little CMS.
+
+    Derived from the complement of sRGB with ``K = min(C, M, Y)``; not an ink model.
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, cmyk
+    >>> srgb.to(cmyk, [1.0, 0.0, 0.0]).round(2).tolist()
+    [0.0, 100.0, 100.0, 0.0]
+    """
 
     name = "cmyk"
     n_channels = 4
@@ -20,14 +33,12 @@ class CMYKSpace(ColorSpace):
     device_domain = [(0.0, 100.0)] * 4
 
     def to_xyz(self, cmyk: np.ndarray) -> np.ndarray:
-        """Convert CMYK to CIE XYZ (D50)."""
         cmyk = np.asarray(cmyk, dtype=np.float64) / 100.0
         k = 1.0 - cmyk[..., 3]
         rgb = np.stack([(1.0 - cmyk[..., i]) * k for i in range(3)], axis=-1)
         return srgb.to_xyz(rgb)
 
     def from_xyz(self, xyz: np.ndarray) -> np.ndarray:
-        """Convert CIE XYZ (D50) to CMYK."""
         cmy = 1.0 - srgb.from_xyz(xyz)
         k = np.minimum(np.minimum(cmy[..., 0], cmy[..., 1]), cmy[..., 2])
         ink = k < 1.0 - 1e-12

@@ -36,7 +36,16 @@ def xyz_to_lab(xyz: ArrayLike, white: ArrayLike | None = None) -> np.ndarray:
     xyz : array_like
         XYZ of shape ``(..., 3)`` with ``Y = 1`` at the white.
     white : array_like, optional
-        Reference white XYZ; defaults to D50.
+        Reference white XYZ. Defaults to D50.
+
+    Returns
+    -------
+    numpy.ndarray
+        Lab of shape ``(..., 3)``, with L in 0..100 at the white.
+
+    See Also
+    --------
+    lab_to_xyz : The inverse.
 
     Examples
     --------
@@ -54,6 +63,22 @@ def xyz_to_lab(xyz: ArrayLike, white: ArrayLike | None = None) -> np.ndarray:
 def lab_to_xyz(lab: ArrayLike, white: ArrayLike | None = None) -> np.ndarray:
     """CIELAB to XYZ; inverse of :func:`xyz_to_lab`.
 
+    Parameters
+    ----------
+    lab : array_like
+        Lab of shape ``(..., 3)``, with L in 0..100.
+    white : array_like, optional
+        Reference white XYZ. Defaults to D50.
+
+    Returns
+    -------
+    numpy.ndarray
+        XYZ of shape ``(..., 3)`` with ``Y = 1`` at the white.
+
+    See Also
+    --------
+    xyz_to_lab : The inverse.
+
     Examples
     --------
     >>> from lcms2.colorimetry import lab_to_xyz
@@ -70,6 +95,20 @@ def lab_to_xyz(lab: ArrayLike, white: ArrayLike | None = None) -> np.ndarray:
 def lab_to_lch(lab: ArrayLike) -> np.ndarray:
     """CIELAB to LCh (hue in degrees, 0..360).
 
+    Parameters
+    ----------
+    lab : array_like
+        Lab of shape ``(..., 3)``.
+
+    Returns
+    -------
+    numpy.ndarray
+        LCh of shape ``(..., 3)``: lightness, chroma and hue in degrees.
+
+    See Also
+    --------
+    lch_to_lab : The inverse.
+
     Examples
     --------
     >>> from lcms2.colorimetry import lab_to_lch
@@ -84,6 +123,20 @@ def lab_to_lch(lab: ArrayLike) -> np.ndarray:
 def lch_to_lab(lch: ArrayLike) -> np.ndarray:
     """LCh to CIELAB; inverse of :func:`lab_to_lch`.
 
+    Parameters
+    ----------
+    lch : array_like
+        LCh of shape ``(..., 3)``, with hue in degrees.
+
+    Returns
+    -------
+    numpy.ndarray
+        Lab of shape ``(..., 3)``.
+
+    See Also
+    --------
+    lab_to_lch : The inverse.
+
     Examples
     --------
     >>> from lcms2.colorimetry import lch_to_lab
@@ -97,6 +150,20 @@ def lch_to_lab(lch: ArrayLike) -> np.ndarray:
 
 def xyz_to_xyy(xyz: ArrayLike) -> np.ndarray:
     """XYZ to xyY. Black (XYZ all zero) gets the D50 chromaticity.
+
+    Parameters
+    ----------
+    xyz : array_like
+        XYZ of shape ``(..., 3)``.
+
+    Returns
+    -------
+    numpy.ndarray
+        xyY of shape ``(..., 3)``.
+
+    See Also
+    --------
+    xyy_to_xyz : The inverse.
 
     Examples
     --------
@@ -113,6 +180,20 @@ def xyz_to_xyy(xyz: ArrayLike) -> np.ndarray:
 
 def xyy_to_xyz(xyy: ArrayLike) -> np.ndarray:
     """xyY to XYZ. A zero ``y`` gives black.
+
+    Parameters
+    ----------
+    xyy : array_like
+        xyY of shape ``(..., 3)``.
+
+    Returns
+    -------
+    numpy.ndarray
+        XYZ of shape ``(..., 3)``.
+
+    See Also
+    --------
+    xyz_to_xyy : The inverse.
 
     Examples
     --------
@@ -149,8 +230,8 @@ def adaptation_matrix(src_white: ArrayLike, dst_white: ArrayLike, method: str = 
     ----------
     src_white, dst_white : array_like
         XYZ of the source and destination whites.
-    method : {"bradford", "von_kries", "xyz_scaling"}
-        Adaptation transform.
+    method : {"bradford", "von_kries", "xyz_scaling"}, optional
+        Adaptation transform. Defaults to ``"bradford"``.
 
     Returns
     -------
@@ -162,6 +243,10 @@ def adaptation_matrix(src_white: ArrayLike, dst_white: ArrayLike, method: str = 
     ------
     ValueError
         If `method` is unknown.
+
+    See Also
+    --------
+    adapt : Apply the adaptation to colors.
 
     Examples
     --------
@@ -186,8 +271,22 @@ def adapt(xyz: ArrayLike, src_white: ArrayLike, dst_white: ArrayLike, method: st
         XYZ of shape ``(..., 3)``.
     src_white, dst_white : array_like
         XYZ of the source and destination whites.
-    method : {"bradford", "von_kries", "xyz_scaling"}
-        Adaptation transform.
+    method : {"bradford", "von_kries", "xyz_scaling"}, optional
+        Adaptation transform. Defaults to ``"bradford"``.
+
+    Returns
+    -------
+    numpy.ndarray
+        Adapted XYZ of shape ``(..., 3)``.
+
+    Raises
+    ------
+    ValueError
+        If `method` is unknown.
+
+    See Also
+    --------
+    adaptation_matrix : The underlying matrix.
 
     Examples
     --------
