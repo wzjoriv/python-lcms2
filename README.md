@@ -5,9 +5,11 @@ differences, build exact ICC profiles from your own NumPy color math, and make p
 all backed by [LittleCMS 2](https://github.com/mm2/Little-CMS).
 
 [![Tests](https://github.com/wzjoriv/python-lcms2/actions/workflows/ci.yml/badge.svg)](https://github.com/wzjoriv/python-lcms2/actions/workflows/ci.yml)
-[![Docs](https://github.com/wzjoriv/python-lcms2/actions/workflows/docs.yml/badge.svg)](https://github.com/wzjoriv/python-lcms2/actions/workflows/docs.yml)
 [![PyPI](https://img.shields.io/pypi/v/python-lcms2)](https://pypi.org/project/python-lcms2/)
 [![Python](https://img.shields.io/pypi/pyversions/python-lcms2)](https://pypi.org/project/python-lcms2/)
+[![Free-threaded](https://img.shields.io/badge/free--threaded-3.14t%20%7C%203.15t-blue)](https://pypi.org/project/python-lcms2/#files)
+[![PyPy](https://img.shields.io/badge/PyPy-3.11-blue)](https://pypi.org/project/python-lcms2/#files)
+[![Pyodide](https://img.shields.io/badge/Pyodide-3.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/python-lcms2/#files)
 [![LittleCMS 2.20](https://img.shields.io/badge/LittleCMS-2.20-blue)](https://github.com/mm2/Little-CMS)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-wzjoriv.github.io%2Fpython--lcms2-blue)](https://wzjoriv.github.io/python-lcms2)
@@ -18,7 +20,7 @@ all backed by [LittleCMS 2](https://github.com/mm2/Little-CMS).
 | Feature | What you get |
 |---|---|
 | One-call conversion | `lcms2.convert(img, "sRGB", "Display P3")`: pixel formats come from the array's dtype and shape. |
-| Profiles | 25 built-ins (sRGB, Display P3, Adobe RGB, ProPhoto, Rec.2020, Lab, XYZ, …), ICC files, bytes; read and edit header, text and tags. |
+| Profiles | 24 built-ins (sRGB, Display P3, Adobe RGB, ProPhoto, Rec.2020, Lab, XYZ, …), ICC files, bytes; read and edit header, text and tags. |
 | Transforms | Rendering intents, black-point compensation, soft proofing with gamut check, multi-profile chains, device links. |
 | Fast and safe | The GIL is released during transforms; any contiguity or stride; alpha channels carried through. |
 | Color spaces | OKLab, OKLCh, CIE LCh, HSV, HWB, Display P3, Rec.2100 PQ/HLG, … as NumPy functions, mixed freely with ICC profiles. |
@@ -54,7 +56,8 @@ lcms2.convert([255, 0, 0], "sRGB", "oklab")
 # array([0.6279, 0.2249, 0.1258])
 ```
 
-Reuse a `Transform` when converting many images; formats are resolved per input and cached:
+Reuse a `Transform` when converting many images; formats are resolved per input and cached. `press.icc` stands
+for any CMYK profile, e.g. from your printer or from [ECI](https://www.eci.org/en/downloads):
 
 ```python
 to_cmyk = lcms2.Transform("sRGB", lcms2.Profile("press.icc"), intent="relative", bpc=True)
@@ -86,12 +89,17 @@ proof(img)                                    # how img prints; out-of-gamut pix
 ```python
 from lcms2.spaces import ColorSpace
 
+M = np.array([[0.4360747, 0.3850649, 0.1430804],   # sRGB primaries → XYZ (D50)
+              [0.2225045, 0.7168786, 0.0606169],
+              [0.0139322, 0.0971045, 0.7141733]])
+M_inv = np.linalg.inv(M)
+
 class Gamma18(ColorSpace):
     n_channels = 3
     def to_xyz(self, rgb):
-        return (rgb ** 1.8) @ M.T             # M: your 3x3 RGB→XYZ (D50) matrix
+        return np.asarray(rgb) ** 1.8 @ M.T
     def from_xyz(self, xyz):
-        return (xyz @ M_inv.T) ** (1 / 1.8)
+        return np.clip(np.asarray(xyz) @ M_inv.T, 0, None) ** (1 / 1.8)
 
 profile = lcms2.Profile(Gamma18())            # exact matrix/TRC profile, usable in any CMS
 profile.save("gamma18.icc")
@@ -111,13 +119,16 @@ lcms2.delta_e(lab1, lab2, method="cmc", l=2, c=1)
 ### Colormaps
 
 ```python
+import matplotlib.pyplot as plt
+
 cm = lcms2.Colormap.from_colors(["#0b1a3a", "#f08a24", "#fff6d5"])   # interpolated in OKLab
 cm = lcms2.Colormap.get("glacier")            # built-ins: lcms2.colormap.list()
 
-rgb = cm(values)                              # (..., 3) floats; bytes=True for uint8
+values = np.linspace(0, 1, 256)
+rgb = cm(values)                              # (256, 3) floats; bytes=True for uint8
 cm.is_lightness_monotonic(), cm.uniformity()
 cm.simulate("deuteranopia")                   # color-vision-deficiency preview
-plt.imshow(data, cmap=cm.to_matplotlib())
+plt.imshow(np.random.rand(64, 64), cmap=cm.to_matplotlib())
 ```
 
 ## Examples
