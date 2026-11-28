@@ -12,6 +12,7 @@ import numpy as np
 
 from .. import colorimetry as col
 from .._errors import ICCParseError
+from .._lcms2 import mat3
 from . import _pcs
 from ._interp import sample_clut
 from ._io import binary as bn
@@ -158,10 +159,10 @@ def _build_matrix_trc(profile: ICCProfile) -> BuiltTransform:
 
     def to_xyz(rgb: np.ndarray) -> np.ndarray:
         rgb = np.asarray(rgb, dtype=np.float64)
-        return _apply_curves(curves, rgb) @ matrix.T
+        return mat3(matrix, _apply_curves(curves, rgb))
 
     def from_xyz(xyz: np.ndarray) -> np.ndarray:
-        lin = np.asarray(xyz, dtype=np.float64) @ matrix_inv.T
+        lin = mat3(matrix_inv, np.asarray(xyz, dtype=np.float64))
         return np.stack([tt.invert_curve_numeric(c, lin[..., i]) for i, c in enumerate(curves)], axis=-1)
 
     return BuiltTransform(to_xyz, from_xyz, kind="matrix_trc", n_channels=3)
@@ -186,7 +187,7 @@ def _classic_lut_apply(
     d: dict[str, Any], x: np.ndarray, use_matrix: bool, circular: Collection[int]
 ) -> np.ndarray:
     if use_matrix:
-        x = np.clip(x @ d["matrix"].T, 0.0, 1.0)
+        x = np.clip(mat3(d["matrix"], x), 0.0, 1.0)
     grid_in = np.linspace(0.0, 1.0, d["in_tables"].shape[1])
     stage = np.stack([np.interp(x[..., i], grid_in, d["in_tables"][i]) for i in range(d["in_ch"])], axis=-1)
     out = sample_clut(d["clut"], stage, circular_channels=circular)
@@ -206,7 +207,7 @@ def _mab_apply(d: dict[str, Any], x: np.ndarray, is_b2a: bool, circular: Collect
                 cur = sample_clut(d["clut"], cur, circular_channels=circular)
         elif stage == "MATRIX":
             if d["matrix"] is not None:
-                cur = cur @ d["matrix"].T + d["matrix_offset"]
+                cur = mat3(d["matrix"], cur) + d["matrix_offset"]
         else:
             curves = d[f"{stage}_curves"]
             if curves is not None:
@@ -220,7 +221,8 @@ def _mpet_apply(d: dict[str, Any], x: np.ndarray, circular: Collection[int]) -> 
     for idx, elem in enumerate(elems):
         kind = elem["kind"]
         if kind == "matrix":
-            cur = cur @ elem["matrix"].T + elem["offset"]
+            m = elem["matrix"]
+            cur = (mat3(m, cur) if m.shape == (3, 3) else np.einsum("...j,ij->...i", cur, m)) + elem["offset"]
         elif kind == "curveset":
             cur = np.stack(
                 [mpe.eval_curveset_channel(elem["curves"][i], cur[..., i]) for i in range(cur.shape[-1])],
