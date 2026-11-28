@@ -188,6 +188,17 @@ def parse_colors(values: Any) -> np.ndarray:
     if isinstance(values, np.ndarray) and values.ndim == 2:
         if values.shape[1] not in (3, 4):
             raise ValueError(f"expected an (N, 3) or (N, 4) array, got shape {values.shape}")
+        kind = values.dtype.kind
+        if (
+            len(values)
+            and kind in "iuf"
+            and values.min() >= 0
+            and values.max() <= (1 if kind == "f" else 255)
+        ):
+            out = values.astype(np.float64)
+            if kind != "f":
+                out /= 255.0
+            return out
         return np.stack([_parse_numeric(row) for row in values]) if len(values) else values.reshape(0, 3)
     items = [parse_color(v) for v in values]
     if not items:
