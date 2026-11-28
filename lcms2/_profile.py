@@ -48,8 +48,8 @@ class Profile(ProfileData):
         ``to_icc_profile()`` (a ``ColorSpace``) or None for the NULL profile.
     white_point : str or sequence of float, optional
         For ``"Lab"`` only: illuminant name (``"D65"``) or xyY of the Lab white (D50 by default).
-    degrees : {2, 10}
-        Observer for illuminant names.
+    degrees : {2, 10}, optional
+        Observer for illuminant names. Defaults to 2.
     temperature : float, optional
         For ``"Lab"`` only: white point as a daylight colour temperature in kelvin.
 
@@ -59,6 +59,15 @@ class Profile(ProfileData):
         For a string that is neither a built-in name nor an existing file.
     CMSError
         When the data is not a valid ICC profile.
+    ValueError
+        If ``white_point`` or ``temperature`` is given for a profile other than Lab.
+    TypeError
+        If ``source`` is of an unsupported type.
+
+    See Also
+    --------
+    Profile.builtins : Names of the built-in profiles.
+    Profile.open : Read a profile from a file.
 
     Examples
     --------
@@ -95,13 +104,62 @@ class Profile(ProfileData):
 
     @classmethod
     def open(cls, path: str | os.PathLike[str]) -> Profile:
-        """Read a profile file (any path, including non-ASCII ones on Windows)."""
+        """Read a profile file (any path, including non-ASCII ones on Windows).
+
+        Parameters
+        ----------
+        path : str or os.PathLike
+            Path of the ``.icc``/``.icm`` file.
+
+        Returns
+        -------
+        Profile
+            The loaded profile.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file does not exist.
+        CMSError
+            If the file is not a valid ICC profile.
+
+        See Also
+        --------
+        Profile.save : Write a profile to a file.
+
+        Examples
+        --------
+        >>> import os, tempfile
+        >>> path = os.path.join(tempfile.mkdtemp(), "p.icc")
+        >>> Profile("sRGB").save(path)
+        >>> Profile.open(path).color_space
+        <ColorSpaceSignature.RGB: 'RGB'>
+        """
         with open(path, "rb") as f:
             return cls.from_bytes(f.read())
 
     @classmethod
     def from_bytes(cls, data: bytes | bytearray | memoryview) -> Profile:
         """Parse a profile from memory.
+
+        Parameters
+        ----------
+        data : bytes, bytearray or memoryview
+            The raw ICC profile.
+
+        Returns
+        -------
+        Profile
+            The parsed profile.
+
+        Raises
+        ------
+        CMSError
+            If the data is not a valid ICC profile.
+
+        See Also
+        --------
+        Profile.to_bytes : The inverse.
 
         Examples
         --------
@@ -122,12 +180,29 @@ class Profile(ProfileData):
         strict : bool, optional
             Raise :class:`~lcms2.ICCWriteError` instead of falling back to sampled lookup
             tables when the functions cannot be traced (data-dependent branching, ``float()``,
-            random numbers, non-NumPy libraries). Default False.
+            random numbers, non-NumPy libraries). Defaults to False.
+
+        Returns
+        -------
+        Profile
+            The profile of the colour space.
 
         Raises
         ------
         ICCWriteError
             With ``strict=True``, naming the operation that prevents an exact profile.
+        TypeError
+            If ``space`` has no ``to_icc_profile()``.
+
+        See Also
+        --------
+        Profile.space : The opposite direction, a colour space view of a profile.
+
+        Examples
+        --------
+        >>> import lcms2
+        >>> Profile.from_space(lcms2.spaces.get("srgb")).color_space
+        <ColorSpaceSignature.RGB: 'RGB'>
         """
         make = getattr(space, "to_icc_profile", None)
         if make is None:
@@ -143,7 +218,32 @@ class Profile(ProfileData):
 
     @classmethod
     def builtin(cls, name: str) -> Profile:
-        """A built-in profile by (lenient) name; see :meth:`builtins`."""
+        """A built-in profile by (lenient) name; see :meth:`builtins`.
+
+        Parameters
+        ----------
+        name : str
+            Built-in profile name, case-insensitive (``"adobe rgb"``, ``"display p3"``).
+
+        Returns
+        -------
+        Profile
+            The built-in profile.
+
+        Raises
+        ------
+        ValueError
+            If the name is unknown, listing the available names.
+
+        See Also
+        --------
+        Profile.builtins : List the available names.
+
+        Examples
+        --------
+        >>> Profile.builtin("display p3").description
+        'Display P3'
+        """
         canonical = lookup_builtin(name)
         if canonical is None:
             raise ValueError(f"unknown built-in profile {name!r}; available: {', '.join(builtin_names())}")
@@ -154,6 +254,15 @@ class Profile(ProfileData):
     def builtins() -> list[str]:
         """Names of the built-in profiles.
 
+        Returns
+        -------
+        list of str
+            The canonical built-in names.
+
+        See Also
+        --------
+        Profile.builtin : Create one by name.
+
         Examples
         --------
         >>> "Display P3" in Profile.builtins()
@@ -163,7 +272,22 @@ class Profile(ProfileData):
 
     @classmethod
     def srgb(cls) -> Profile:
-        """LittleCMS's built-in sRGB profile."""
+        """LittleCMS's built-in sRGB profile.
+
+        Returns
+        -------
+        Profile
+            An sRGB display profile.
+
+        See Also
+        --------
+        Profile.rgb : A custom matrix-shaper RGB profile.
+
+        Examples
+        --------
+        >>> Profile.srgb().color_space
+        <ColorSpaceSignature.RGB: 'RGB'>
+        """
         return cls._from_handle(_lcms2.profile_create_srgb())
 
     @classmethod
@@ -171,6 +295,26 @@ class Profile(ProfileData):
         cls, white_point: Any = None, *, version: int = 4, degrees: int = 2, temperature: float | None = None
     ) -> Profile:
         """Lab identity profile (v4 or v2) relative to a white point (D50 by default).
+
+        Parameters
+        ----------
+        white_point : str or sequence of float, optional
+            Illuminant name or xyY of the Lab white. Defaults to D50.
+        version : int, optional
+            ICC major version, 4 or 2. Defaults to 4.
+        degrees : {2, 10}, optional
+            Observer for illuminant names. Defaults to 2.
+        temperature : float, optional
+            White point as a daylight colour temperature in kelvin.
+
+        Returns
+        -------
+        Profile
+            The Lab profile.
+
+        See Also
+        --------
+        Profile.xyz : The XYZ identity profile.
 
         Examples
         --------
@@ -182,7 +326,22 @@ class Profile(ProfileData):
 
     @classmethod
     def xyz(cls) -> Profile:
-        """XYZ identity profile (D50 PCS, Y = 1 for the white)."""
+        """XYZ identity profile (D50 PCS, Y = 1 for the white).
+
+        Returns
+        -------
+        Profile
+            The XYZ profile.
+
+        See Also
+        --------
+        Profile.lab : The Lab identity profile.
+
+        Examples
+        --------
+        >>> Profile.xyz().color_space
+        <ColorSpaceSignature.XYZ: 'XYZ'>
+        """
         return cls._from_handle(_lcms2.profile_create_xyz())
 
     @classmethod
@@ -205,9 +364,26 @@ class Profile(ProfileData):
             Red, green and blue chromaticities.
         gamma : float, ToneCurve, (type, params) or a sequence of 3 of those
             Transfer function(s) from encoded to linear values.
+        degrees : {2, 10}, optional
+            Observer for illuminant names. Defaults to 2.
         description : str, optional
             Profile description text. Defaults to one naming the white point and gamma,
             such as ``"RGB (D65, gamma 2.2)"``.
+
+        Returns
+        -------
+        Profile
+            The RGB profile.
+
+        Raises
+        ------
+        ValueError
+            If ``primaries`` does not have three entries.
+
+        See Also
+        --------
+        Profile.srgb : The built-in sRGB profile.
+        Profile.gray : A gray profile.
 
         Examples
         --------
@@ -236,7 +412,31 @@ class Profile(ProfileData):
 
     @classmethod
     def gray(cls, white_point: Any = "D50", gamma: Any = 2.2, *, degrees: int = 2) -> Profile:
-        """Gray profile from a white point and a transfer function (gamma, ToneCurve or (type, params))."""
+        """Gray profile from a white point and a transfer function (gamma, ToneCurve or (type, params)).
+
+        Parameters
+        ----------
+        white_point : str or sequence of float, optional
+            Illuminant name or xyY. Defaults to ``"D50"``.
+        gamma : float, ToneCurve or (type, params), optional
+            Transfer function from encoded to linear values. Defaults to 2.2.
+        degrees : {2, 10}, optional
+            Observer for illuminant names. Defaults to 2.
+
+        Returns
+        -------
+        Profile
+            The gray profile.
+
+        See Also
+        --------
+        Profile.rgb : A matrix-shaper RGB profile.
+
+        Examples
+        --------
+        >>> Profile.gray(gamma=2.2).channels
+        1
+        """
         return cls._from_handle(_lcms2.profile_create_gray(resolve_white_point(white_point, degrees), gamma))
 
     @classmethod
@@ -251,19 +451,105 @@ class Profile(ProfileData):
         temp_dst: int = 0,
         lut_points: int = 17,
     ) -> Profile:
-        """Abstract Lab profile adjusting brightness, contrast, hue, saturation and white temperature."""
+        """Abstract Lab profile adjusting brightness, contrast, hue, saturation and white temperature.
+
+        Parameters
+        ----------
+        brightness : float, optional
+            Brightness offset. Defaults to 0.0.
+        contrast : float, optional
+            Contrast multiplier. Defaults to 1.0.
+        hue : float, optional
+            Hue rotation in degrees. Defaults to 0.0.
+        saturation : float, optional
+            Saturation offset. Defaults to 0.0.
+        temp_src : int, optional
+            Source white temperature in kelvin; 0 disables the adjustment. Defaults to 0.
+        temp_dst : int, optional
+            Destination white temperature in kelvin; 0 disables the adjustment. Defaults to 0.
+        lut_points : int, optional
+            Lookup table grid points per dimension. Defaults to 17.
+
+        Returns
+        -------
+        Profile
+            The abstract profile.
+
+        See Also
+        --------
+        Profile.linearization : A per-channel curve device link.
+
+        Examples
+        --------
+        >>> Profile.abstract(contrast=1.2).device_class
+        <DeviceClass.ABSTRACT: 'abstract'>
+        """
         return cls._from_handle(
             _lcms2.profile_create_bchsw(lut_points, brightness, contrast, hue, saturation, temp_src, temp_dst)
         )
 
     @classmethod
     def ink_limiting(cls, limit: float = 300.0, color_space: str = "CMYK") -> Profile:
-        """CMYK device link limiting total ink coverage to ``limit`` percent."""
+        """CMYK device link limiting total ink coverage to ``limit`` percent.
+
+        Parameters
+        ----------
+        limit : float, optional
+            Maximum total ink coverage in percent. Defaults to 300.0.
+        color_space : str, optional
+            ``"CMYK"`` or ``"CMY"``. Defaults to ``"CMYK"``.
+
+        Returns
+        -------
+        Profile
+            The device link profile.
+
+        Raises
+        ------
+        CMSError
+            If the colour space is not supported.
+
+        See Also
+        --------
+        Profile.linearization : A per-channel curve device link.
+
+        Examples
+        --------
+        >>> Profile.ink_limiting(280).device_class
+        <DeviceClass.LINK: 'link'>
+        """
         return cls._from_handle(_lcms2.profile_create_ink_limiting(color_space, limit))
 
     @classmethod
     def linearization(cls, curves: Sequence[Any], color_space: str = "RGB") -> Profile:
-        """Device link applying one curve (gamma, ToneCurve or (type, params)) per channel."""
+        """Device link applying one curve (gamma, ToneCurve or (type, params)) per channel.
+
+        Parameters
+        ----------
+        curves : sequence of float, ToneCurve or (type, params)
+            One transfer function per channel.
+        color_space : str, optional
+            Colour space of the link. Defaults to ``"RGB"``.
+
+        Returns
+        -------
+        Profile
+            The device link profile.
+
+        Raises
+        ------
+        CMSError
+            If the colour space or curves are not supported.
+
+        See Also
+        --------
+        Profile.ink_limiting : A CMYK ink limiting device link.
+
+        Examples
+        --------
+        >>> Profile.linearization([2.2, 2.2, 2.2]).device_class
+        <DeviceClass.LINK: 'link'>
+        """
         return cls._from_handle(_lcms2.profile_create_linearization(color_space, list(curves)))
 
     # ---- Serialisation ----
@@ -282,11 +568,44 @@ class Profile(ProfileData):
         return ICCSpace(self.to_bytes())
 
     def to_bytes(self) -> bytes:
-        """The profile as ICC bytes."""
+        """The profile as ICC bytes.
+
+        Returns
+        -------
+        bytes
+            The serialized profile.
+
+        See Also
+        --------
+        Profile.from_bytes : The inverse.
+
+        Examples
+        --------
+        >>> Profile("sRGB").to_bytes()[36:40]
+        b'acsp'
+        """
         return _lcms2.profile_to_bytes(self._handle)
 
     def save(self, path: str | os.PathLike[str]) -> None:
-        """Write the profile to a file."""
+        """Write the profile to a file.
+
+        Parameters
+        ----------
+        path : str or os.PathLike
+            Destination file path.
+
+        See Also
+        --------
+        Profile.open : Read a profile file.
+
+        Examples
+        --------
+        >>> import os, tempfile
+        >>> path = os.path.join(tempfile.mkdtemp(), "srgb.icc")
+        >>> Profile("sRGB").save(path)
+        >>> os.path.getsize(path) > 0
+        True
+        """
         data = self.to_bytes()
         with open(path, "wb") as f:
             f.write(data)
@@ -309,8 +628,30 @@ class Profile(ProfileData):
         return _lcms2.profile_get_header(self._handle)
 
     def set_header(self, **fields: Any) -> None:
-        """Change header fields: device_class, color_space, pcs, version, rendering_intent, flags,
-        manufacturer, model, attributes, profile_id."""
+        """Change header fields in place.
+
+        Parameters
+        ----------
+        **fields
+            Any of ``device_class``, ``color_space``, ``pcs``, ``version``, ``rendering_intent``,
+            ``flags``, ``manufacturer``, ``model``, ``attributes`` and ``profile_id``.
+
+        Raises
+        ------
+        CMSError
+            For an unknown field or invalid value.
+
+        See Also
+        --------
+        Profile.header : The current header fields.
+
+        Examples
+        --------
+        >>> p = Profile("sRGB")
+        >>> p.set_header(version=2.1)
+        >>> p.version
+        2.1
+        """
         _lcms2.profile_set_header(self._handle, **fields)
 
     @property
@@ -375,7 +716,22 @@ class Profile(ProfileData):
         return self.header["profile_id"]
 
     def compute_id(self) -> bytes:
-        """Compute the MD5 profile ID, store it in the header and return it."""
+        """Compute the MD5 profile ID, store it in the header and return it.
+
+        Returns
+        -------
+        bytes
+            The 16-byte profile ID.
+
+        See Also
+        --------
+        Profile.profile_id : The stored ID.
+
+        Examples
+        --------
+        >>> len(Profile("sRGB").compute_id())
+        16
+        """
         return _lcms2.profile_compute_id(self._handle)
 
     # ---- Conversion ----
@@ -395,6 +751,45 @@ class Profile(ProfileData):
         out_dtype: DTypeLike = None,
     ) -> np.ndarray:
         """Convert ``data`` from this profile to ``to``; same keywords as :func:`lcms2.convert`.
+
+        Parameters
+        ----------
+        data : array_like
+            Values in this profile's colour space, shaped ``(..., channels)``.
+        to : str, Profile or colour space
+            Destination profile or colour space.
+        intent : Intent or str, optional
+            Rendering intent. Defaults to ``"relative"``.
+        bpc : bool, optional
+            Apply black point compensation. Defaults to False.
+        proof : str, Profile or colour space, optional
+            Soft-proofing profile. Defaults to None.
+        gamut_check : bool, optional
+            Mark out-of-gamut colours when proofing. Defaults to False.
+        optimize : bool, optional
+            Allow transform optimization. Defaults to True.
+        precision : str, optional
+            Evaluation precision, as in :func:`lcms2.convert`. Defaults to ``"auto"``.
+        flags : Flag, int or str, optional
+            Extra transform flags. Defaults to None.
+        out : numpy.ndarray, optional
+            Array to write the result to. Defaults to None.
+        out_dtype : dtype, optional
+            Data type of the result. Defaults to None.
+
+        Returns
+        -------
+        numpy.ndarray
+            The converted values.
+
+        Raises
+        ------
+        CMSError
+            If LittleCMS cannot build the transform.
+
+        See Also
+        --------
+        lcms2.convert : The equivalent function taking a source argument.
 
         Examples
         --------

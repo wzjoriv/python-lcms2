@@ -30,6 +30,17 @@ class ToneCurve:
         A float builds a pure gamma curve; a 1-D ``uint16`` or float array builds a
         tabulated curve. (Internal code also passes an existing curve handle.)
 
+    Raises
+    ------
+    ValueError
+        If a table is not 1-D.
+    TypeError
+        If a table is of an unsupported dtype.
+
+    See Also
+    --------
+    ToneCurve.parametric : Curves from the ICC parametric types.
+
     Examples
     --------
     >>> import numpy as np
@@ -63,6 +74,15 @@ class ToneCurve:
         gamma : float
             The exponent (2.2 is a typical display gamma).
 
+        Returns
+        -------
+        ToneCurve
+            The power-law curve.
+
+        See Also
+        --------
+        ToneCurve.parametric : Curves with offsets and linear segments.
+
         Examples
         --------
         >>> from lcms2._curves import ToneCurve
@@ -84,10 +104,19 @@ class ToneCurve:
             Parameters for the type; the required count is 1, 3, 4, 5, 7, 4, 5, 5, 1, 1
             for types 1-8, 108, 109 respectively.
 
+        Returns
+        -------
+        ToneCurve
+            The parametric curve.
+
         Raises
         ------
         ValueError
             For an unknown type or the wrong number of parameters.
+
+        See Also
+        --------
+        ToneCurve.gamma : The simple power-law case.
 
         Examples
         --------
@@ -118,6 +147,22 @@ class ToneCurve:
         values : array_like
             1-D ``uint16`` (0..65535) or floating point (0..1) samples, at least 2.
 
+        Returns
+        -------
+        ToneCurve
+            The tabulated curve.
+
+        Raises
+        ------
+        ValueError
+            If ``values`` is not 1-D.
+        TypeError
+            If ``values`` is not a ``uint16`` or float array.
+
+        See Also
+        --------
+        ToneCurve.table : The curve as a ``uint16`` table.
+
         Examples
         --------
         >>> import numpy as np
@@ -131,6 +176,15 @@ class ToneCurve:
     def srgb(cls) -> ToneCurve:
         """The sRGB transfer curve (encoded to linear).
 
+        Returns
+        -------
+        ToneCurve
+            The sRGB curve.
+
+        See Also
+        --------
+        ToneCurve.rec709 : The Rec. 709 curve.
+
         Examples
         --------
         >>> from lcms2._curves import ToneCurve
@@ -143,6 +197,15 @@ class ToneCurve:
     def rec709(cls) -> ToneCurve:
         """The Rec. 709 transfer curve (encoded to linear).
 
+        Returns
+        -------
+        ToneCurve
+            The Rec. 709 curve.
+
+        See Also
+        --------
+        ToneCurve.srgb : The sRGB curve.
+
         Examples
         --------
         >>> from lcms2._curves import ToneCurve
@@ -154,6 +217,15 @@ class ToneCurve:
     @classmethod
     def linear(cls) -> ToneCurve:
         """The identity curve.
+
+        Returns
+        -------
+        ToneCurve
+            A curve with ``y = x``.
+
+        See Also
+        --------
+        ToneCurve.gamma : Curves with other exponents.
 
         Examples
         --------
@@ -169,6 +241,25 @@ class ToneCurve:
 
         Floating point input (0..1) gives ``float64`` output; ``uint16`` input gives
         ``uint16`` output. Other integer dtypes are rejected to avoid guessing a scale.
+
+        Parameters
+        ----------
+        x : array_like
+            Input values, floats in 0..1 or ``uint16``.
+
+        Returns
+        -------
+        numpy.ndarray or numpy.generic
+            The curve values, with the shape of ``x``.
+
+        Raises
+        ------
+        TypeError
+            For integer input other than ``uint16``.
+
+        See Also
+        --------
+        ToneCurve.table : The curve as a table.
 
         Examples
         --------
@@ -193,6 +284,20 @@ class ToneCurve:
     def inverse(self, n: int = 4096) -> ToneCurve:
         """Inverse curve, analytic when possible, otherwise sampled at ``n`` points.
 
+        Parameters
+        ----------
+        n : int, optional
+            Number of samples used when no analytic inverse exists. Defaults to 4096.
+
+        Returns
+        -------
+        ToneCurve
+            The inverse curve.
+
+        See Also
+        --------
+        ToneCurve.join : Combine a curve with the inverse of another.
+
         Examples
         --------
         >>> from lcms2._curves import ToneCurve
@@ -208,6 +313,22 @@ class ToneCurve:
         curve with itself gives the identity. To apply one curve after another, use
         :meth:`then`.
 
+        Parameters
+        ----------
+        other : ToneCurve
+            The curve whose inverse is applied.
+        n : int, optional
+            Number of samples. Defaults to 4096.
+
+        Returns
+        -------
+        ToneCurve
+            The joined curve.
+
+        See Also
+        --------
+        ToneCurve.then : Apply one curve after another.
+
         Examples
         --------
         >>> from lcms2._curves import ToneCurve
@@ -218,6 +339,27 @@ class ToneCurve:
 
     def then(self, other: ToneCurve, n: int = 4096) -> ToneCurve:
         """Compose two curves: ``x -> other(self(x))``, sampled at ``n`` points.
+
+        Parameters
+        ----------
+        other : ToneCurve
+            The curve applied after this one.
+        n : int, optional
+            Number of samples. Defaults to 4096.
+
+        Returns
+        -------
+        ToneCurve
+            The composed curve.
+
+        Raises
+        ------
+        TypeError
+            If ``other`` is not a :class:`ToneCurve`.
+
+        See Also
+        --------
+        ToneCurve.join : Combine a curve with the inverse of another.
 
         Examples
         --------
@@ -240,6 +382,20 @@ class ToneCurve:
         lam : float
             Smoothing strength; larger is smoother (0.1 to 1000 is typical).
 
+        Returns
+        -------
+        ToneCurve
+            The smoothed curve.
+
+        Raises
+        ------
+        CMSError
+            If the smoothed curve would not be monotonic.
+
+        See Also
+        --------
+        ToneCurve.copy : Unsmoothed duplicate.
+
         Examples
         --------
         >>> import numpy as np
@@ -252,6 +408,15 @@ class ToneCurve:
 
     def copy(self) -> ToneCurve:
         """Independent duplicate of the curve.
+
+        Returns
+        -------
+        ToneCurve
+            A copy that does not share state with this curve.
+
+        See Also
+        --------
+        ToneCurve.smooth : A smoothed copy.
 
         Examples
         --------
@@ -267,10 +432,24 @@ class ToneCurve:
 
         Parameters
         ----------
-        precision : float
+        precision : float, optional
             Maximum acceptable mean error. When no single gamma reaches it (as for the sRGB
-            curve), the tolerance is relaxed step by step up to 0.5 before :class:`~lcms2.LCMSError` is
-            raised.
+            curve), the tolerance is relaxed step by step up to 0.5 before :class:`~lcms2.CMSError` is
+            raised. Defaults to 0.01.
+
+        Returns
+        -------
+        float
+            The estimated gamma.
+
+        Raises
+        ------
+        CMSError
+            If no gamma fits within the relaxed tolerance.
+
+        See Also
+        --------
+        ToneCurve.gamma : Build a power-law curve.
 
         Examples
         --------

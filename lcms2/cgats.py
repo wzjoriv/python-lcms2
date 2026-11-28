@@ -56,6 +56,11 @@ class CGATS:
     property. Create one with ``CGATS()`` (empty), :meth:`load`, :meth:`from_bytes` or
     :meth:`from_columns`.
 
+    See Also
+    --------
+    CGATS.from_columns : Build a file from a mapping of columns.
+    CGATS.load : Read a file.
+
     Examples
     --------
     >>> import numpy as np
@@ -79,10 +84,30 @@ class CGATS:
     def from_bytes(cls, data: bytes) -> CGATS:
         """Parse CGATS text.
 
+        Parameters
+        ----------
+        data : bytes
+            The CGATS file contents.
+
+        Returns
+        -------
+        CGATS
+            The parsed file.
+
         Raises
         ------
         CMSError
             If the data is not valid CGATS (the message names the offending line).
+
+        See Also
+        --------
+        CGATS.to_bytes : The inverse.
+
+        Examples
+        --------
+        >>> text = CGATS.from_columns({"A": [1.0, 2.0]}).to_bytes()
+        >>> CGATS.from_bytes(text).column("A").tolist()
+        [1.0, 2.0]
         """
         self = cls.__new__(cls)
         self._handle = _lcms2.it8_load(bytes(data))
@@ -92,7 +117,37 @@ class CGATS:
 
     @classmethod
     def load(cls, path: str | os.PathLike) -> CGATS:
-        """Read a CGATS file from ``path`` (the file is read in Python and then closed)."""
+        """Read a CGATS file from ``path`` (the file is read in Python and then closed).
+
+        Parameters
+        ----------
+        path : str or os.PathLike
+            Path of the CGATS file.
+
+        Returns
+        -------
+        CGATS
+            The parsed file.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file does not exist.
+        CMSError
+            If the file is not valid CGATS.
+
+        See Also
+        --------
+        CGATS.save : Write a file.
+
+        Examples
+        --------
+        >>> import os, tempfile
+        >>> path = os.path.join(tempfile.mkdtemp(), "t.txt")
+        >>> CGATS.from_columns({"A": [1.0]}).save(path)
+        >>> CGATS.load(path).columns
+        ['A']
+        """
         with open(path, "rb") as fh:
             return cls.from_bytes(fh.read())
 
@@ -110,9 +165,28 @@ class CGATS:
         data : mapping of str to sequence
             Columns of equal length; numbers are stored as numbers, anything else as text.
         sheet_type : str, optional
-            Sheet type (the first line of the file); defaults to ``"CGATS.17"``.
+            Sheet type (the first line of the file). Defaults to ``"CGATS.17"``.
         properties : mapping, optional
-            Header properties to set.
+            Header properties to set. Defaults to None.
+
+        Returns
+        -------
+        CGATS
+            The new file.
+
+        Raises
+        ------
+        ValueError
+            If there are no columns or the columns differ in length.
+
+        See Also
+        --------
+        CGATS.data : The columns of the current table.
+
+        Examples
+        --------
+        >>> CGATS.from_columns({"SAMPLE_ID": ["A1"], "X": [0.5]}).n_rows
+        1
         """
         names = list(data)
         cols = [list(np.asarray(data[n]).tolist()) for n in names]
@@ -131,12 +205,45 @@ class CGATS:
         return self
 
     def to_bytes(self) -> bytes:
-        """Serialise every table to CGATS text."""
+        """Serialise every table to CGATS text.
+
+        Returns
+        -------
+        bytes
+            The CGATS file contents.
+
+        See Also
+        --------
+        CGATS.from_bytes : The inverse.
+
+        Examples
+        --------
+        >>> CGATS.from_columns({"A": [1.0]}).to_bytes().startswith(b"CGATS.17")
+        True
+        """
         out = _lcms2.it8_save(self._handle)
         return out
 
     def save(self, path: str | os.PathLike) -> None:
-        """Write the file to ``path``."""
+        """Write the file to ``path``.
+
+        Parameters
+        ----------
+        path : str or os.PathLike
+            Destination file path.
+
+        See Also
+        --------
+        CGATS.load : Read a file.
+
+        Examples
+        --------
+        >>> import os, tempfile
+        >>> path = os.path.join(tempfile.mkdtemp(), "t.txt")
+        >>> CGATS.from_columns({"A": [1.0]}).save(path)
+        >>> os.path.getsize(path) > 0
+        True
+        """
         data = self.to_bytes()
         with open(path, "wb") as fh:
             fh.write(data)
@@ -161,10 +268,29 @@ class CGATS:
     def select(self, n: int) -> CGATS:
         """Make table ``n`` current and return ``self``.
 
+        Parameters
+        ----------
+        n : int
+            Table index.
+
+        Returns
+        -------
+        CGATS
+            This object, for chaining.
+
         Raises
         ------
         IndexError
             If ``n`` is not a table of the file (``0 <= n < len(self)``).
+
+        See Also
+        --------
+        CGATS.add_table : Append and select a new table.
+
+        Examples
+        --------
+        >>> CGATS.from_columns({"A": [1.0]}).select(0).table
+        0
         """
         n = int(n)
         count = len(self)
@@ -174,7 +300,22 @@ class CGATS:
         return self
 
     def add_table(self) -> int:
-        """Append an empty table, make it current and return its index."""
+        """Append an empty table, make it current and return its index.
+
+        Returns
+        -------
+        int
+            Index of the new table.
+
+        See Also
+        --------
+        CGATS.define_table : Declare its columns.
+
+        Examples
+        --------
+        >>> CGATS.from_columns({"A": [1.0]}).add_table()
+        1
+        """
         n = len(self)
         _lcms2.it8_set_table(self._handle, n)
         self._table = n
@@ -193,10 +334,28 @@ class CGATS:
     def define_table(self, columns: Iterable[str], n_rows: int) -> None:
         """Declare the column names and row count of the (empty) current table.
 
+        Parameters
+        ----------
+        columns : iterable of str
+            Column names.
+        n_rows : int
+            Number of patches.
+
         Raises
         ------
         CMSError
             If the table already has columns; call :meth:`add_table` first.
+
+        See Also
+        --------
+        CGATS.add_table : Append a new table first.
+
+        Examples
+        --------
+        >>> it8 = CGATS()
+        >>> it8.define_table(["SAMPLE_ID", "X"], 2)
+        >>> it8.n_rows
+        2
         """
         _lcms2.it8_define_table(self._sel(), [str(c) for c in columns], int(n_rows))
 
@@ -262,12 +421,61 @@ class CGATS:
             Patch name (``SAMPLE_ID``) or row index.
         column : str or int
             Column name (case-insensitive) or index.
+
+        Returns
+        -------
+        float, str or None
+            The cell value.
+
+        Raises
+        ------
+        KeyError
+            For an unknown patch or column name.
+        IndexError
+            For a row or column index out of range.
+
+        See Also
+        --------
+        CGATS.set : Change a cell.
+
+        Examples
+        --------
+        >>> CGATS.from_columns({"SAMPLE_ID": ["A1"], "X": [0.5]}).get("A1", "x")
+        0.5
         """
         text = self._get_cell(self._row_index(patch), self._col_index(column))
         return _parse(text)
 
     def set(self, patch: str | int, column: str | int, value: str | float) -> None:
-        """Set one cell from a number or string; see :meth:`get` for the addressing."""
+        """Set one cell from a number or string; see :meth:`get` for the addressing.
+
+        Parameters
+        ----------
+        patch : str or int
+            Patch name (``SAMPLE_ID``) or row index.
+        column : str or int
+            Column name (case-insensitive) or index.
+        value : str or float
+            The new value.
+
+        Raises
+        ------
+        KeyError
+            For an unknown patch or column name.
+        IndexError
+            For a row or column index out of range.
+
+        See Also
+        --------
+        CGATS.get : Read a cell.
+
+        Examples
+        --------
+        >>> it8 = CGATS.from_columns({"SAMPLE_ID": ["A1"], "X": [0.5]})
+        >>> it8.set("A1", "X", 0.75)
+        >>> it8.get(0, 1)
+        0.75
+        """
         self._set_cell(self._row_index(patch), self._col_index(column), value)
 
     def __getitem__(self, key: tuple[str | int, str | int]) -> float | str | None:
@@ -282,6 +490,32 @@ class CGATS:
         """One column: a ``float64`` array if every cell is numeric, else an array of strings.
 
         Empty numeric cells become ``nan``.
+
+        Parameters
+        ----------
+        name : str or int
+            Column name (case-insensitive) or index.
+
+        Returns
+        -------
+        numpy.ndarray
+            The column values.
+
+        Raises
+        ------
+        KeyError
+            For an unknown column name.
+        IndexError
+            For a column index out of range.
+
+        See Also
+        --------
+        CGATS.data : All columns at once.
+
+        Examples
+        --------
+        >>> CGATS.from_columns({"X": [0.5, 1.5]}).column("X").tolist()
+        [0.5, 1.5]
         """
         c = self._col_index(name)
         cells = [self._get_cell(r, c) for r in range(self.n_rows)]
@@ -302,6 +536,15 @@ class CGATS:
         -------
         dict
             ``{"tables": [{"sheet_type", "properties", "columns": {name: list}}, ...]}``.
+
+        See Also
+        --------
+        CGATS.data : The columns of the current table as arrays.
+
+        Examples
+        --------
+        >>> CGATS.from_columns({"X": [0.5]}).to_dict()["tables"][0]["columns"]
+        {'X': [0.5]}
         """
         keep = self._table
         tables = []

@@ -35,7 +35,18 @@ from .spaces import ColorSpace
 
 
 def get_version() -> str:
-    """Version of the linked LittleCMS library, e.g. ``"2.20"``."""
+    """Version of the linked LittleCMS library, e.g. ``"2.20"``.
+
+    Returns
+    -------
+    str
+        The ``major.minor`` version.
+
+    Examples
+    --------
+    >>> get_version().count(".")
+    1
+    """
     v = _lcms2.get_version()
     return f"{v // 1000}.{v % 1000 // 10}"
 

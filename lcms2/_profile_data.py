@@ -50,15 +50,82 @@ class ProfileData:
         return _lcms2.profile_tags(self._handle)
 
     def has_tag(self, sig: str) -> bool:
-        """Whether the profile has tag ``sig``."""
+        """Whether the profile has tag ``sig``.
+
+        Parameters
+        ----------
+        sig : str
+            The 4-character tag signature, such as ``"wtpt"``.
+
+        Returns
+        -------
+        bool
+            True if the tag is present.
+
+        See Also
+        --------
+        ProfileData.read_tag_raw : Read the tag data.
+
+        Examples
+        --------
+        >>> import lcms2
+        >>> lcms2.Profile("sRGB").has_tag("wtpt")
+        True
+        """
         return _lcms2.profile_is_tag(self._handle, sig)
 
     def read_tag_raw(self, sig: str) -> bytes:
-        """Serialised tag data including its 8-byte type header. KeyError if absent."""
+        """Serialised tag data including its 8-byte type header.
+
+        Parameters
+        ----------
+        sig : str
+            The 4-character tag signature.
+
+        Returns
+        -------
+        bytes
+            The raw tag data.
+
+        Raises
+        ------
+        KeyError
+            If the tag is absent.
+
+        See Also
+        --------
+        ProfileData.write_tag_raw : Store raw tag data.
+
+        Examples
+        --------
+        >>> import lcms2
+        >>> lcms2.Profile("sRGB").read_tag_raw("wtpt")[:4]
+        b'XYZ '
+        """
         return _lcms2.profile_read_raw_tag(self._handle, sig)
 
     def write_tag_raw(self, sig: str, data: bytes) -> None:
-        """Store raw tag data (with its type header) under ``sig``."""
+        """Store raw tag data (with its type header) under ``sig``.
+
+        Parameters
+        ----------
+        sig : str
+            The 4-character tag signature.
+        data : bytes
+            Tag data including its type header.
+
+        See Also
+        --------
+        ProfileData.read_tag_raw : Read raw tag data.
+
+        Examples
+        --------
+        >>> import lcms2
+        >>> p = lcms2.Profile("sRGB")
+        >>> p.write_tag_raw("wtpt", p.read_tag_raw("wtpt"))
+        >>> p.has_tag("wtpt")
+        True
+        """
         _lcms2.profile_write_raw_tag(self._handle, sig, data)
         self._handle = _lcms2.profile_open(_lcms2.profile_to_bytes(self._handle))
         self._source_space = None
@@ -111,11 +178,67 @@ class ProfileData:
         return _lcms2.profile_is_matrix_shaper(self._handle)
 
     def is_clut(self, intent: Any = "perceptual", direction: str = "input") -> bool:
-        """Whether ``intent`` is implemented by a CLUT in ``direction`` (input/output/proof)."""
+        """Whether ``intent`` is implemented by a CLUT in ``direction`` (input/output/proof).
+
+        Parameters
+        ----------
+        intent : Intent or str, optional
+            Rendering intent. Defaults to ``"perceptual"``.
+        direction : {"input", "output", "proof"}, optional
+            Direction of use. Defaults to ``"input"``.
+
+        Returns
+        -------
+        bool
+            True if a lookup table implements the intent.
+
+        Raises
+        ------
+        ValueError
+            For an unknown intent or direction.
+
+        See Also
+        --------
+        ProfileData.is_intent_supported : Whether any implementation exists.
+
+        Examples
+        --------
+        >>> import lcms2
+        >>> lcms2.Profile("sRGB").is_clut()
+        False
+        """
         return _lcms2.profile_is_clut(self._handle, int(Intent.parse(intent)), _direction(direction))
 
     def is_intent_supported(self, intent: Any, direction: str = "input") -> bool:
-        """Whether the profile implements ``intent`` in ``direction`` (input/output/proof)."""
+        """Whether the profile implements ``intent`` in ``direction`` (input/output/proof).
+
+        Parameters
+        ----------
+        intent : Intent or str
+            Rendering intent.
+        direction : {"input", "output", "proof"}, optional
+            Direction of use. Defaults to ``"input"``.
+
+        Returns
+        -------
+        bool
+            True if the intent is implemented.
+
+        Raises
+        ------
+        ValueError
+            For an unknown intent or direction.
+
+        See Also
+        --------
+        ProfileData.is_clut : Whether a lookup table implements it.
+
+        Examples
+        --------
+        >>> import lcms2
+        >>> lcms2.Profile("sRGB").is_intent_supported("relative")
+        True
+        """
         return _lcms2.profile_is_intent_supported(
             self._handle, int(Intent.parse(intent)), _direction(direction)
         )
@@ -138,6 +261,23 @@ class ProfileData:
 
     def black_point(self, intent: Any = "perceptual", *, destination: bool = False) -> np.ndarray | None:
         """Detected black point XYZ (Y = 1 white) or None.
+
+        Parameters
+        ----------
+        intent : Intent or str, optional
+            Rendering intent. Defaults to ``"perceptual"``.
+        destination : bool, optional
+            Detect the black point as a destination profile. Defaults to False.
+
+        Returns
+        -------
+        numpy.ndarray or None
+            The XYZ black point, or None if it cannot be determined.
+
+        Raises
+        ------
+        ValueError
+            For an unknown intent.
 
         Examples
         --------
