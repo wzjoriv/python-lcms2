@@ -32,17 +32,6 @@ def write_u16Fixed16(x: float) -> bytes:
     return struct.pack(">I", v)
 
 
-def read_u1Fixed15(buf: bytes, off: int) -> float:
-    (v,) = struct.unpack_from(">H", buf, off)
-    return v / 32768.0
-
-
-def write_u1Fixed15(x: float) -> bytes:
-    v = int(round(x * 32768.0))
-    v = max(0, min(0xFFFF, v))
-    return struct.pack(">H", v)
-
-
 def read_u8Fixed8(buf: bytes, off: int) -> float:
     (v,) = struct.unpack_from(">H", buf, off)
     return v / 256.0
@@ -68,26 +57,6 @@ def read_u32(buf: bytes, off: int) -> int:
 
 def read_u64(buf: bytes, off: int) -> int:
     return struct.unpack_from(">Q", buf, off)[0]
-
-
-def read_s32(buf: bytes, off: int) -> int:
-    return struct.unpack_from(">i", buf, off)[0]
-
-
-def write_u16(v: int) -> bytes:
-    return struct.pack(">H", v & 0xFFFF)
-
-
-def write_u32(v: int) -> bytes:
-    return struct.pack(">I", v & 0xFFFFFFFF)
-
-
-def write_u64(v: int) -> bytes:
-    return struct.pack(">Q", v & 0xFFFFFFFFFFFFFFFF)
-
-
-def write_s32(v: int) -> bytes:
-    return struct.pack(">i", v)
 
 
 def read_dateTime(buf: bytes, off: int) -> _dt.datetime:

@@ -163,11 +163,6 @@ def power_curve(g: float, signed: bool = False) -> bytes:
     return mpe.encode_segmented_curve(*_power_segments(g, signed))
 
 
-def identity_curf() -> bytes:
-    """A 'curf' identity curve."""
-    return mpe.encode_segmented_curve([], [("formula", 0, [1.0, 1.0, 0.0, 0.0])])
-
-
 def v5_curve(fn: CurveFn, lo: float, hi: float) -> bytes:
     """Encode `fn` on ``[lo, hi]`` as a 'curf' curve, constant beyond both ends."""
     g = detect_power_law(fn, lo, hi)
