@@ -55,6 +55,12 @@ def test_srgb_curve_table_matches_builtin():
     )
 
 
+def test_builtins_lists_public_names_only():
+    names = lcms2.Profile.builtins()
+    assert "_sRGB" not in names and "sRGB" in names
+    assert lcms2.Profile("_sRGB").color_space == lcms2.Profile("sRGB").color_space
+
+
 def test_unknown_name_and_bad_type():
     with pytest.raises(FileNotFoundError, match="built-in"):
         lcms2.Profile("no such profile")
