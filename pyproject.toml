@@ -82,7 +82,13 @@ where = ["."]
 include = ["lcms2*"]
 
 [tool.setuptools.package-data]
-lcms2 = ["py.typed", "*.pyi", "**/*.pyi", "_data/*", "**/_data/*"]
+lcms2 = [
+    "py.typed",
+    "*.pyi",
+    "**/*.pyi",
+    "_data/*",
+    "**/_data/*",
+]
 
 [tool.setuptools.exclude-package-data]
 "*" = ["*.c", "*.h"]
@@ -101,22 +107,57 @@ show_missing = true
 [tool.ruff]
 line-length = 110
 target-version = "py310"
-include = ["lcms2/**/*.py", "lcms2/**/*.pyi", "tests/**/*.py", "scripts/**/*.py", "examples/**/*.py"]
-extend-exclude = ["build", "*.egg-info", "scripts/devkit", ".venv", ".venvs", "vendor"]
+include = [
+    "lcms2/**/*.py",
+    "lcms2/**/*.pyi",
+    "tests/**/*.py",
+    "scripts/**/*.py",
+    "examples/**/*.py",
+]
+extend-exclude = [
+    "build",
+    "*.egg-info",
+    "scripts/devkit",
+    ".venv",
+    ".venvs",
+    "vendor",
+]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "UP", "B", "C4"]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "UP",
+    "B",
+    "C4",
+]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
 "scripts/**/*.py" = ["B008"]
-"tests/**/*.py" = ["UP006", "UP007", "UP035", "UP037", "UP045", "E701", "E702", "E741"]
+"tests/**/*.py" = [
+    "UP006",
+    "UP007",
+    "UP035",
+    "UP037",
+    "UP045",
+    "E701",
+    "E702",
+    "E741",
+]
 
 [tool.devkit]
 tools = ["lcms2_tools:app"]
 
 [tool.devkit.check]
-lint = ["lcms2", "scripts", "tests", "examples"]
+lint = [
+    "lcms2",
+    "scripts",
+    "tests",
+    "examples",
+]
 tests = ["-q", "-p", "no:cacheprovider"]
 docs = "docs"
 
@@ -142,11 +183,21 @@ log_dir = "build/test-logs"
 
 [tool.devkit.tiers.quick]
 help = "The whole suite, quiet."
-args = ["tests", "-q", "-p", "no:cacheprovider"]
+args = [
+    "tests",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+]
 
 [tool.devkit.tiers.cov]
 help = "The whole suite with a coverage report."
-args = ["tests", "-q", "--cov=lcms2", "--cov-report=term-missing"]
+args = [
+    "tests",
+    "-q",
+    "--cov=lcms2",
+    "--cov-report=term-missing",
+]
 
 [tool.cibuildwheel]
 build = "cp310-* cp311-* cp312-* cp313-* cp314-* cp314t-* cp315-* cp315t-* pp311-*"
