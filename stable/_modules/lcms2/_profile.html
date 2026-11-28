@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2._profile - python-lcms2 0.4.4</title>
+        <title>lcms2._profile - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -330,8 +330,8 @@
 <span class="sd">        ``to_icc_profile()`` (a ``ColorSpace``) or None for the NULL profile.</span>
 <span class="sd">    white_point : str or sequence of float, optional</span>
 <span class="sd">        For ``"Lab"`` only: illuminant name (``"D65"``) or xyY of the Lab white (D50 by default).</span>
-<span class="sd">    degrees : {2, 10}</span>
-<span class="sd">        Observer for illuminant names.</span>
+<span class="sd">    degrees : {2, 10}, optional</span>
+<span class="sd">        Observer for illuminant names. Defaults to 2.</span>
 <span class="sd">    temperature : float, optional</span>
 <span class="sd">        For ``"Lab"`` only: white point as a daylight colour temperature in kelvin.</span>
 
@@ -341,6 +341,15 @@
 <span class="sd">        For a string that is neither a built-in name nor an existing file.</span>
 <span class="sd">    CMSError</span>
 <span class="sd">        When the data is not a valid ICC profile.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``white_point`` or ``temperature`` is given for a profile other than Lab.</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``source`` is of an unsupported type.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Profile.builtins : Names of the built-in profiles.</span>
+<span class="sd">    Profile.open : Read a profile from a file.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -382,7 +391,37 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.open">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Read a profile file (any path, including non-ASCII ones on Windows)."""</span>
+<span class="w">        </span><span class="sd">"""Read a profile file (any path, including non-ASCII ones on Windows).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or os.PathLike</span>
+<span class="sd">            Path of the ``.icc``/``.icm`` file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The loaded profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        FileNotFoundError</span>
+<span class="sd">            If the file does not exist.</span>
+<span class="sd">        CMSError</span>
+<span class="sd">            If the file is not a valid ICC profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.save : Write a profile to a file.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import os, tempfile</span>
+<span class="sd">        &gt;&gt;&gt; path = os.path.join(tempfile.mkdtemp(), "p.icc")</span>
+<span class="sd">        &gt;&gt;&gt; Profile("sRGB").save(path)</span>
+<span class="sd">        &gt;&gt;&gt; Profile.open(path).color_space</span>
+<span class="sd">        &lt;ColorSpaceSignature.RGB: 'RGB'&gt;</span>
+<span class="sd">        """</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
@@ -392,6 +431,25 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_bytes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">bytearray</span> <span class="o">|</span> <span class="nb">memoryview</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Parse a profile from memory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : bytes, bytearray or memoryview</span>
+<span class="sd">            The raw ICC profile.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The parsed profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        CMSError</span>
+<span class="sd">            If the data is not a valid ICC profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.to_bytes : The inverse.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -415,12 +473,29 @@
 <span class="sd">        strict : bool, optional</span>
 <span class="sd">            Raise :class:`~lcms2.ICCWriteError` instead of falling back to sampled lookup</span>
 <span class="sd">            tables when the functions cannot be traced (data-dependent branching, ``float()``,</span>
-<span class="sd">            random numbers, non-NumPy libraries). Default False.</span>
+<span class="sd">            random numbers, non-NumPy libraries). Defaults to False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The profile of the colour space.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ICCWriteError</span>
 <span class="sd">            With ``strict=True``, naming the operation that prevents an exact profile.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``space`` has no ``to_icc_profile()``.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.space : The opposite direction, a colour space view of a profile.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import lcms2</span>
+<span class="sd">        &gt;&gt;&gt; Profile.from_space(lcms2.spaces.get("srgb")).color_space</span>
+<span class="sd">        &lt;ColorSpaceSignature.RGB: 'RGB'&gt;</span>
 <span class="sd">        """</span>
         <span class="n">make</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="s2">"to_icc_profile"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">make</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -439,7 +514,32 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.builtin">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">builtin</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""A built-in profile by (lenient) name; see :meth:`builtins`."""</span>
+<span class="w">        </span><span class="sd">"""A built-in profile by (lenient) name; see :meth:`builtins`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Built-in profile name, case-insensitive (``"adobe rgb"``, ``"display p3"``).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The built-in profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the name is unknown, listing the available names.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.builtins : List the available names.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.builtin("display p3").description</span>
+<span class="sd">        'Display P3'</span>
+<span class="sd">        """</span>
         <span class="n">canonical</span> <span class="o">=</span> <span class="n">lookup_builtin</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">canonical</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unknown built-in profile </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">; available: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_names</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -453,6 +553,15 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">builtins</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Names of the built-in profiles.</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of str</span>
+<span class="sd">            The canonical built-in names.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.builtin : Create one by name.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; "Display P3" in Profile.builtins()</span>
@@ -465,7 +574,22 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.srgb">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">srgb</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""LittleCMS's built-in sRGB profile."""</span>
+<span class="w">        </span><span class="sd">"""LittleCMS's built-in sRGB profile.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            An sRGB display profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.rgb : A custom matrix-shaper RGB profile.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.srgb().color_space</span>
+<span class="sd">        &lt;ColorSpaceSignature.RGB: 'RGB'&gt;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_srgb</span><span class="p">())</span></div>
 
 
@@ -476,6 +600,26 @@
         <span class="bp">cls</span><span class="p">,</span> <span class="n">white_point</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Lab identity profile (v4 or v2) relative to a white point (D50 by default).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        white_point : str or sequence of float, optional</span>
+<span class="sd">            Illuminant name or xyY of the Lab white. Defaults to D50.</span>
+<span class="sd">        version : int, optional</span>
+<span class="sd">            ICC major version, 4 or 2. Defaults to 4.</span>
+<span class="sd">        degrees : {2, 10}, optional</span>
+<span class="sd">            Observer for illuminant names. Defaults to 2.</span>
+<span class="sd">        temperature : float, optional</span>
+<span class="sd">            White point as a daylight colour temperature in kelvin.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The Lab profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.xyz : The XYZ identity profile.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -490,7 +634,22 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.xyz">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">xyz</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""XYZ identity profile (D50 PCS, Y = 1 for the white)."""</span>
+<span class="w">        </span><span class="sd">"""XYZ identity profile (D50 PCS, Y = 1 for the white).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The XYZ profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.lab : The Lab identity profile.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.xyz().color_space</span>
+<span class="sd">        &lt;ColorSpaceSignature.XYZ: 'XYZ'&gt;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_xyz</span><span class="p">())</span></div>
 
 
@@ -516,9 +675,26 @@
 <span class="sd">            Red, green and blue chromaticities.</span>
 <span class="sd">        gamma : float, ToneCurve, (type, params) or a sequence of 3 of those</span>
 <span class="sd">            Transfer function(s) from encoded to linear values.</span>
+<span class="sd">        degrees : {2, 10}, optional</span>
+<span class="sd">            Observer for illuminant names. Defaults to 2.</span>
 <span class="sd">        description : str, optional</span>
 <span class="sd">            Profile description text. Defaults to one naming the white point and gamma,</span>
 <span class="sd">            such as ``"RGB (D65, gamma 2.2)"``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The RGB profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``primaries`` does not have three entries.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.srgb : The built-in sRGB profile.</span>
+<span class="sd">        Profile.gray : A gray profile.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -550,7 +726,31 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.gray">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">gray</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">white_point</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">"D50"</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="mf">2.2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">degrees</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Gray profile from a white point and a transfer function (gamma, ToneCurve or (type, params))."""</span>
+<span class="w">        </span><span class="sd">"""Gray profile from a white point and a transfer function (gamma, ToneCurve or (type, params)).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        white_point : str or sequence of float, optional</span>
+<span class="sd">            Illuminant name or xyY. Defaults to ``"D50"``.</span>
+<span class="sd">        gamma : float, ToneCurve or (type, params), optional</span>
+<span class="sd">            Transfer function from encoded to linear values. Defaults to 2.2.</span>
+<span class="sd">        degrees : {2, 10}, optional</span>
+<span class="sd">            Observer for illuminant names. Defaults to 2.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The gray profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.rgb : A matrix-shaper RGB profile.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.gray(gamma=2.2).channels</span>
+<span class="sd">        1</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_gray</span><span class="p">(</span><span class="n">resolve_white_point</span><span class="p">(</span><span class="n">white_point</span><span class="p">,</span> <span class="n">degrees</span><span class="p">),</span> <span class="n">gamma</span><span class="p">))</span></div>
 
 
@@ -568,7 +768,39 @@
         <span class="n">temp_dst</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">lut_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">17</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Abstract Lab profile adjusting brightness, contrast, hue, saturation and white temperature."""</span>
+<span class="w">        </span><span class="sd">"""Abstract Lab profile adjusting brightness, contrast, hue, saturation and white temperature.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        brightness : float, optional</span>
+<span class="sd">            Brightness offset. Defaults to 0.0.</span>
+<span class="sd">        contrast : float, optional</span>
+<span class="sd">            Contrast multiplier. Defaults to 1.0.</span>
+<span class="sd">        hue : float, optional</span>
+<span class="sd">            Hue rotation in degrees. Defaults to 0.0.</span>
+<span class="sd">        saturation : float, optional</span>
+<span class="sd">            Saturation offset. Defaults to 0.0.</span>
+<span class="sd">        temp_src : int, optional</span>
+<span class="sd">            Source white temperature in kelvin; 0 disables the adjustment. Defaults to 0.</span>
+<span class="sd">        temp_dst : int, optional</span>
+<span class="sd">            Destination white temperature in kelvin; 0 disables the adjustment. Defaults to 0.</span>
+<span class="sd">        lut_points : int, optional</span>
+<span class="sd">            Lookup table grid points per dimension. Defaults to 17.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The abstract profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.linearization : A per-channel curve device link.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.abstract(contrast=1.2).device_class</span>
+<span class="sd">        &lt;DeviceClass.ABSTRACT: 'abstract'&gt;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span>
             <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_bchsw</span><span class="p">(</span><span class="n">lut_points</span><span class="p">,</span> <span class="n">brightness</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">hue</span><span class="p">,</span> <span class="n">saturation</span><span class="p">,</span> <span class="n">temp_src</span><span class="p">,</span> <span class="n">temp_dst</span><span class="p">)</span>
         <span class="p">)</span></div>
@@ -578,7 +810,34 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.ink_limiting">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">ink_limiting</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">300.0</span><span class="p">,</span> <span class="n">color_space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CMYK"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""CMYK device link limiting total ink coverage to ``limit`` percent."""</span>
+<span class="w">        </span><span class="sd">"""CMYK device link limiting total ink coverage to ``limit`` percent.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        limit : float, optional</span>
+<span class="sd">            Maximum total ink coverage in percent. Defaults to 300.0.</span>
+<span class="sd">        color_space : str, optional</span>
+<span class="sd">            ``"CMYK"`` or ``"CMY"``. Defaults to ``"CMYK"``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The device link profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        CMSError</span>
+<span class="sd">            If the colour space is not supported.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.linearization : A per-channel curve device link.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.ink_limiting(280).device_class</span>
+<span class="sd">        &lt;DeviceClass.LINK: 'link'&gt;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_ink_limiting</span><span class="p">(</span><span class="n">color_space</span><span class="p">,</span> <span class="n">limit</span><span class="p">))</span></div>
 
 
@@ -586,7 +845,34 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.linearization">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">linearization</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">curves</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">color_space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"RGB"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Device link applying one curve (gamma, ToneCurve or (type, params)) per channel."""</span>
+<span class="w">        </span><span class="sd">"""Device link applying one curve (gamma, ToneCurve or (type, params)) per channel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        curves : sequence of float, ToneCurve or (type, params)</span>
+<span class="sd">            One transfer function per channel.</span>
+<span class="sd">        color_space : str, optional</span>
+<span class="sd">            Colour space of the link. Defaults to ``"RGB"``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The device link profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        CMSError</span>
+<span class="sd">            If the colour space or curves are not supported.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.ink_limiting : A CMYK ink limiting device link.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile.linearization([2.2, 2.2, 2.2]).device_class</span>
+<span class="sd">        &lt;DeviceClass.LINK: 'link'&gt;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_handle</span><span class="p">(</span><span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_create_linearization</span><span class="p">(</span><span class="n">color_space</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">curves</span><span class="p">)))</span></div>
 
 
@@ -608,14 +894,47 @@
 <div class="viewcode-block" id="Profile.to_bytes">
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.to_bytes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The profile as ICC bytes."""</span>
+<span class="w">        </span><span class="sd">"""The profile as ICC bytes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bytes</span>
+<span class="sd">            The serialized profile.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.from_bytes : The inverse.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Profile("sRGB").to_bytes()[36:40]</span>
+<span class="sd">        b'acsp'</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Profile.save">
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.save">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Write the profile to a file."""</span>
+<span class="w">        </span><span class="sd">"""Write the profile to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or os.PathLike</span>
+<span class="sd">            Destination file path.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.open : Read a profile file.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import os, tempfile</span>
+<span class="sd">        &gt;&gt;&gt; path = os.path.join(tempfile.mkdtemp(), "srgb.icc")</span>
+<span class="sd">        &gt;&gt;&gt; Profile("sRGB").save(path)</span>
+<span class="sd">        &gt;&gt;&gt; os.path.getsize(path) &gt; 0</span>
+<span class="sd">        True</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
@@ -641,8 +960,30 @@
 <div class="viewcode-block" id="Profile.set_header">
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.set_header">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Change header fields: device_class, color_space, pcs, version, rendering_intent, flags,</span>
-<span class="sd">        manufacturer, model, attributes, profile_id."""</span>
+<span class="w">        </span><span class="sd">"""Change header fields in place.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **fields</span>
+<span class="sd">            Any of ``device_class``, ``color_space``, ``pcs``, ``version``, ``rendering_intent``,</span>
+<span class="sd">            ``flags``, ``manufacturer``, ``model``, ``attributes`` and ``profile_id``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        CMSError</span>
+<span class="sd">            For an unknown field or invalid value.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.header : The current header fields.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; p = Profile("sRGB")</span>
+<span class="sd">        &gt;&gt;&gt; p.set_header(version=2.1)</span>
+<span class="sd">        &gt;&gt;&gt; p.version</span>
+<span class="sd">        2.1</span>
+<span class="sd">        """</span>
         <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_set_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">,</span> <span class="o">**</span><span class="n">fields</span><span class="p">)</span></div>
 
 
@@ -710,7 +1051,22 @@
 <div class="viewcode-block" id="Profile.compute_id">
 <a class="viewcode-back" href="../../reference/generated/lcms2.Profile.html#lcms2.Profile.compute_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute the MD5 profile ID, store it in the header and return it."""</span>
+<span class="w">        </span><span class="sd">"""Compute the MD5 profile ID, store it in the header and return it.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bytes</span>
+<span class="sd">            The 16-byte profile ID.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.profile_id : The stored ID.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; len(Profile("sRGB").compute_id())</span>
+<span class="sd">        16</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">profile_compute_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle</span><span class="p">)</span></div>
 
 
@@ -733,6 +1089,45 @@
         <span class="n">out_dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Convert ``data`` from this profile to ``to``; same keywords as :func:`lcms2.convert`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : array_like</span>
+<span class="sd">            Values in this profile's colour space, shaped ``(..., channels)``.</span>
+<span class="sd">        to : str, Profile or colour space</span>
+<span class="sd">            Destination profile or colour space.</span>
+<span class="sd">        intent : Intent or str, optional</span>
+<span class="sd">            Rendering intent. Defaults to ``"relative"``.</span>
+<span class="sd">        bpc : bool, optional</span>
+<span class="sd">            Apply black point compensation. Defaults to False.</span>
+<span class="sd">        proof : str, Profile or colour space, optional</span>
+<span class="sd">            Soft-proofing profile. Defaults to None.</span>
+<span class="sd">        gamut_check : bool, optional</span>
+<span class="sd">            Mark out-of-gamut colours when proofing. Defaults to False.</span>
+<span class="sd">        optimize : bool, optional</span>
+<span class="sd">            Allow transform optimization. Defaults to True.</span>
+<span class="sd">        precision : str, optional</span>
+<span class="sd">            Evaluation precision, as in :func:`lcms2.convert`. Defaults to ``"auto"``.</span>
+<span class="sd">        flags : Flag, int or str, optional</span>
+<span class="sd">            Extra transform flags. Defaults to None.</span>
+<span class="sd">        out : numpy.ndarray, optional</span>
+<span class="sd">            Array to write the result to. Defaults to None.</span>
+<span class="sd">        out_dtype : dtype, optional</span>
+<span class="sd">            Data type of the result. Defaults to None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The converted values.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        CMSError</span>
+<span class="sd">            If LittleCMS cannot build the transform.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        lcms2.convert : The equivalent function taking a source argument.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -829,7 +1224,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

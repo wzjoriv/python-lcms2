@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.colormap._builtin - python-lcms2 0.4.4</title>
+        <title>lcms2.colormap._builtin - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
@@ -302,7 +302,23 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">"""Sorted names of the built-in colormaps."""</span>
+<span class="w">    </span><span class="sd">"""Sorted names of the built-in colormaps.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of str</span>
+<span class="sd">        The names accepted by `get`, without the ``_r`` variants.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lcms2.colormap.get : Build one by name.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.colormap import list as colormap_names</span>
+<span class="sd">    &gt;&gt;&gt; "glacier" in colormap_names()</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_SPECS</span><span class="p">)</span>
 
 
@@ -310,6 +326,27 @@
 <a class="viewcode-back" href="../../../reference/generated/lcms2.colormap.html#lcms2.colormap.get">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Build the named colormap (a ``_r`` suffix reverses it).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Built-in name, case-insensitive, optionally ending in ``_r``.</span>
+<span class="sd">    cls : type, optional</span>
+<span class="sd">        Colormap class to build. Defaults to `Colormap`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Colormap</span>
+<span class="sd">        The named colormap.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        For an unknown name; the message lists the available ones.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lcms2.colormap.list : The built-in names.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -359,7 +396,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

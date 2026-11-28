@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2._constants - python-lcms2 0.4.4</title>
+        <title>lcms2._constants - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -302,6 +302,21 @@
 <span class="sd">    Strings are accepted wherever an intent is expected, case-insensitively, with the short</span>
 <span class="sd">    aliases ``"relative"`` and ``"absolute"``.</span>
 
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    PERCEPTUAL : int</span>
+<span class="sd">        Perceptual intent (0).</span>
+<span class="sd">    RELATIVE_COLORIMETRIC : int</span>
+<span class="sd">        Relative colorimetric intent (1), the default for conversions.</span>
+<span class="sd">    SATURATION : int</span>
+<span class="sd">        Saturation intent (2).</span>
+<span class="sd">    ABSOLUTE_COLORIMETRIC : int</span>
+<span class="sd">        Absolute colorimetric intent (3).</span>
+<span class="sd">    PRESERVE_K_ONLY_PERCEPTUAL, PRESERVE_K_ONLY_RELATIVE_COLORIMETRIC, PRESERVE_K_ONLY_SATURATION : int</span>
+<span class="sd">        CMYK to CMYK intents that preserve the K channel only (10 to 12).</span>
+<span class="sd">    PRESERVE_K_PLANE_PERCEPTUAL, PRESERVE_K_PLANE_RELATIVE_COLORIMETRIC, PRESERVE_K_PLANE_SATURATION : int</span>
+<span class="sd">        CMYK to CMYK intents that preserve the K plane (13 to 15).</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; Intent.parse("relative")</span>
@@ -327,10 +342,29 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Intent</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Intent</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Convert an int or a name (case-insensitive, aliases allowed) to an :class:`Intent`.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : Intent, int or str</span>
+<span class="sd">            The intent, its number, or its name (``"relative"`` and ``"absolute"`` are accepted).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Intent</span>
+<span class="sd">            The matching intent.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            For unknown names or numbers, listing the valid names.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Flag.parse : The equivalent for transform flags.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Intent.parse(3).name</span>
+<span class="sd">        'ABSOLUTE_COLORIMETRIC'</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Intent</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">value</span>
@@ -368,6 +402,21 @@
 <span class="sd">    (separators ``,`` ``|`` ``;`` or spaces). ``8BITS_DEVICELINK`` is spelled ``EIGHTBITS_DEVICELINK`` in</span>
 <span class="sd">    Python.</span>
 
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    NONE : int</span>
+<span class="sd">        No flags.</span>
+<span class="sd">    CLUT_POST_LINEARIZATION, CLUT_PRE_LINEARIZATION, FORCE_CLUT, HIGHRESPRECALC, LOWRESPRECALC : int</span>
+<span class="sd">        Control how the precalculated lookup table is built.</span>
+<span class="sd">    NOWHITEONWHITEFIXUP, NONEGATIVES, NOCACHE, NOOPTIMIZE, NULLTRANSFORM : int</span>
+<span class="sd">        Disable fix-ups, caching, optimization or the actual conversion.</span>
+<span class="sd">    EIGHTBITS_DEVICELINK : int</span>
+<span class="sd">        Write 8-bit device links (``8BITS_DEVICELINK`` in C).</span>
+<span class="sd">    GUESSDEVICECLASS, KEEP_SEQUENCE, NODEFAULTRESOURCEDEF, COPY_ALPHA : int</span>
+<span class="sd">        Device class guessing, profile sequence keeping, default resource disabling and alpha copying.</span>
+<span class="sd">    GAMUTCHECK, SOFTPROOFING, BLACKPOINTCOMPENSATION : int</span>
+<span class="sd">        Gamut warning, soft proofing and black point compensation.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; Flag.parse("gamutcheck|softproofing") == Flag.GAMUTCHECK | Flag.SOFTPROOFING</span>
@@ -400,7 +449,28 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Flag.html#lcms2.Flag.grid_points">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">grid_points</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Flag</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Flag requesting ``n`` CLUT grid points per dimension (``cmsFLAGS_GRIDPOINTS``)."""</span>
+<span class="w">        </span><span class="sd">"""Flag requesting ``n`` CLUT grid points per dimension (``cmsFLAGS_GRIDPOINTS``).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Grid points per dimension, from 0 to 255.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Flag</span>
+<span class="sd">            The flag value to combine with other flags.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If ``n`` is outside 0 to 255.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Flag.grid_points(17) == 17 &lt;&lt; 16</span>
+<span class="sd">        True</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">255</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"grid points must be 0-255, got </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Flag</span><span class="p">((</span><span class="n">n</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span></div>
@@ -410,7 +480,34 @@
 <a class="viewcode-back" href="../../reference/generated/lcms2.Flag.html#lcms2.Flag.parse">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Flag</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Flag</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Convert ``None``, an int or a flag string to a :class:`Flag`."""</span>
+<span class="w">        </span><span class="sd">"""Convert ``None``, an int or a flag string to a :class:`Flag`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : Flag, int, str or None</span>
+<span class="sd">            The flags, as a number or a string of names such as ``"NOOPTIMIZE,BPC"``. ``None`` gives no flags.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Flag</span>
+<span class="sd">            The combined flags.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            For an unknown flag name.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If ``value`` is not a supported type.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Intent.parse : The equivalent for rendering intents.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; Flag.parse("bpc") == Flag.BLACKPOINTCOMPENSATION</span>
+<span class="sd">        True</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NONE</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -431,7 +528,18 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DeviceClass</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""ICC profile/device class, with readable values (``"display"``) and the header signature."""</span>
+<span class="w">    </span><span class="sd">"""ICC profile/device class, with readable values (``"display"``) and the header signature.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    INPUT, DISPLAY, OUTPUT, LINK, ABSTRACT, COLOR_SPACE, NAMED_COLOR</span>
+<span class="sd">        The seven ICC device classes.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; DeviceClass.DISPLAY.signature</span>
+<span class="sd">    'mntr'</span>
+<span class="sd">    """</span>
 
     <span class="n">INPUT</span> <span class="o">=</span> <span class="s2">"input"</span>
     <span class="n">DISPLAY</span> <span class="o">=</span> <span class="s2">"display"</span>
@@ -451,7 +559,23 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceClass</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The class for a header signature; unknown signatures are returned unchanged."""</span>
+<span class="w">        </span><span class="sd">"""The class for a header signature; unknown signatures are returned unchanged.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sig : str</span>
+<span class="sd">            The 4-character header signature, such as ``"mntr"``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DeviceClass or str</span>
+<span class="sd">            The matching class, or ``sig`` itself if it is unknown.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; DeviceClass.from_signature("prtr")</span>
+<span class="sd">        &lt;DeviceClass.OUTPUT: 'output'&gt;</span>
+<span class="sd">        """</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_CLASS_SIGS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">sig</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">k</span>
@@ -473,6 +597,18 @@
 <span class="w">    </span><span class="sd">"""ICC data colour spaces by header signature without padding (``"RGB"``, ``"Lab"``, ``"CMYK"``).</span>
 
 <span class="sd">    Members compare equal to their strings: ``profile.color_space == "RGB"``.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    XYZ, LAB, LUV, YCBCR, YXY, RGB, GRAY, HSV, HLS, CMYK, CMY : str</span>
+<span class="sd">        Colour spaces by signature.</span>
+<span class="sd">    MCH5, MCH6, MCH7, MCH8 : str</span>
+<span class="sd">        Multichannel spaces with five to eight channels.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ColorSpaceSignature.RGB == "RGB"</span>
+<span class="sd">    True</span>
 <span class="sd">    """</span>
 
     <span class="n">XYZ</span> <span class="o">=</span> <span class="s2">"XYZ"</span>
@@ -496,7 +632,23 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sig</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorSpaceSignature</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""The member for a (possibly space-padded) signature; unknown ones come back stripped."""</span>
+<span class="w">        </span><span class="sd">"""The member for a (possibly space-padded) signature; unknown ones come back stripped.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sig : str</span>
+<span class="sd">            The header signature, optionally padded with spaces (``"RGB "``).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ColorSpaceSignature or str</span>
+<span class="sd">            The matching member, or the stripped signature if it is unknown.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; ColorSpaceSignature.from_signature("RGB ")</span>
+<span class="sd">        &lt;ColorSpaceSignature.RGB: 'RGB'&gt;</span>
+<span class="sd">        """</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
@@ -534,7 +686,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

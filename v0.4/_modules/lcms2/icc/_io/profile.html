@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.icc._io.profile - python-lcms2 0.4.4</title>
+        <title>lcms2.icc._io.profile - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
@@ -292,6 +292,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..._errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICCParseError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D50</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">binary</span> <span class="k">as</span> <span class="n">bn</span>
 
 <span class="n">HEADER_SIZE</span> <span class="o">=</span> <span class="mi">128</span>
@@ -336,6 +337,15 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">ICCProfile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A parsed ICC profile.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    header : ICCHeader</span>
+<span class="sd">        Decoded header.</span>
+<span class="sd">    tags : dict of bytes to bytes</span>
+<span class="sd">        Raw tag data keyed by 4-byte tag signature.</span>
+<span class="sd">    raw : bytes</span>
+<span class="sd">        The complete profile bytes.</span>
+
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    header : ICCHeader</span>
@@ -344,9 +354,39 @@
 <span class="sd">        Raw tag data keyed by 4-byte tag signature.</span>
 <span class="sd">    raw : bytes</span>
 <span class="sd">        The complete profile bytes.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lcms2.icc.ICCSpace : A color space read from a profile.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">    &gt;&gt;&gt; data = srgb.to_icc_profile()["bytes"]</span>
+<span class="sd">    &gt;&gt;&gt; profile = ICCProfile.from_bytes(data)</span>
+<span class="sd">    &gt;&gt;&gt; profile.header.data_colour_space</span>
+<span class="sd">    b'RGB '</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">ICCHeader</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">],</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Wrap an already parsed header, tag table and file bytes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        header : ICCHeader</span>
+<span class="sd">            Decoded header.</span>
+<span class="sd">        tags : dict of bytes to bytes</span>
+<span class="sd">            Raw tag data keyed by 4-byte tag signature.</span>
+<span class="sd">        raw : bytes</span>
+<span class="sd">            The complete profile bytes.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; parsed = ICCProfile.from_bytes(srgb.to_icc_profile()["bytes"])</span>
+<span class="sd">        &gt;&gt;&gt; ICCProfile(parsed.header, parsed.tags, parsed.raw).has_tag(b"wtpt")</span>
+<span class="sd">        True</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
@@ -366,6 +406,23 @@
 <span class="sd">        -------</span>
 <span class="sd">        ICCProfile</span>
 <span class="sd">            The parsed profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ICCParseError</span>
+<span class="sd">            If the data is not a valid ICC profile.</span>
+<span class="sd">        OSError</span>
+<span class="sd">            If a path cannot be read.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        ICCProfile.from_bytes : Parse bytes only.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; ICCProfile.load(srgb.to_icc_profile()["bytes"]).header.version[0]</span>
+<span class="sd">        4</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_bytes</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">)):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">path_or_bytes</span><span class="p">)</span>
@@ -397,6 +454,16 @@
 <span class="sd">            If the data is too small, has a bad file signature, an</span>
 <span class="sd">            unsupported major version, or a truncated/out-of-bounds tag</span>
 <span class="sd">            table.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        ICCProfile.load : Accepts a path as well.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; ICCProfile.from_bytes(srgb.to_icc_profile(version=2)["bytes"]).header.version_major</span>
+<span class="sd">        2</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">HEADER_SIZE</span> <span class="o">+</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ICCParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"file too small to be an ICC profile (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes)"</span><span class="p">)</span>
@@ -485,6 +552,18 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bytes or None</span>
+<span class="sd">            The tag data, or None when absent.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        ICCProfile.has_tag : Test for presence only.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; profile = ICCProfile.from_bytes(srgb.to_icc_profile()["bytes"])</span>
+<span class="sd">        &gt;&gt;&gt; profile.get_tag(b"nope") is None</span>
+<span class="sd">        True</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sig4</span><span class="p">)</span></div>
 
@@ -502,6 +581,17 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
+<span class="sd">            True when the tag is present.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        ICCProfile.get_tag : Return the tag data.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; ICCProfile.from_bytes(srgb.to_icc_profile()["bytes"]).has_tag(b"wtpt")</span>
+<span class="sd">        True</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">sig4</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span></div>
 
@@ -523,7 +613,7 @@
         <span class="n">data_colour_space</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"RGB "</span><span class="p">,</span>
         <span class="n">pcs</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"XYZ "</span><span class="p">,</span>
         <span class="n">rendering_intent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">pcs_illuminant</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.9642</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8249</span><span class="p">),</span>
+        <span class="n">pcs_illuminant</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">D50</span><span class="o">.</span><span class="n">tolist</span><span class="p">()),</span>
         <span class="n">cmm</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\x00\x00\x00\x00</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">primary_platform</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\x00\x00\x00\x00</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">manufacturer</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\x00\x00\x00\x00</span><span class="s2">"</span><span class="p">,</span>
@@ -539,9 +629,47 @@
 <span class="sd">        Identical tag payloads share one data block, every block is padded</span>
 <span class="sd">        to 4 bytes, and v4+ profiles carry the MD5 profile ID of ICC.1.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        version : sequence of int, optional</span>
+<span class="sd">            ``(major, minor, bugfix)``. Defaults to ``(4, 4, 0)``.</span>
+<span class="sd">        device_class : bytes, optional</span>
+<span class="sd">            Profile class signature. Defaults to ``b'spac'``.</span>
+<span class="sd">        data_colour_space : bytes, optional</span>
+<span class="sd">            Device color space signature. Defaults to ``b'RGB '``.</span>
+<span class="sd">        pcs : bytes, optional</span>
+<span class="sd">            Profile connection space signature. Defaults to ``b'XYZ '``.</span>
+<span class="sd">        rendering_intent : int, optional</span>
+<span class="sd">            Header rendering intent. Defaults to 1.</span>
+<span class="sd">        pcs_illuminant : sequence of float, optional</span>
+<span class="sd">            XYZ of the PCS illuminant. Defaults to D50.</span>
+<span class="sd">        cmm, primary_platform, manufacturer, model : bytes, optional</span>
+<span class="sd">            Four-byte header signatures. Default to zeros.</span>
+<span class="sd">        attributes : int, optional</span>
+<span class="sd">            Header attribute flags. Defaults to 0.</span>
+<span class="sd">        flags : int, optional</span>
+<span class="sd">            Header profile flags. Defaults to 0.</span>
+<span class="sd">        creator : bytes, optional</span>
+<span class="sd">            Creator signature. Defaults to ``b'lcms'``.</span>
+<span class="sd">        created : datetime, optional</span>
+<span class="sd">            Creation time. Defaults to now (UTC).</span>
+<span class="sd">        tags : dict of bytes to bytes, optional</span>
+<span class="sd">            Raw tag data keyed by 4-byte tag signature. Defaults to no tags.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bytes</span>
+<span class="sd">            The complete profile file.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        lcms2.icc.write_icc_bytes : Write a color space as a profile.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; data = ICCProfile.build_bytes(tags={b"test": b"abcd"})</span>
+<span class="sd">        &gt;&gt;&gt; ICCProfile.from_bytes(data).get_tag(b"test")</span>
+<span class="sd">        b'abcd'</span>
 <span class="sd">        """</span>
         <span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="n">created</span> <span class="o">=</span> <span class="n">created</span> <span class="ow">or</span> <span class="n">_dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">_dt</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -640,7 +768,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>

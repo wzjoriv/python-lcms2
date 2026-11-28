@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="lcms2.CGATS" href="lcms2.CGATS.html"><link rel="prev" title="lcms2.CMSError" href="lcms2.CMSError.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.ToneCurve - python-lcms2 0.4.4</title>
+        <title>lcms2.ToneCurve - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +189,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -303,7 +303,20 @@ then evaluate them by calling the object on any array.</p>
 <dd class="field-odd"><p><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> or </em><em>array_like</em>) – A float builds a pure gamma curve; a 1-D <code class="docutils literal notranslate"><span class="pre">uint16</span></code> or float array builds a
 tabulated curve. (Internal code also passes an existing curve handle.)</p>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If a table is not 1-D.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If a table is of an unsupported dtype.</p></li>
+</ul>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.parametric" title="lcms2.ToneCurve.parametric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.parametric</span></code></a></dt><dd><p>Curves from the ICC parametric types.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
@@ -396,7 +409,17 @@ tabulated curve. (Internal code also passes an existing curve handle.)</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>gamma</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – The exponent (2.2 is a typical display gamma).</p>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ToneCurve</em> – The power-law curve.</p>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.parametric" title="lcms2.ToneCurve.parametric"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.parametric</span></code></a></dt><dd><p>Curves with offsets and linear segments.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.2</span><span class="p">)(</span><span class="mf">0.5</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span>
@@ -418,10 +441,20 @@ tabulated curve. (Internal code also passes an existing curve handle.)</p>
 for types 1-8, 108, 109 respectively.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an unknown type or the wrong number of parameters.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ToneCurve</em> – The parametric curve.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an unknown type or the wrong number of parameters.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.gamma" title="lcms2.ToneCurve.gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.gamma</span></code></a></dt><dd><p>The simple power-law case.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">parametric</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">])(</span><span class="mf">0.5</span><span class="p">)</span>
@@ -438,7 +471,23 @@ for types 1-8, 108, 109 respectively.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>values</strong> (<em>array_like</em>) – 1-D <code class="docutils literal notranslate"><span class="pre">uint16</span></code> (0..65535) or floating point (0..1) samples, at least 2.</p>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ToneCurve</em> – The tabulated curve.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">values</span></code> is not 1-D.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">values</span></code> is not a <code class="docutils literal notranslate"><span class="pre">uint16</span></code> or float array.</p></li>
+</ul>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.table" title="lcms2.ToneCurve.table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.table</span></code></a></dt><dd><p>The curve as a <code class="docutils literal notranslate"><span class="pre">uint16</span></code> table.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
@@ -452,6 +501,18 @@ for types 1-8, 108, 109 respectively.</p></li>
 <dt class="sig sig-object py" id="lcms2.ToneCurve.srgb">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">srgb</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.ToneCurve" title="lcms2._curves.ToneCurve"><span class="pre">ToneCurve</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_curves.html#ToneCurve.srgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.ToneCurve.srgb" title="Link to this definition">¶</a></dt>
 <dd><p>The sRGB transfer curve (encoded to linear).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ToneCurve</em> – The sRGB curve.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.rec709" title="lcms2.ToneCurve.rec709"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.rec709</span></code></a></dt><dd><p>The Rec. 709 curve.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">srgb</span><span class="p">()(</span><span class="mf">0.5</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span>
@@ -464,6 +525,18 @@ for types 1-8, 108, 109 respectively.</p></li>
 <dt class="sig sig-object py" id="lcms2.ToneCurve.rec709">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">rec709</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.ToneCurve" title="lcms2._curves.ToneCurve"><span class="pre">ToneCurve</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_curves.html#ToneCurve.rec709"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.ToneCurve.rec709" title="Link to this definition">¶</a></dt>
 <dd><p>The Rec. 709 transfer curve (encoded to linear).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ToneCurve</em> – The Rec. 709 curve.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.srgb" title="lcms2.ToneCurve.srgb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.srgb</span></code></a></dt><dd><p>The sRGB curve.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">rec709</span><span class="p">()(</span><span class="mf">1.0</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span>
@@ -476,6 +549,18 @@ for types 1-8, 108, 109 respectively.</p></li>
 <dt class="sig sig-object py" id="lcms2.ToneCurve.linear">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.ToneCurve" title="lcms2._curves.ToneCurve"><span class="pre">ToneCurve</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_curves.html#ToneCurve.linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.ToneCurve.linear" title="Link to this definition">¶</a></dt>
 <dd><p>The identity curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ToneCurve</em> – A curve with <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">x</span></code>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.gamma" title="lcms2.ToneCurve.gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.gamma</span></code></a></dt><dd><p>Curves with other exponents.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">linear</span><span class="p">()</span><span class="o">.</span><span class="n">is_linear</span>
@@ -488,6 +573,21 @@ for types 1-8, 108, 109 respectively.</p></li>
 <dt class="sig sig-object py" id="lcms2.ToneCurve.inverse">
 <span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4096</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.ToneCurve" title="lcms2._curves.ToneCurve"><span class="pre">ToneCurve</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_curves.html#ToneCurve.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.ToneCurve.inverse" title="Link to this definition">¶</a></dt>
 <dd><p>Inverse curve, analytic when possible, otherwise sampled at <code class="docutils literal notranslate"><span class="pre">n</span></code> points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of samples used when no analytic inverse exists. Defaults to 4096.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ToneCurve</em> – The inverse curve.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.join" title="lcms2.ToneCurve.join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.join</span></code></a></dt><dd><p>Combine a curve with the inverse of another.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">inverse</span><span class="p">()(</span><span class="mf">0.25</span><span class="p">)),</span> <span class="mi">4</span><span class="p">)</span>
@@ -503,6 +603,24 @@ for types 1-8, 108, 109 respectively.</p></li>
 <p>This is the curve that, applied after <code class="docutils literal notranslate"><span class="pre">other</span></code>, reproduces <code class="docutils literal notranslate"><span class="pre">self</span></code>; joining a
 curve with itself gives the identity. To apply one curve after another, use
 <a class="reference internal" href="#lcms2.ToneCurve.then" title="lcms2.ToneCurve.then"><code class="xref py py-meth docutils literal notranslate"><span class="pre">then()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<a class="reference internal" href="#lcms2.ToneCurve" title="lcms2.ToneCurve"><em>ToneCurve</em></a>) – The curve whose inverse is applied.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of samples. Defaults to 4096.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ToneCurve</em> – The joined curve.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.then" title="lcms2.ToneCurve.then"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.then</span></code></a></dt><dd><p>Apply one curve after another.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))(</span><span class="mf">0.3</span><span class="p">)),</span> <span class="mi">3</span><span class="p">)</span>
@@ -515,6 +633,27 @@ curve with itself gives the identity. To apply one curve after another, use
 <dt class="sig sig-object py" id="lcms2.ToneCurve.then">
 <span class="sig-name descname"><span class="pre">then</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lcms2.ToneCurve" title="lcms2._curves.ToneCurve"><span class="pre">ToneCurve</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4096</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.ToneCurve" title="lcms2._curves.ToneCurve"><span class="pre">ToneCurve</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_curves.html#ToneCurve.then"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.ToneCurve.then" title="Link to this definition">¶</a></dt>
 <dd><p>Compose two curves: <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">other(self(x))</span></code>, sampled at <code class="docutils literal notranslate"><span class="pre">n</span></code> points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<a class="reference internal" href="#lcms2.ToneCurve" title="lcms2.ToneCurve"><em>ToneCurve</em></a>) – The curve applied after this one.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of samples. Defaults to 4096.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ToneCurve</em> – The composed curve.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">other</span></code> is not a <a class="reference internal" href="#lcms2.ToneCurve" title="lcms2.ToneCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">ToneCurve</span></code></a>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.join" title="lcms2.ToneCurve.join"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.join</span></code></a></dt><dd><p>Combine a curve with the inverse of another.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">1.5</span><span class="p">))</span>
@@ -533,7 +672,20 @@ would not be monotonic).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>lam</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Smoothing strength; larger is smoother (0.1 to 1000 is typical).</p>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ToneCurve</em> – The smoothed curve.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CMSError</strong> – If the smoothed curve would not be monotonic.</p>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.copy" title="lcms2.ToneCurve.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.copy</span></code></a></dt><dd><p>Unsmoothed duplicate.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
@@ -548,6 +700,18 @@ would not be monotonic).</p>
 <dt class="sig sig-object py" id="lcms2.ToneCurve.copy">
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.ToneCurve" title="lcms2._curves.ToneCurve"><span class="pre">ToneCurve</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_curves.html#ToneCurve.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.ToneCurve.copy" title="Link to this definition">¶</a></dt>
 <dd><p>Independent duplicate of the curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>ToneCurve</em> – A copy that does not share state with this curve.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.smooth" title="lcms2.ToneCurve.smooth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.smooth</span></code></a></dt><dd><p>A smoothed copy.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
@@ -563,11 +727,24 @@ would not be monotonic).</p>
 <dd><p>Estimate the gamma that best matches the curve.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Maximum acceptable mean error. When no single gamma reaches it (as for the sRGB
-curve), the tolerance is relaxed step by step up to 0.5 before <code class="xref py py-class docutils literal notranslate"><span class="pre">LCMSError</span></code> is
-raised.</p>
+<dd class="field-odd"><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum acceptable mean error. When no single gamma reaches it (as for the sRGB
+curve), the tolerance is relaxed step by step up to 0.5 before <a class="reference internal" href="lcms2.CMSError.html#lcms2.CMSError" title="lcms2.CMSError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CMSError</span></code></a> is
+raised. Defaults to 0.01.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>float</em> – The estimated gamma.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CMSError</strong> – If no gamma fits within the relaxed tolerance.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.ToneCurve.gamma" title="lcms2.ToneCurve.gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ToneCurve.gamma</span></code></a></dt><dd><p>Build a power-law curve.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2._curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToneCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">ToneCurve</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="mf">2.2</span><span class="p">)</span><span class="o">.</span><span class="n">estimate_gamma</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
@@ -705,7 +882,7 @@ raised.</p>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="lcms2.convert" href="lcms2.convert.html"><link rel="prev" title="lcms2.Profile" href="lcms2.Profile.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.Transform - python-lcms2 0.4.4</title>
+        <title>lcms2.Transform - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +189,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -302,23 +302,38 @@ LittleCMS transform is cached per format pair. The explicit form with format str
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>src</strong> (<a class="reference internal" href="lcms2.Profile.html#lcms2.Profile" title="lcms2.Profile"><em>Profile</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>path</em><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em> of </em><em>those</em>) – Source profile; a list makes a multi-profile transform (<code class="docutils literal notranslate"><span class="pre">dst</span></code> omitted).</p></li>
-<li><p><strong>dst</strong> (<a class="reference internal" href="lcms2.Profile.html#lcms2.Profile" title="lcms2.Profile"><em>Profile</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><em>path</em>) – Destination profile.</p></li>
-<li><p><strong>intent</strong> (<a class="reference internal" href="lcms2.Intent.html#lcms2.Intent" title="lcms2.Intent"><em>Intent</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, or </em><em>one per profile</em>) – Rendering intent: <code class="docutils literal notranslate"><span class="pre">&quot;relative&quot;</span></code> (default; in-gamut colors unchanged), <code class="docutils literal notranslate"><span class="pre">&quot;perceptual&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;saturation&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;absolute&quot;</span></code>.</p></li>
-<li><p><strong>bpc</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em> or </em><em>one per profile</em>) – Black point compensation.</p></li>
-<li><p><strong>proof</strong> (<a class="reference internal" href="lcms2.Profile.html#lcms2.Profile" title="lcms2.Profile"><em>Profile</em></a><em>, </em><em>optional</em>) – Proofing profile: simulate <code class="docutils literal notranslate"><span class="pre">proof</span></code> on <code class="docutils literal notranslate"><span class="pre">dst</span></code> (soft proofing).</p></li>
-<li><p><strong>proof_intent</strong> (<em>intent</em>) – Intent from the source to the proofing device (0-3).</p></li>
-<li><p><strong>gamut_check</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – Mark colours outside the <code class="docutils literal notranslate"><span class="pre">proof</span></code> gamut with the alarm colour (see <a class="reference internal" href="lcms2.set_alarm_codes.html#lcms2.set_alarm_codes" title="lcms2.set_alarm_codes"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_alarm_codes()</span></code></a>).</p></li>
-<li><p><strong>optimize</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – Allow LittleCMS to precalculate (False adds <code class="docutils literal notranslate"><span class="pre">NOOPTIMIZE</span></code>).</p></li>
-<li><p><strong>precision</strong> (<em>{&quot;auto&quot;</em><em>, </em><em>&quot;high&quot;</em><em>, </em><em>&quot;low&quot;}</em>) – Precalculation table size.</p></li>
-<li><p><strong>flags</strong> (<a class="reference internal" href="lcms2.Flag.html#lcms2.Flag" title="lcms2.Flag"><em>Flag</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Any other <code class="docutils literal notranslate"><span class="pre">cmsFLAGS_*</span></code>.</p></li>
-<li><p><strong>adaptation</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Per-profile adaptation states (makes an extended transform).</p></li>
+<li><p><strong>*args</strong> – Either <code class="docutils literal notranslate"><span class="pre">dst</span></code> (a Profile, str or path), or the explicit form <code class="docutils literal notranslate"><span class="pre">src_format,</span> <span class="pre">dst,</span>
+<span class="pre">dst_format[,</span> <span class="pre">intent[,</span> <span class="pre">flags]]</span></code>. A device link takes no argument.</p></li>
+<li><p><strong>intent</strong> (<a class="reference internal" href="lcms2.Intent.html#lcms2.Intent" title="lcms2.Intent"><em>Intent</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, or </em><em>one per profile</em><em>, </em><em>optional</em>) – Rendering intent: <code class="docutils literal notranslate"><span class="pre">&quot;relative&quot;</span></code> (in-gamut colors unchanged), <code class="docutils literal notranslate"><span class="pre">&quot;perceptual&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;saturation&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;absolute&quot;</span></code>. Defaults to relative colorimetric.</p></li>
+<li><p><strong>flags</strong> (<a class="reference internal" href="lcms2.Flag.html#lcms2.Flag" title="lcms2.Flag"><em>Flag</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Any other <code class="docutils literal notranslate"><span class="pre">cmsFLAGS_*</span></code>. Defaults to None.</p></li>
+<li><p><strong>proof</strong> (<a class="reference internal" href="lcms2.Profile.html#lcms2.Profile" title="lcms2.Profile"><em>Profile</em></a><em>, </em><em>optional</em>) – Proofing profile: simulate <code class="docutils literal notranslate"><span class="pre">proof</span></code> on <code class="docutils literal notranslate"><span class="pre">dst</span></code> (soft proofing). Defaults to None.</p></li>
+<li><p><strong>proof_intent</strong> (<a class="reference internal" href="lcms2.Intent.html#lcms2.Intent" title="lcms2.Intent"><em>Intent</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Intent from the source to the proofing device (0-3). Defaults to relative colorimetric.</p></li>
+<li><p><strong>gamut_check</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – Mark colours outside the <code class="docutils literal notranslate"><span class="pre">proof</span></code> gamut with the alarm colour (see <a class="reference internal" href="lcms2.set_alarm_codes.html#lcms2.set_alarm_codes" title="lcms2.set_alarm_codes"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_alarm_codes()</span></code></a>).
+Defaults to False.</p></li>
+<li><p><strong>bpc</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em> or </em><em>one per profile</em><em>, </em><em>optional</em>) – Black point compensation. Defaults to False.</p></li>
+<li><p><strong>optimize</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>, </em><em>optional</em>) – Allow LittleCMS to precalculate (False adds <code class="docutils literal notranslate"><span class="pre">NOOPTIMIZE</span></code>). Defaults to True.</p></li>
+<li><p><strong>precision</strong> (<em>{&quot;auto&quot;</em><em>, </em><em>&quot;high&quot;</em><em>, </em><em>&quot;low&quot;}</em><em>, </em><em>optional</em>) – Precalculation table size. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>.</p></li>
+<li><p><strong>adaptation</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – Per-profile adaptation states (makes an extended transform). Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>CMSError</strong> – When LittleCMS cannot build the transform (e.g. incompatible profiles).</p>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>CMSError</strong> – When LittleCMS cannot build the transform (e.g. incompatible profiles).</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an invalid <code class="docutils literal notranslate"><span class="pre">precision</span></code>, <code class="docutils literal notranslate"><span class="pre">proof_intent</span></code> or proofing setup.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – For an unsupported combination of arguments.</p></li>
+</ul>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="lcms2.convert.html#lcms2.convert" title="lcms2.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></dt><dd><p>One-call conversion with a transform cache.</p>
+</dd>
+<dt><a class="reference internal" href="lcms2.Profile.html#lcms2.Profile.transform" title="lcms2.Profile.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Profile.transform</span></code></a></dt><dd><p>Convert starting from a profile.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="o">,</span><span class="w"> </span><span class="nn">lcms2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">lcms2</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="s2">"sRGB"</span><span class="p">,</span> <span class="s2">"Lab"</span><span class="p">,</span> <span class="n">intent</span><span class="o">=</span><span class="s2">"relative"</span><span class="p">)</span>
@@ -424,6 +439,27 @@ Lab/XYZ which gives float64.</p></li>
 <dt class="sig sig-object py" id="lcms2.Transform.to_device_link">
 <span class="sig-name descname"><span class="pre">to_device_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="lcms2.Profile.html#lcms2.Profile" title="lcms2._profile.Profile"><span class="pre">Profile</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_transform.html#Transform.to_device_link"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Transform.to_device_link" title="Link to this definition">¶</a></dt>
 <dd><p>A device link profile equivalent to this transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>, </em><em>optional</em>) – ICC version of the device link. Defaults to 4.3.</p></li>
+<li><p><strong>flags</strong> (<a class="reference internal" href="lcms2.Flag.html#lcms2.Flag" title="lcms2.Flag"><em>Flag</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Extra <code class="docutils literal notranslate"><span class="pre">cmsFLAGS_*</span></code> for building the link. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Profile</em> – The device link profile.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>CMSError</strong> – If the device link cannot be created.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="lcms2.Profile.html#lcms2.Profile.ink_limiting" title="lcms2.Profile.ink_limiting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Profile.ink_limiting</span></code></a></dt><dd><p>A ready-made CMYK device link.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">lcms2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">link</span> <span class="o">=</span> <span class="n">lcms2</span><span class="o">.</span><span class="n">Transform</span><span class="p">(</span><span class="s2">"sRGB"</span><span class="p">,</span> <span class="s2">"Lab"</span><span class="p">)</span><span class="o">.</span><span class="n">to_device_link</span><span class="p">()</span>
@@ -514,7 +550,7 @@ Lab/XYZ which gives float64.</p></li>
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

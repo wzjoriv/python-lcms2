@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="Contributing" href="../../contributing.html"><link rel="prev" title="lcms2.icc" href="lcms2.icc.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.colormap - python-lcms2 0.4.4</title>
+        <title>lcms2.colormap - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -168,7 +168,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +189,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -314,9 +314,12 @@ built-in set.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>colors</strong> (<em>array_like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>3</em><em>)</em>) – sRGB floats in 0..1 (values outside are kept only with <code class="docutils literal notranslate"><span class="pre">gamut=&quot;none&quot;</span></code>).</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Display name.</p></li>
-<li><p><strong>space</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the interpolation space the colours were built in (informational).</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Display name. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;colormap&quot;</span></code>.</p></li>
+<li><p><strong>space</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace" title="lcms2.spaces.ColorSpace"><em>ColorSpace</em></a><em>, </em><em>optional</em>) – The interpolation space the colours were built in (informational). Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;oklab&quot;</span></code>.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <cite>colors</cite> is not finite with shape <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">3)</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">&gt;=</span> <span class="pre">1</span></code>.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -343,31 +346,41 @@ built-in set.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>colors</strong> (<em>sequence</em>) – Two or more colours in any form <cite>lcms2._parse.parse_color</cite> accepts.</p></li>
-<li><p><strong>space</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace" title="lcms2.spaces.ColorSpace"><em>ColorSpace</em></a><em>, </em><em>default &quot;oklab&quot;</em>) – Space the colours are interpolated in. Cylindrical spaces (<code class="docutils literal notranslate"><span class="pre">oklch</span></code>,
-<code class="docutils literal notranslate"><span class="pre">lch</span></code>, <code class="docutils literal notranslate"><span class="pre">hsv</span></code>) interpolate hue along the shorter arc.</p></li>
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>default 256</em>) – Number of samples.</p></li>
+<li><p><strong>space</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><a class="reference internal" href="lcms2.spaces.html#lcms2.spaces.ColorSpace" title="lcms2.spaces.ColorSpace"><em>ColorSpace</em></a><em>, </em><em>optional</em>) – Space the colours are interpolated in. Cylindrical spaces (<code class="docutils literal notranslate"><span class="pre">oklch</span></code>,
+<code class="docutils literal notranslate"><span class="pre">lch</span></code>, <code class="docutils literal notranslate"><span class="pre">hsv</span></code>) interpolate hue along the shorter arc. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;oklab&quot;</span></code>.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><em>optional</em>) – Number of samples. Defaults to 256.</p></li>
 <li><p><strong>positions</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> or </em><em>&quot;uniform&quot;</em><em>, </em><em>optional</em>) – Increasing positions of the control colours; rescaled to span 0..1.
-Default: evenly spaced (stops at 0, 1/(k-1), …, 1). <code class="docutils literal notranslate"><span class="pre">&quot;uniform&quot;</span></code> places
-each stop at its cumulative OKLab distance from the first, so the perceived
-colour change per step is the same along the whole map.</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>)</p></li>
-<li><p><strong>gamut</strong> (<em>{&quot;chroma&quot;</em><em>, </em><em>&quot;clip&quot;</em><em>, </em><em>&quot;none&quot;}</em><em>, </em><em>default &quot;chroma&quot;</em>) – <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code> reduces OKLCh chroma at constant lightness and hue until the
-colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&quot;clip&quot;</span></code> clips channels; <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> leaves them.</p></li>
+<code class="docutils literal notranslate"><span class="pre">&quot;uniform&quot;</span></code> places each stop at its cumulative OKLab distance from the
+first, so the perceived colour change per step is the same along the whole
+map. Defaults to evenly spaced stops.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>optional</em>) – Display name. Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;custom&quot;</span></code>.</p></li>
+<li><p><strong>gamut</strong> (<em>{&quot;chroma&quot;</em><em>, </em><em>&quot;clip&quot;</em><em>, </em><em>&quot;none&quot;}</em><em>, </em><em>optional</em>) – <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code> reduces OKLCh chroma at constant lightness and hue until the
+colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&quot;clip&quot;</span></code> clips channels; <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> leaves them.
+Defaults to <code class="docutils literal notranslate"><span class="pre">&quot;chroma&quot;</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>Colormap</em></p>
+<dd class="field-even"><p><em>Colormap</em> – The interpolated colormap.</p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For fewer than two colours, bad positions, <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">&lt;</span> <span class="pre">2</span></code> or an unknown gamut mode.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Colormap.sequential</span></code></dt><dd><p>Design a lightness ramp from a hue.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colormap</span><span class="w"> </span><span class="kn">import</span> <span class="n">Colormap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">Colormap</span><span class="o">.</span><span class="n">from_colors</span><span class="p">([</span><span class="s2">"#000"</span><span class="p">,</span> <span class="s2">"#f80"</span><span class="p">,</span> <span class="s2">"#fff"</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
 <span class="go">['#000000', '#ff8800', '#ffffff']</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">Colormap</span><span class="o">.</span><span class="n">from_colors</span><span class="p">([</span><span class="s2">"#000"</span><span class="p">,</span> <span class="s2">"#f80"</span><span class="p">,</span> <span class="s2">"#fff"</span><span class="p">],</span> <span class="n">positions</span><span class="o">=</span><span class="s2">"uniform"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">Colormap</span><span class="o">.</span><span class="n">from_colors</span><span class="p">([</span><span class="s2">"#000"</span><span class="p">,</span> <span class="s2">"#f80"</span><span class="p">,</span> <span class="s2">"#fff"</span><span class="p">],</span> <span class="n">positions</span><span class="o">=</span><span class="s2">"uniform"</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+<span class="go">3</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -377,10 +390,23 @@ colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.colormap.Colormap" title="lcms2.colormap._colormap.Colormap"><span class="pre">Colormap</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colormap/_colormap.html#Colormap.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colormap.Colormap.get" title="Link to this definition">¶</a></dt>
 <dd><p>A built-in colormap by name (append <code class="docutils literal notranslate"><span class="pre">_r</span></code> to reverse); see <cite>lcms2.colormap.list</cite>.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Built-in name, case-insensitive, optionally ending in <code class="docutils literal notranslate"><span class="pre">_r</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Colormap</em> – The named colormap.</p>
+</dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><strong>KeyError</strong></a> – For an unknown name; the message lists the available ones.</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colormap.list" title="lcms2.colormap.list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.colormap.list</span></code></a></dt><dd><p>The built-in names.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colormap</span><span class="w"> </span><span class="kn">import</span> <span class="n">Colormap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Colormap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"glacier_r"</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
@@ -411,6 +437,11 @@ colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&
 <dt class="sig sig-object py" id="lcms2.colormap.Colormap.hex">
 <span class="sig-name descname"><span class="pre">hex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/lcms2/colormap/_colormap.html#Colormap.hex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colormap.Colormap.hex" title="Link to this definition">¶</a></dt>
 <dd><p>The colours as <code class="docutils literal notranslate"><span class="pre">&quot;#rrggbb&quot;</span></code> strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list of str</em> – One hex string per entry.</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colormap</span><span class="w"> </span><span class="kn">import</span> <span class="n">Colormap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Colormap</span><span class="o">.</span><span class="n">from_colors</span><span class="p">([</span><span class="s2">"red"</span><span class="p">,</span> <span class="s2">"blue"</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
@@ -423,6 +454,11 @@ colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&
 <dt class="sig sig-object py" id="lcms2.colormap.Colormap.reversed">
 <span class="sig-name descname"><span class="pre">reversed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.colormap.Colormap" title="lcms2.colormap._colormap.Colormap"><span class="pre">Colormap</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colormap/_colormap.html#Colormap.reversed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colormap.Colormap.reversed" title="Link to this definition">¶</a></dt>
 <dd><p>A copy with the colours in reverse order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Colormap</em> – The reversed colormap, named with a <code class="docutils literal notranslate"><span class="pre">_r</span></code> suffix.</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colormap</span><span class="w"> </span><span class="kn">import</span> <span class="n">Colormap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Colormap</span><span class="o">.</span><span class="n">from_colors</span><span class="p">([</span><span class="s2">"red"</span><span class="p">,</span> <span class="s2">"blue"</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reversed</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span>
@@ -435,6 +471,17 @@ colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&
 <dt class="sig sig-object py" id="lcms2.colormap.Colormap.resampled">
 <span class="sig-name descname"><span class="pre">resampled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.colormap.Colormap" title="lcms2.colormap._colormap.Colormap"><span class="pre">Colormap</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colormap/_colormap.html#Colormap.resampled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colormap.Colormap.resampled" title="Link to this definition">¶</a></dt>
 <dd><p>Linearly resample to <code class="docutils literal notranslate"><span class="pre">n</span></code> entries (endpoints preserved).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Number of entries, at least 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Colormap</em> – The resampled colormap.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">&lt;</span> <span class="pre">1</span></code>.</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colormap</span><span class="w"> </span><span class="kn">import</span> <span class="n">Colormap</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">Colormap</span><span class="o">.</span><span class="n">from_colors</span><span class="p">([</span><span class="s2">"red"</span><span class="p">,</span> <span class="s2">"blue"</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">resampled</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
@@ -449,6 +496,27 @@ colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&
 <dt class="sig sig-object py" id="lcms2.colormap.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><span class="pre">type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/colormap/_builtin.html#get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.colormap.get" title="Link to this definition">¶</a></dt>
 <dd><p>Build the named colormap (a <code class="docutils literal notranslate"><span class="pre">_r</span></code> suffix reverses it).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – Built-in name, case-insensitive, optionally ending in <code class="docutils literal notranslate"><span class="pre">_r</span></code>.</p></li>
+<li><p><strong>cls</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#type" title="(in Python v3.15)"><em>type</em></a><em>, </em><em>optional</em>) – Colormap class to build. Defaults to <cite>Colormap</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Colormap</em> – The named colormap.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><strong>KeyError</strong></a> – For an unknown name; the message lists the available ones.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colormap.list" title="lcms2.colormap.list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.colormap.list</span></code></a></dt><dd><p>The built-in names.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colormap</span><span class="w"> </span><span class="kn">import</span> <span class="n">get</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">get</span><span class="p">(</span><span class="s2">"glacier"</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
@@ -461,6 +529,24 @@ colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&
 <dt class="sig sig-object py" id="lcms2.colormap.list">
 <span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lcms2.colormap.list" title="Link to this definition">¶</a></dt>
 <dd><p>Sorted names of the built-in colormaps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>list of str</em> – The names accepted by <cite>get</cite>, without the <code class="docutils literal notranslate"><span class="pre">_r</span></code> variants.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#lcms2.colormap.get" title="lcms2.colormap.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lcms2.colormap.get</span></code></a></dt><dd><p>Build one by name.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">lcms2.colormap</span><span class="w"> </span><span class="kn">import</span> <span class="nb">list</span> <span class="k">as</span> <span class="n">colormap_names</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">"glacier"</span> <span class="ow">in</span> <span class="n">colormap_names</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -545,7 +631,7 @@ colour fits sRGB; <code class="docutils literal notranslate"><span class="pre">&
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

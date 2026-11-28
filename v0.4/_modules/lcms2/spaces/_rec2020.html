@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.spaces._rec2020 - python-lcms2 0.4.4</title>
+        <title>lcms2.spaces._rec2020 - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
@@ -302,7 +302,25 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rec2020_decode</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""BT.2020 transfer function, device to linear."""</span>
+<span class="w">    </span><span class="sd">"""Apply the ITU-R BT.2020 transfer function from device values to linear light.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    v : ndarray</span>
+<span class="sd">        Device values, 0..1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The transformed values, same shape as `v`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces._rec2020 import rec2020_decode</span>
+<span class="sd">    &gt;&gt;&gt; rec2020_decode(np.array([0.5, 1.0])).round(4).tolist()</span>
+<span class="sd">    [0.2597, 1.0]</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
             <span class="n">v</span> <span class="o">&lt;</span> <span class="n">REC2020_BETA</span> <span class="o">*</span> <span class="mf">4.5</span><span class="p">,</span>
@@ -312,7 +330,25 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">rec2020_encode</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""BT.2020 transfer function, linear to device."""</span>
+<span class="w">    </span><span class="sd">"""Apply the inverse ITU-R BT.2020 transfer function from linear light to device values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    v : ndarray</span>
+<span class="sd">        Linear-light values, 0..1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ndarray</span>
+<span class="sd">        The transformed values, same shape as `v`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces._rec2020 import rec2020_encode</span>
+<span class="sd">    &gt;&gt;&gt; rec2020_encode(np.array([0.5, 1.0])).round(4).tolist()</span>
+<span class="sd">    [0.7054, 1.0]</span>
+<span class="sd">    """</span>
     <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
             <span class="n">v</span> <span class="o">&lt;</span> <span class="n">REC2020_BETA</span><span class="p">,</span>
@@ -324,7 +360,19 @@
 <div class="viewcode-block" id="Rec2020Space">
 <a class="viewcode-back" href="../../../reference/generated/lcms2.spaces.html#lcms2.spaces.Rec2020Space">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Rec2020Space</span><span class="p">(</span><span class="n">RGBSpace</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""ITU-R BT.2020 primaries and transfer function (CSS ``rec2020``)."""</span>
+<span class="w">    </span><span class="sd">"""ITU-R BT.2020 primaries and transfer function (CSS ``rec2020``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Passed to `ColorSpace`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from lcms2.spaces import srgb, rec2020</span>
+<span class="sd">    &gt;&gt;&gt; srgb.to(rec2020, [1.0, 0.0, 0.0]).round(2).tolist()</span>
+<span class="sd">    [0.79, 0.23, 0.07]</span>
+<span class="sd">    """</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">"rec2020"</span>
     <span class="n">matrix</span> <span class="o">=</span> <span class="n">D65_TO_D50</span> <span class="o">@</span> <span class="n">d65_white_matrix</span><span class="p">(</span><span class="n">REC2020_TO_XYZ_D65</span><span class="p">)</span>
@@ -368,7 +416,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

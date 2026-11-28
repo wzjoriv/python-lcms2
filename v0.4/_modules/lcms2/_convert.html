@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2._convert - python-lcms2 0.4.4</title>
+        <title>lcms2._convert - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -293,6 +293,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTypeLike</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._builtins</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup_builtin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color_text</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._profile</span><span class="w"> </span><span class="kn">import</span> <span class="n">Profile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 
@@ -379,13 +380,6 @@
     <span class="k">return</span> <span class="n">t</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_is_color_text</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""A CSS colour string, or a non-empty list/tuple of them."""</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
-
-
 <span class="k">def</span><span class="w"> </span><span class="nf">_xyz_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">_builtin</span><span class="p">(</span><span class="s2">"XYZ"</span><span class="p">)</span>
 
@@ -414,8 +408,10 @@
 <span class="sd">        ``"rgb(255 128 0)"``, or a list of them), which become sRGB floats in 0..1.</span>
 <span class="sd">    src, dst : Profile, str, path or colour space</span>
 <span class="sd">        Source and destination.</span>
-<span class="sd">    out, out_dtype</span>
-<span class="sd">        See :meth:`Transform.apply`.</span>
+<span class="sd">    out : numpy.ndarray, optional</span>
+<span class="sd">        Array to write the result to; see :meth:`Transform.apply`. Defaults to None.</span>
+<span class="sd">    out_dtype : dtype, optional</span>
+<span class="sd">        Data type of the result; see :meth:`Transform.apply`. Defaults to None.</span>
 <span class="sd">    **options</span>
 <span class="sd">        :class:`Transform` keywords: ``intent``, ``bpc``, ``proof``, ``gamut_check``, ``optimize``,</span>
 <span class="sd">        ``precision``, ``flags``.</span>
@@ -427,6 +423,18 @@
 <span class="sd">        colour space object is involved the result is ``float64``, since analytic spaces work in</span>
 <span class="sd">        floats. Pass ``out_dtype`` to choose.</span>
 
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        For a name that is neither a built-in profile, a registered colour space nor a file.</span>
+<span class="sd">    CMSError</span>
+<span class="sd">        If LittleCMS cannot build the transform.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Profile.transform : The same conversion starting from a profile.</span>
+<span class="sd">    Transform : Reusable transform for repeated conversions.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import lcms2</span>
@@ -437,10 +445,7 @@
 <span class="sd">    &gt;&gt;&gt; lcms2.convert("#ffffff", "sRGB", "Lab").round(2) + 0.0</span>
 <span class="sd">    array([100.,   0.,   0.])</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">_is_color_text</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color</span><span class="p">,</span> <span class="n">parse_colors</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">parse_color</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">parse_colors</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">parse_color_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">_resolve_space</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="n">_resolve_space</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
     <span class="n">s_profile</span><span class="p">,</span> <span class="n">d_profile</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Profile</span><span class="p">),</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">Profile</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">s_profile</span> <span class="ow">and</span> <span class="n">d_profile</span><span class="p">:</span>
@@ -491,7 +496,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

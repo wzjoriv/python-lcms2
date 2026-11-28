@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2.spaces._base - python-lcms2 0.4.4</title>
+        <title>lcms2.spaces._base - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
@@ -292,6 +292,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTypeLike</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._parallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">parallel_worthwhile</span><span class="p">,</span> <span class="n">run_chunks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color_text</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._domain</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_circular_channels</span><span class="p">,</span> <span class="n">resolve_channels_and_domain</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -386,6 +387,7 @@
 <span class="sd">    ... )</span>
 <span class="sd">    &gt;&gt;&gt; gray.to_xyz([0.5]).tolist()</span>
 <span class="sd">    [0.5, 0.5, 0.5]</span>
+
 <span class="sd">    """</span>
 
     <span class="n">n_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -402,6 +404,47 @@
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">device_domain</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create a color space from callables, or as a configured subclass.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_channels : int, optional</span>
+<span class="sd">            Number of device channels. Defaults to the class attribute, and to the</span>
+<span class="sd">            length of `device_domain` when that lists one pair per channel.</span>
+<span class="sd">        to_xyz : callable, optional</span>
+<span class="sd">            Maps ``(..., n_channels)`` device values to ``(..., 3)`` XYZ.</span>
+<span class="sd">            Required unless a subclass overrides `to_xyz`.</span>
+<span class="sd">        from_xyz : callable, optional</span>
+<span class="sd">            Maps ``(..., 3)`` XYZ to ``(..., n_channels)`` device values.</span>
+<span class="sd">            Required unless a subclass overrides `from_xyz`.</span>
+<span class="sd">        name : str, optional</span>
+<span class="sd">            Display name. Defaults to the registered name.</span>
+<span class="sd">        device_domain : tuple or list of tuple, optional</span>
+<span class="sd">            Device value range written to ICC profiles: one ``(lo, hi)`` pair</span>
+<span class="sd">            shared by every channel, or one pair per channel. Defaults to the</span>
+<span class="sd">            class attribute, ``(0.0, 1.0)``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If a direction has no implementation, or has both an override and a</span>
+<span class="sd">            callable, or the channel count is neither declared nor implied by</span>
+<span class="sd">            `device_domain`.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If `n_channels` disagrees with `device_domain` or a range is invalid.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import ColorSpace</span>
+<span class="sd">        &gt;&gt;&gt; space = ColorSpace(</span>
+<span class="sd">        ...     to_xyz=lambda v: v,</span>
+<span class="sd">        ...     from_xyz=lambda xyz: xyz,</span>
+<span class="sd">        ...     device_domain=[(0.0, 1.0)] * 3,</span>
+<span class="sd">        ...     name="identity",</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; space.n_channels</span>
+<span class="sd">        3</span>
+<span class="sd">        """</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">declared</span> <span class="o">=</span> <span class="n">n_channels</span> <span class="k">if</span> <span class="n">n_channels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_channels</span>
         <span class="n">domain</span> <span class="o">=</span> <span class="n">device_domain</span> <span class="k">if</span> <span class="n">device_domain</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_domain</span>
@@ -461,6 +504,17 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list of str</span>
+<span class="sd">            Registered names, lowercase with ``-`` separators.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        lcms2.spaces.get : Look a registered space up by name.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import ColorSpace</span>
+<span class="sd">        &gt;&gt;&gt; "oklab" in ColorSpace.list()</span>
+<span class="sd">        True</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_REGISTRY</span><span class="p">)</span></div>
 
@@ -484,8 +538,40 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Convert ``data`` from this space to ``to``, exactly like :meth:`lcms2.Profile.transform`.</span>
 
-<span class="sd">        ``to`` may be a colour space, a profile, a built-in profile name or an ICC file; see</span>
-<span class="sd">        :func:`lcms2.convert` for the keywords (they apply when a profile is involved).</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : array_like, shape (..., n_channels)</span>
+<span class="sd">            Values in this space.</span>
+<span class="sd">        to : ColorSpace, Profile or str</span>
+<span class="sd">            Destination: a color space, a profile, a built-in profile name or an ICC file.</span>
+<span class="sd">        intent : int, str or Intent, optional</span>
+<span class="sd">            Rendering intent. Defaults to ``"relative"``.</span>
+<span class="sd">        bpc : bool, optional</span>
+<span class="sd">            Use black point compensation. Defaults to False.</span>
+<span class="sd">        proof : Profile or str, optional</span>
+<span class="sd">            Soft-proofing profile. Defaults to None.</span>
+<span class="sd">        gamut_check : bool, optional</span>
+<span class="sd">            Mark out-of-gamut colors with the alarm codes when proofing. Defaults to False.</span>
+<span class="sd">        optimize : bool, optional</span>
+<span class="sd">            Let Little CMS optimize the transform. Defaults to True.</span>
+<span class="sd">        precision : str, optional</span>
+<span class="sd">            ``"auto"``, ``"high"`` or ``"low"``. Defaults to ``"auto"``.</span>
+<span class="sd">        flags : int or Flag, optional</span>
+<span class="sd">            Extra Little CMS flags. Defaults to None.</span>
+<span class="sd">        out : ndarray, optional</span>
+<span class="sd">            Array to write the result into. Defaults to a new array.</span>
+<span class="sd">        out_dtype : dtype, optional</span>
+<span class="sd">            Output dtype. Defaults to following the input.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray, shape (..., n_out)</span>
+<span class="sd">            The converted values.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        lcms2.convert : The underlying function.</span>
+<span class="sd">        ColorSpace.to : Convert between color spaces in pure NumPy.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -526,13 +612,16 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray, shape (..., target.n_channels)</span>
+<span class="sd">            The converted values.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
-<span class="sd">        KeyError</span>
-<span class="sd">            If `target` is an unregistered name.</span>
 <span class="sd">        TypeError</span>
 <span class="sd">            If `target` names a space that needs constructor arguments.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        ColorSpace.transform : Convert through ICC profiles.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -541,12 +630,7 @@
 <span class="sd">        &gt;&gt;&gt; srgb.to(xyz_d50, np.array([1.0, 1.0, 1.0])).round(4)</span>
 <span class="sd">        array([0.9642, 1.    , 0.8249])</span>
 <span class="sd">        """</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.._convert</span><span class="w"> </span><span class="kn">import</span> <span class="n">_is_color_text</span>
-
-        <span class="k">if</span> <span class="n">_is_color_text</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">.._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color</span><span class="p">,</span> <span class="n">parse_colors</span>
-
-            <span class="n">array</span> <span class="o">=</span> <span class="n">parse_color</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">parse_colors</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">parse_color_text</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_key</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_REGISTRY</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">ColorSpace</span><span class="p">))</span>
         <span class="p">):</span>
@@ -582,17 +666,29 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        values : array_like, shape (..., n_channels)</span>
+<span class="sd">        values : array_like, shape (..., C)</span>
+<span class="sd">            Device values, with ``C = n_channels`` channels.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray, shape (..., 3)</span>
+<span class="sd">            XYZ relative to D50, with Y 0..1 for the white point.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If the input's last dimension is not `n_channels`, or the result</span>
 <span class="sd">            does not have shape ``(..., 3)``.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        ColorSpace.from_xyz : The inverse.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; srgb.to_xyz([1.0, 1.0, 1.0]).round(4).tolist()</span>
+<span class="sd">        [0.9642, 1.0, 0.8249]</span>
 <span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
@@ -605,16 +701,28 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        xyz : array_like, shape (..., 3)</span>
+<span class="sd">            XYZ relative to D50.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        ndarray, shape (..., n_channels)</span>
+<span class="sd">        ndarray, shape (..., C)</span>
+<span class="sd">            Device values, with ``C = n_channels`` channels.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If the input's last dimension is not 3, or the result does not</span>
 <span class="sd">            have shape ``(..., n_channels)``.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        ColorSpace.to_xyz : The inverse.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; srgb.from_xyz([0.9642, 1.0, 0.8249]).round(2).tolist()</span>
+<span class="sd">        [1.0, 1.0, 1.0]</span>
 <span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
@@ -622,6 +730,11 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">profile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""This space as an :class:`lcms2.Profile` (built once, exactly when possible).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The cached profile.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -658,22 +771,23 @@
 <span class="sd">            File to write the profile to.</span>
 <span class="sd">        version : int or tuple of int, optional</span>
 <span class="sd">            ``2``, ``4``, ``5`` or a published ``(major, minor, bugfix)``</span>
-<span class="sd">            revision such as ``(4, 2, 0)``. Default 4.</span>
+<span class="sd">            revision such as ``(4, 2, 0)``. Defaults to 4.</span>
 <span class="sd">        rendering_intent : int, optional</span>
-<span class="sd">            Header rendering intent. Default 1 (relative colorimetric).</span>
+<span class="sd">            Header rendering intent. Defaults to 1 (relative colorimetric).</span>
 <span class="sd">        grid_size : int, optional</span>
-<span class="sd">            Grid points per axis of sampled lookup tables.</span>
+<span class="sd">            Grid points per axis of sampled lookup tables. Defaults to a size chosen</span>
+<span class="sd">            from the channel count.</span>
 <span class="sd">        description : str, optional</span>
-<span class="sd">            Profile description text.</span>
+<span class="sd">            Profile description text. Defaults to the class name.</span>
 <span class="sd">        copyright : str, optional</span>
-<span class="sd">            Profile copyright text.</span>
+<span class="sd">            Profile copyright text. Defaults to a generic notice.</span>
 <span class="sd">        force_clut : bool, optional</span>
-<span class="sd">            Always write sampled lookup tables.</span>
+<span class="sd">            Always write sampled lookup tables. Defaults to False.</span>
 <span class="sd">        strict : bool, optional</span>
 <span class="sd">            Raise :class:`~lcms2.ICCWriteError` instead of falling back to sampled lookup</span>
 <span class="sd">            tables when `to_xyz` or `from_xyz` has no exact representation, for example</span>
 <span class="sd">            because it branches on values or calls a non-NumPy library. The message names</span>
-<span class="sd">            the operation that could not be traced.</span>
+<span class="sd">            the operation that could not be traced. Defaults to False.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -695,6 +809,17 @@
 <span class="sd">            If the version or `device_domain` is invalid, if `to_xyz` or `from_xyz`</span>
 <span class="sd">            fails on every input, or with ``strict=True`` if there is no exact</span>
 <span class="sd">            representation.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        lcms2.icc.write_icc_bytes : Function form that returns bytes only.</span>
+<span class="sd">        lcms2.icc.ICCSpace : Read a profile back as a color space.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from lcms2.spaces import srgb</span>
+<span class="sd">        &gt;&gt;&gt; srgb.to_icc_profile()["method"]</span>
+<span class="sd">        'exact_matrix_trc'</span>
 <span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">..icc</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_icc_version</span><span class="p">,</span> <span class="n">write_icc_bytes</span>
 
@@ -734,10 +859,26 @@
 <span class="sd">    The instance is shared: repeated calls return the same object until another class is</span>
 <span class="sd">    registered under that name.</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Registered name, for example ``"oklab"`` or ``"display-p3"``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ColorSpace</span>
+<span class="sd">        The shared instance.</span>
+
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    KeyError</span>
 <span class="sd">        If no space is registered under `name`.</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If the space needs constructor arguments.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    lcms2.spaces.ColorSpace.list : The registered names.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -785,7 +926,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

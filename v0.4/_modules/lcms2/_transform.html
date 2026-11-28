@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 9.2.0 and Furo 2025.12.19 -->
-        <title>lcms2._transform - python-lcms2 0.4.4</title>
+        <title>lcms2._transform - python-lcms2 0.4.5</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">python-lcms2 0.4.4</div></a>
+      <a href="../../index.html"><div class="brand">python-lcms2 0.4.5</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,10 +188,10 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">python-lcms2 0.4.4</span>
+  <span class="sidebar-brand-text">python-lcms2 0.4.5</span>
   
 </a><div class="sidebar-versions">
-  <span class="sidebar-versions-label">0.4.4</span>
+  <span class="sidebar-versions-label">0.4.5</span>
   <a href="https://wzjoriv.github.io/python-lcms2/stable/" class="current">stable</a>
   <a href="https://wzjoriv.github.io/python-lcms2/dev/" class="">dev</a>
 </div><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
@@ -368,32 +368,43 @@
 <span class="sd">    ----------</span>
 <span class="sd">    src : Profile, str, path or list of those</span>
 <span class="sd">        Source profile; a list makes a multi-profile transform (``dst`` omitted).</span>
-<span class="sd">    dst : Profile, str or path</span>
-<span class="sd">        Destination profile.</span>
-<span class="sd">    intent : Intent, str or int, or one per profile</span>
-<span class="sd">        Rendering intent: ``"relative"`` (default; in-gamut colors unchanged), ``"perceptual"``,</span>
-<span class="sd">        ``"saturation"`` or ``"absolute"``.</span>
-<span class="sd">    bpc : bool or one per profile</span>
-<span class="sd">        Black point compensation.</span>
+<span class="sd">    *args</span>
+<span class="sd">        Either ``dst`` (a Profile, str or path), or the explicit form ``src_format, dst,</span>
+<span class="sd">        dst_format[, intent[, flags]]``. A device link takes no argument.</span>
+<span class="sd">    intent : Intent, str or int, or one per profile, optional</span>
+<span class="sd">        Rendering intent: ``"relative"`` (in-gamut colors unchanged), ``"perceptual"``,</span>
+<span class="sd">        ``"saturation"`` or ``"absolute"``. Defaults to relative colorimetric.</span>
+<span class="sd">    flags : Flag, int or str, optional</span>
+<span class="sd">        Any other ``cmsFLAGS_*``. Defaults to None.</span>
 <span class="sd">    proof : Profile, optional</span>
-<span class="sd">        Proofing profile: simulate ``proof`` on ``dst`` (soft proofing).</span>
-<span class="sd">    proof_intent : intent</span>
-<span class="sd">        Intent from the source to the proofing device (0-3).</span>
-<span class="sd">    gamut_check : bool</span>
+<span class="sd">        Proofing profile: simulate ``proof`` on ``dst`` (soft proofing). Defaults to None.</span>
+<span class="sd">    proof_intent : Intent, str or int, optional</span>
+<span class="sd">        Intent from the source to the proofing device (0-3). Defaults to relative colorimetric.</span>
+<span class="sd">    gamut_check : bool, optional</span>
 <span class="sd">        Mark colours outside the ``proof`` gamut with the alarm colour (see :func:`set_alarm_codes`).</span>
-<span class="sd">    optimize : bool</span>
-<span class="sd">        Allow LittleCMS to precalculate (False adds ``NOOPTIMIZE``).</span>
-<span class="sd">    precision : {"auto", "high", "low"}</span>
-<span class="sd">        Precalculation table size.</span>
-<span class="sd">    flags : Flag, int or str</span>
-<span class="sd">        Any other ``cmsFLAGS_*``.</span>
+<span class="sd">        Defaults to False.</span>
+<span class="sd">    bpc : bool or one per profile, optional</span>
+<span class="sd">        Black point compensation. Defaults to False.</span>
+<span class="sd">    optimize : bool, optional</span>
+<span class="sd">        Allow LittleCMS to precalculate (False adds ``NOOPTIMIZE``). Defaults to True.</span>
+<span class="sd">    precision : {"auto", "high", "low"}, optional</span>
+<span class="sd">        Precalculation table size. Defaults to ``"auto"``.</span>
 <span class="sd">    adaptation : sequence of float, optional</span>
-<span class="sd">        Per-profile adaptation states (makes an extended transform).</span>
+<span class="sd">        Per-profile adaptation states (makes an extended transform). Defaults to None.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    CMSError</span>
 <span class="sd">        When LittleCMS cannot build the transform (e.g. incompatible profiles).</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        For an invalid ``precision``, ``proof_intent`` or proofing setup.</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        For an unsupported combination of arguments.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    convert : One-call conversion with a transform cache.</span>
+<span class="sd">    Profile.transform : Convert starting from a profile.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -719,6 +730,27 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">to_device_link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.3</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""A device link profile equivalent to this transform.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        version : float, optional</span>
+<span class="sd">            ICC version of the device link. Defaults to 4.3.</span>
+<span class="sd">        flags : Flag, int or str, optional</span>
+<span class="sd">            Extra ``cmsFLAGS_*`` for building the link. Defaults to None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Profile</span>
+<span class="sd">            The device link profile.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        CMSError</span>
+<span class="sd">            If the device link cannot be created.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        Profile.ink_limiting : A ready-made CMYK device link.</span>
+
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; import lcms2</span>
@@ -789,6 +821,15 @@
 <span class="sd">    Includes intents added by plugins; :attr:`Profile.supported_intents` lists the ones a</span>
 <span class="sd">    given profile supports.</span>
 
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Intent (an :class:`Intent`, or the plain number for plugin intents) to its description.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Profile.supported_intents : Intents a given profile implements.</span>
+
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import lcms2</span>
@@ -808,7 +849,23 @@
 <div class="viewcode-block" id="get_alarm_codes">
 <a class="viewcode-back" href="../../reference/generated/lcms2.get_alarm_codes.html#lcms2.get_alarm_codes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_alarm_codes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">"""The 16 gamut-check alarm values (process-wide), in 16-bit output encoding."""</span>
+<span class="w">    </span><span class="sd">"""The 16 gamut-check alarm values (process-wide), in 16-bit output encoding.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of int</span>
+<span class="sd">        The alarm value of each of the 16 output channels.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    set_alarm_codes : Change the alarm values.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import lcms2</span>
+<span class="sd">    &gt;&gt;&gt; len(lcms2.get_alarm_codes())</span>
+<span class="sd">    16</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">get_alarm_codes</span><span class="p">()</span></div>
 
 
@@ -816,7 +873,25 @@
 <div class="viewcode-block" id="set_alarm_codes">
 <a class="viewcode-back" href="../../reference/generated/lcms2.set_alarm_codes.html#lcms2.set_alarm_codes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_alarm_codes</span><span class="p">(</span><span class="n">codes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Set the gamut-check alarm values (process-wide; affects transforms created afterwards)."""</span>
+<span class="w">    </span><span class="sd">"""Set the gamut-check alarm values (process-wide; affects transforms created afterwards).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    codes : sequence of int</span>
+<span class="sd">        The alarm value of each output channel, in 16-bit encoding.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    get_alarm_codes : Read the current alarm values.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import lcms2</span>
+<span class="sd">    &gt;&gt;&gt; old = lcms2.get_alarm_codes()</span>
+<span class="sd">    &gt;&gt;&gt; lcms2.set_alarm_codes(old)</span>
+<span class="sd">    &gt;&gt;&gt; lcms2.get_alarm_codes() == old</span>
+<span class="sd">    True</span>
+<span class="sd">    """</span>
     <span class="n">_lcms2</span><span class="o">.</span><span class="n">set_alarm_codes</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">codes</span><span class="p">))</span></div>
 
 
@@ -824,7 +899,25 @@
 <div class="viewcode-block" id="set_adaptation_state">
 <a class="viewcode-back" href="../../reference/generated/lcms2.set_adaptation_state.html#lcms2.set_adaptation_state">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_adaptation_state</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Set the process-wide absolute-colorimetric adaptation state (0..1); returns the previous one."""</span>
+<span class="w">    </span><span class="sd">"""Set the process-wide absolute-colorimetric adaptation state (0..1); returns the previous one.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : float</span>
+<span class="sd">        Adaptation state, from 0 (no adaptation) to 1 (full adaptation).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The previous adaptation state.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import lcms2</span>
+<span class="sd">    &gt;&gt;&gt; previous = lcms2.set_adaptation_state(1.0)</span>
+<span class="sd">    &gt;&gt;&gt; lcms2.set_adaptation_state(previous)</span>
+<span class="sd">    1.0</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">set_adaptation_state</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">state</span><span class="p">))</span></div>
 
 </pre></div>
@@ -859,7 +952,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=dca52136"></script>
+</div><script src="../../_static/documentation_options.js?v=75e55550"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
