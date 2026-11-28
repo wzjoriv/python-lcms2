@@ -296,6 +296,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..._errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICCParseError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...colorimetry</span><span class="w"> </span><span class="kn">import</span> <span class="n">D50</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">binary</span> <span class="k">as</span> <span class="n">bn</span>
 
 <span class="n">HEADER_SIZE</span> <span class="o">=</span> <span class="mi">128</span>
@@ -527,7 +528,7 @@
         <span class="n">data_colour_space</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"RGB "</span><span class="p">,</span>
         <span class="n">pcs</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"XYZ "</span><span class="p">,</span>
         <span class="n">rendering_intent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">pcs_illuminant</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.9642</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8249</span><span class="p">),</span>
+        <span class="n">pcs_illuminant</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">D50</span><span class="o">.</span><span class="n">tolist</span><span class="p">()),</span>
         <span class="n">cmm</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\x00\x00\x00\x00</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">primary_platform</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\x00\x00\x00\x00</span><span class="s2">"</span><span class="p">,</span>
         <span class="n">manufacturer</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">"</span><span class="se">\x00\x00\x00\x00</span><span class="s2">"</span><span class="p">,</span>

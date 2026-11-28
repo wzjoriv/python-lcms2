@@ -297,6 +297,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTypeLike</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">._builtins</span><span class="w"> </span><span class="kn">import</span> <span class="n">lookup_builtin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color_text</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._profile</span><span class="w"> </span><span class="kn">import</span> <span class="n">Profile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 
@@ -383,13 +384,6 @@
     <span class="k">return</span> <span class="n">t</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_is_color_text</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""A CSS colour string, or a non-empty list/tuple of them."""</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
-
-
 <span class="k">def</span><span class="w"> </span><span class="nf">_xyz_profile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Profile</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">_builtin</span><span class="p">(</span><span class="s2">"XYZ"</span><span class="p">)</span>
 
@@ -441,10 +435,7 @@
 <span class="sd">    &gt;&gt;&gt; lcms2.convert("#ffffff", "sRGB", "Lab").round(2) + 0.0</span>
 <span class="sd">    array([100.,   0.,   0.])</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="n">_is_color_text</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color</span><span class="p">,</span> <span class="n">parse_colors</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">parse_color</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">parse_colors</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">parse_color_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">s</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">_resolve_space</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="n">_resolve_space</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
     <span class="n">s_profile</span><span class="p">,</span> <span class="n">d_profile</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Profile</span><span class="p">),</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">Profile</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">s_profile</span> <span class="ow">and</span> <span class="n">d_profile</span><span class="p">:</span>

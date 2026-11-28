@@ -296,6 +296,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTypeLike</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._parallel</span><span class="w"> </span><span class="kn">import</span> <span class="n">parallel_worthwhile</span><span class="p">,</span> <span class="n">run_chunks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color_text</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._domain</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_circular_channels</span><span class="p">,</span> <span class="n">resolve_channels_and_domain</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -545,12 +546,7 @@
 <span class="sd">        &gt;&gt;&gt; srgb.to(xyz_d50, np.array([1.0, 1.0, 1.0])).round(4)</span>
 <span class="sd">        array([0.9642, 1.    , 0.8249])</span>
 <span class="sd">        """</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.._convert</span><span class="w"> </span><span class="kn">import</span> <span class="n">_is_color_text</span>
-
-        <span class="k">if</span> <span class="n">_is_color_text</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
-            <span class="kn">from</span><span class="w"> </span><span class="nn">.._parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_color</span><span class="p">,</span> <span class="n">parse_colors</span>
-
-            <span class="n">array</span> <span class="o">=</span> <span class="n">parse_color</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">parse_colors</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">parse_color_text</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_key</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_REGISTRY</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">ColorSpace</span><span class="p">))</span>
         <span class="p">):</span>
