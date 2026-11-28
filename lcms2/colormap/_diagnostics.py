@@ -52,6 +52,11 @@ class DiagnosticsMixin:
         Returns
         -------
         ndarray, shape (n,)
+            Lightness per entry, 0..1.
+
+        See Also
+        --------
+        Colormap.is_lightness_monotonic : Whether it never reverses.
 
         Examples
         --------
@@ -68,6 +73,11 @@ class DiagnosticsMixin:
         Returns
         -------
         ndarray, shape (n - 1,)
+            Distances between neighbouring entries.
+
+        See Also
+        --------
+        Colormap.uniformity : A single summary number.
 
         Examples
         --------
@@ -89,6 +99,10 @@ class DiagnosticsMixin:
         float
             ``std / mean`` of `perceptual_deltas`; ``0.0`` for fewer than two steps.
 
+        See Also
+        --------
+        Colormap.perceptual_deltas : The step sizes.
+
         Examples
         --------
         >>> from lcms2.colormap import Colormap
@@ -105,6 +119,20 @@ class DiagnosticsMixin:
 
         A map of constant lightness (most cyclic maps) counts as monotonic; check
         `lightness` too when that matters.
+
+        Parameters
+        ----------
+        tol : float, optional
+            Largest reversal still ignored. Defaults to 1e-6.
+
+        Returns
+        -------
+        bool
+            True when lightness is non-decreasing or non-increasing.
+
+        See Also
+        --------
+        Colormap.lightness : The values checked.
 
         Examples
         --------
@@ -124,14 +152,19 @@ class DiagnosticsMixin:
         ----------
         deficiency : {"protan", "deutan", "tritan"}
             Missing or weakened cone class (``"protanopia"`` style spellings also work).
-        severity : float, default 1.0
+        severity : float, optional
             0 (normal vision) to 1 (dichromacy); matrices are tabulated every 0.1 and
-            linearly interpolated. Applied in linear sRGB.
+            linearly interpolated. Applied in linear sRGB. Defaults to 1.0.
 
         Returns
         -------
         Colormap
             A new colormap showing what the original looks like.
+
+        Raises
+        ------
+        ValueError
+            If `deficiency` is unknown or `severity` is outside 0..1.
 
         Examples
         --------

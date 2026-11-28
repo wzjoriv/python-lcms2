@@ -19,7 +19,19 @@ P3_TO_XYZ_D65 = np.array(
 
 
 class DisplayP3Space(RGBSpace):
-    """Display P3: DCI-P3 primaries, D65 white and the sRGB transfer function."""
+    """Display P3: DCI-P3 primaries, D65 white and the sRGB transfer function.
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, display_p3
+    >>> srgb.to(display_p3, [1.0, 0.0, 0.0]).round(2).tolist()
+    [0.92, 0.2, 0.14]
+    """
 
     name = "display-p3"
     matrix = D65_TO_D50 @ d65_white_matrix(P3_TO_XYZ_D65)

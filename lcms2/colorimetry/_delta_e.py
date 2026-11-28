@@ -25,9 +25,9 @@ def delta_e(lab1: ArrayLike, lab2: ArrayLike, method: str = "2000", **params: fl
     ----------
     lab1, lab2 : array_like
         Lab values of shape ``(..., 3)``; the two operands broadcast against each other.
-    method : {"2000", "76", "94", "cmc", "bfd"}
-        CIEDE2000 (default), CIE76 (Euclidean), CIE94, CMC l:c or BFD. A leading "de" or
-        "cie" is accepted ("de2000").
+    method : {"2000", "76", "94", "cmc", "bfd"}, optional
+        CIEDE2000, CIE76 (Euclidean), CIE94, CMC l:c or BFD. A leading "de" or
+        "cie" is accepted ("de2000"). Defaults to ``"2000"``.
     **params
         ``Kl``, ``Kc``, ``Kh`` (all default 1) for ``"2000"``; ``l`` (2) and ``c`` (1) for
         ``"cmc"``.
@@ -43,6 +43,10 @@ def delta_e(lab1: ArrayLike, lab2: ArrayLike, method: str = "2000", **params: fl
         For an unknown method or an array whose last axis is not 3.
     TypeError
         For a parameter the chosen method does not take.
+
+    See Also
+    --------
+    lcms2.colorimetry.xyz_to_lab : Get Lab values from XYZ.
 
     Examples
     --------

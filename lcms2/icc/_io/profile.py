@@ -55,6 +55,15 @@ class ICCHeader:
 class ICCProfile:
     """A parsed ICC profile.
 
+    Parameters
+    ----------
+    header : ICCHeader
+        Decoded header.
+    tags : dict of bytes to bytes
+        Raw tag data keyed by 4-byte tag signature.
+    raw : bytes
+        The complete profile bytes.
+
     Attributes
     ----------
     header : ICCHeader
@@ -63,9 +72,39 @@ class ICCProfile:
         Raw tag data keyed by 4-byte tag signature.
     raw : bytes
         The complete profile bytes.
+
+    See Also
+    --------
+    lcms2.icc.ICCSpace : A color space read from a profile.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb
+    >>> data = srgb.to_icc_profile()["bytes"]
+    >>> profile = ICCProfile.from_bytes(data)
+    >>> profile.header.data_colour_space
+    b'RGB '
     """
 
     def __init__(self, header: ICCHeader, tags: dict[bytes, bytes], raw: bytes):
+        """Wrap an already parsed header, tag table and file bytes.
+
+        Parameters
+        ----------
+        header : ICCHeader
+            Decoded header.
+        tags : dict of bytes to bytes
+            Raw tag data keyed by 4-byte tag signature.
+        raw : bytes
+            The complete profile bytes.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> parsed = ICCProfile.from_bytes(srgb.to_icc_profile()["bytes"])
+        >>> ICCProfile(parsed.header, parsed.tags, parsed.raw).has_tag(b"wtpt")
+        True
+        """
         self.header = header
         self.tags = tags
         self.raw = raw
@@ -83,6 +122,23 @@ class ICCProfile:
         -------
         ICCProfile
             The parsed profile.
+
+        Raises
+        ------
+        ICCParseError
+            If the data is not a valid ICC profile.
+        OSError
+            If a path cannot be read.
+
+        See Also
+        --------
+        ICCProfile.from_bytes : Parse bytes only.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> ICCProfile.load(srgb.to_icc_profile()["bytes"]).header.version[0]
+        4
         """
         if isinstance(path_or_bytes, (bytes, bytearray)):
             data = bytes(path_or_bytes)
@@ -111,6 +167,16 @@ class ICCProfile:
             If the data is too small, has a bad file signature, an
             unsupported major version, or a truncated/out-of-bounds tag
             table.
+
+        See Also
+        --------
+        ICCProfile.load : Accepts a path as well.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> ICCProfile.from_bytes(srgb.to_icc_profile(version=2)["bytes"]).header.version_major
+        2
         """
         if len(data) < HEADER_SIZE + 4:
             raise ICCParseError(f"file too small to be an ICC profile ({len(data)} bytes)")
@@ -196,6 +262,18 @@ class ICCProfile:
         Returns
         -------
         bytes or None
+            The tag data, or None when absent.
+
+        See Also
+        --------
+        ICCProfile.has_tag : Test for presence only.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> profile = ICCProfile.from_bytes(srgb.to_icc_profile()["bytes"])
+        >>> profile.get_tag(b"nope") is None
+        True
         """
         return self.tags.get(sig4)
 
@@ -210,6 +288,17 @@ class ICCProfile:
         Returns
         -------
         bool
+            True when the tag is present.
+
+        See Also
+        --------
+        ICCProfile.get_tag : Return the tag data.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> ICCProfile.from_bytes(srgb.to_icc_profile()["bytes"]).has_tag(b"wtpt")
+        True
         """
         return sig4 in self.tags
 
@@ -244,9 +333,47 @@ class ICCProfile:
         Identical tag payloads share one data block, every block is padded
         to 4 bytes, and v4+ profiles carry the MD5 profile ID of ICC.1.
 
+        Parameters
+        ----------
+        version : sequence of int, optional
+            ``(major, minor, bugfix)``. Defaults to ``(4, 4, 0)``.
+        device_class : bytes, optional
+            Profile class signature. Defaults to ``b'spac'``.
+        data_colour_space : bytes, optional
+            Device color space signature. Defaults to ``b'RGB '``.
+        pcs : bytes, optional
+            Profile connection space signature. Defaults to ``b'XYZ '``.
+        rendering_intent : int, optional
+            Header rendering intent. Defaults to 1.
+        pcs_illuminant : sequence of float, optional
+            XYZ of the PCS illuminant. Defaults to D50.
+        cmm, primary_platform, manufacturer, model : bytes, optional
+            Four-byte header signatures. Default to zeros.
+        attributes : int, optional
+            Header attribute flags. Defaults to 0.
+        flags : int, optional
+            Header profile flags. Defaults to 0.
+        creator : bytes, optional
+            Creator signature. Defaults to ``b'lcms'``.
+        created : datetime, optional
+            Creation time. Defaults to now (UTC).
+        tags : dict of bytes to bytes, optional
+            Raw tag data keyed by 4-byte tag signature. Defaults to no tags.
+
         Returns
         -------
         bytes
+            The complete profile file.
+
+        See Also
+        --------
+        lcms2.icc.write_icc_bytes : Write a color space as a profile.
+
+        Examples
+        --------
+        >>> data = ICCProfile.build_bytes(tags={b"test": b"abcd"})
+        >>> ICCProfile.from_bytes(data).get_tag(b"test")
+        b'abcd'
         """
         tags = tags or {}
         created = created or _dt.datetime.now(_dt.timezone.utc).replace(tzinfo=None)

@@ -17,22 +17,71 @@ PQ_C3 = 2392.0 / 4096.0 * 32.0
 
 
 def pq_decode(e: np.ndarray) -> np.ndarray:
-    """SMPTE ST 2084 EOTF: signal to normalized linear light (1.0 = 10000 cd/m2)."""
+    """Apply the SMPTE ST 2084 (PQ) EOTF from signal to normalized linear light.
+
+    Parameters
+    ----------
+    e : ndarray
+        PQ signal, 0..1; negatives give NaN.
+
+    Returns
+    -------
+    ndarray
+        Linear light, where 1.0 is 10000 cd/m2.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from lcms2.spaces._rec2100_pq import pq_decode
+    >>> pq_decode(np.array([0.5, 1.0])).round(4).tolist()
+    [0.0092, 1.0]
+    """
     with np.errstate(invalid="ignore"):
         ep = np.power(e, 1.0 / PQ_M2)
         return np.power(np.maximum(ep - PQ_C1, 0.0) / (PQ_C2 - PQ_C3 * ep), 1.0 / PQ_M1)
 
 
 def pq_encode(y: np.ndarray) -> np.ndarray:
-    """SMPTE ST 2084 inverse EOTF: normalized linear light to signal."""
+    """Apply the inverse SMPTE ST 2084 (PQ) EOTF from normalized linear light to signal.
+
+    Parameters
+    ----------
+    y : ndarray
+        Linear light, where 1.0 is 10000 cd/m2; negatives give NaN.
+
+    Returns
+    -------
+    ndarray
+        PQ signal, 0..1.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from lcms2.spaces._rec2100_pq import pq_encode
+    >>> pq_encode(np.array([0.5, 1.0])).round(4).tolist()
+    [0.9265, 1.0]
+    """
     with np.errstate(invalid="ignore"):
         yp = np.power(y, PQ_M1)
         return np.power((PQ_C1 + PQ_C2 * yp) / (1.0 + PQ_C3 * yp), PQ_M2)
 
 
 class Rec2100PQSpace(RGBSpace):
-    """BT.2020 primaries with the PQ curve; signal 1.0 maps to the reference
-    white. Negative values give NaN."""
+    """BT.2020 primaries with the PQ curve.
+
+    Signal 1.0 maps to the reference white. Negative values give NaN.
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, rec2100_pq
+    >>> srgb.to(rec2100_pq, [1.0, 0.0, 0.0]).round(2).tolist()
+    [0.95, 0.71, 0.56]
+    """
 
     name = "rec2100-pq"
     matrix = Rec2020Space.matrix

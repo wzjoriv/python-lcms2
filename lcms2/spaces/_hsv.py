@@ -44,7 +44,19 @@ def rgb_to_hsv(rgb: np.ndarray) -> np.ndarray:
 
 
 class HSVSpace(ColorSpace):
-    """HSV over sRGB; hue in degrees (circular), saturation and value in 0..1."""
+    """HSV over sRGB; hue in degrees (circular), saturation and value in 0..1.
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, hsv
+    >>> srgb.to(hsv, [0.0, 1.0, 0.0]).round(2).tolist()
+    [120.0, 1.0, 1.0]
+    """
 
     name = "hsv"
     n_channels = 3
@@ -53,11 +65,9 @@ class HSVSpace(ColorSpace):
     device_domain = [(0.0, 360.0), (0.0, 1.0), (0.0, 1.0)]
 
     def to_xyz(self, hsv: np.ndarray) -> np.ndarray:
-        """Convert HSV to CIE XYZ (D50)."""
         return srgb.to_xyz(hsv_to_rgb(np.asarray(hsv, dtype=np.float64)))
 
     def from_xyz(self, xyz: np.ndarray) -> np.ndarray:
-        """Convert CIE XYZ (D50) to HSV."""
         return rgb_to_hsv(srgb.from_xyz(xyz))
 
 

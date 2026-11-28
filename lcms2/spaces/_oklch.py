@@ -12,7 +12,19 @@ from ._oklab import oklab
 
 
 class OKLChSpace(ColorSpace):
-    """Cylindrical OKLab (CSS ``oklch``); hue in degrees."""
+    """Cylindrical OKLab (CSS ``oklch``); hue in degrees.
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, oklch
+    >>> srgb.to(oklch, [1.0, 0.0, 0.0]).round(2).tolist()
+    [0.63, 0.26, 29.23]
+    """
 
     name = "oklch"
     icc_colour_space_signature = b"3CLR"
@@ -20,11 +32,9 @@ class OKLChSpace(ColorSpace):
     device_domain = [(0.0, 1.0), (0.0, 0.5), (0.0, 360.0)]
 
     def to_xyz(self, oklch: np.ndarray) -> np.ndarray:
-        """Convert OKLCh to CIE XYZ (D50)."""
         return oklab.to_xyz(lch_to_lab(np.asarray(oklch, dtype=np.float64)))
 
     def from_xyz(self, xyz: np.ndarray) -> np.ndarray:
-        """Convert CIE XYZ (D50) to OKLCh."""
         return lab_to_lch(oklab.from_xyz(xyz))
 
 

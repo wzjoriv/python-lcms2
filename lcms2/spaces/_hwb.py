@@ -12,8 +12,21 @@ from ._srgb import srgb
 
 
 class HWBSpace(ColorSpace):
-    """Hue (degrees), whiteness, blackness over sRGB (CSS Color 4); whiteness plus
-    blackness above 1 is normalized to 1."""
+    """Hue (degrees), whiteness and blackness over sRGB (CSS Color 4).
+
+    Whiteness plus blackness above 1 is normalized to 1.
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, hwb
+    >>> srgb.to(hwb, [0.0, 1.0, 0.0]).round(2).tolist()
+    [120.0, 0.0, 0.0]
+    """
 
     name = "hwb"
     n_channels = 3
@@ -22,7 +35,6 @@ class HWBSpace(ColorSpace):
     device_domain = [(0.0, 360.0), (0.0, 1.0), (0.0, 1.0)]
 
     def to_xyz(self, hwb: np.ndarray) -> np.ndarray:
-        """Convert HWB to CIE XYZ (D50)."""
         hwb = np.asarray(hwb, dtype=np.float64)
         w, bl = hwb[..., 1], hwb[..., 2]
         total = w + bl
@@ -33,7 +45,6 @@ class HWBSpace(ColorSpace):
         return srgb.to_xyz(hsv_to_rgb(np.stack([hwb[..., 0], s, v], axis=-1)))
 
     def from_xyz(self, xyz: np.ndarray) -> np.ndarray:
-        """Convert CIE XYZ (D50) to HWB."""
         hsv = rgb_to_hsv(srgb.from_xyz(xyz))
         s, v = hsv[..., 1], hsv[..., 2]
         return np.stack([hsv[..., 0], (1.0 - s) * v, 1.0 - v], axis=-1)

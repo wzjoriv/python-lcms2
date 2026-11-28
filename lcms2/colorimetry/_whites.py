@@ -31,6 +31,10 @@ def white_point_from_temperature(kelvin: ArrayLike) -> np.ndarray:
     ValueError
         If a temperature is outside 4000-25000 K.
 
+    See Also
+    --------
+    temperature_from_white_point : The inverse.
+
     Examples
     --------
     >>> from lcms2.colorimetry import white_point_from_temperature
@@ -52,6 +56,10 @@ def temperature_from_white_point(xyy: ArrayLike) -> np.ndarray:
     -------
     numpy.ndarray
         Temperature in kelvin (a scalar for a single white point).
+
+    See Also
+    --------
+    white_point_from_temperature : The inverse.
 
     Examples
     --------

@@ -39,11 +39,45 @@ class ICCSpace(ColorSpace):
         The profile's description text.
     kind : str
         ``'matrix_trc'``, ``'gray_trc'`` or ``'lut'``.
+
+    Raises
+    ------
+    ICCParseError
+        If the profile cannot be parsed or evaluated.
+
+    See Also
+    --------
+    lcms2.icc.ICCProfile : The parsed container.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb
+    >>> space = ICCSpace(srgb.to_icc_profile()["bytes"])
+    >>> space.n_channels, space.kind
+    (3, 'matrix_trc')
     """
 
     _abstract = True
 
     def __init__(self, source: str | bytes | ICCProfile):
+        """Read a color space from a profile.
+
+        Parameters
+        ----------
+        source : str, bytes or ICCProfile
+            Path to a profile, its bytes, or a parsed `ICCProfile`.
+
+        Raises
+        ------
+        ICCParseError
+            If the profile cannot be parsed or evaluated.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> ICCSpace(srgb.to_icc_profile()["bytes"]).n_channels
+        3
+        """
         self.icc = source if isinstance(source, ICCProfile) else ICCProfile.load(source)
         self.description = self._read_description()
         built = build_transform(self.icc)
@@ -110,6 +144,21 @@ class ICCSpace(ColorSpace):
         -------
         dict
             ``{'bytes': bytes, 'method': str, 'notes': list of str}``.
+
+        Raises
+        ------
+        ICCWriteError
+            If the version is invalid, or the space cannot be written.
+
+        See Also
+        --------
+        lcms2.spaces.ColorSpace.to_icc_profile : The general writer.
+
+        Examples
+        --------
+        >>> from lcms2.spaces import srgb
+        >>> ICCSpace(srgb.to_icc_profile(version=2)["bytes"]).to_icc_profile(version=2)["method"]
+        'verbatim_tags'
         """
         version = normalize_icc_version(kwargs.get("version", 4))
         header = self.icc.header

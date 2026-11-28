@@ -31,19 +31,29 @@ _M2_INV = np.linalg.inv(OKLAB_M2)
 
 
 class OKLabSpace(ColorSpace):
-    """OKLab (Ottosson 2020) on linear sRGB primaries, adapted to D50."""
+    """OKLab (Ottosson 2020) on linear sRGB primaries, adapted to D50.
+
+    Parameters
+    ----------
+    **kwargs
+        Passed to `ColorSpace`.
+
+    Examples
+    --------
+    >>> from lcms2.spaces import srgb, oklab
+    >>> srgb.to(oklab, [1.0, 1.0, 1.0]).round(2).tolist()
+    [1.0, 0.0, 0.0]
+    """
 
     name = "oklab"
     icc_colour_space_signature = b"3CLR"
     device_domain = [(0.0, 1.0), (-0.4, 0.4), (-0.4, 0.4)]
 
     def to_xyz(self, oklab: np.ndarray) -> np.ndarray:
-        """Convert OKLab to CIE XYZ (D50)."""
         lms_ = mat3(_M2_INV, oklab)
         return mat3(_LMS_TO_XYZ_D50, lms_**3)
 
     def from_xyz(self, xyz: np.ndarray) -> np.ndarray:
-        """Convert CIE XYZ (D50) to OKLab."""
         return mat3(OKLAB_M2, np.cbrt(mat3(_XYZ_D50_TO_LMS, xyz)))
 
 

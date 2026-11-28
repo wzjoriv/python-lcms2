@@ -92,19 +92,19 @@ def write_icc_bytes(
     colorspace : ColorSpace
         The space to write.
     version : tuple of int, optional
-        ``(major, minor, bugfix)``. Default ``(4, 4, 0)``.
+        ``(major, minor, bugfix)``. Defaults to ``(4, 4, 0)``.
     rendering_intent : int, optional
-        Header rendering intent. Default 1.
+        Header rendering intent. Defaults to 1.
     grid_size : int, optional
-        CLUT grid points per axis for a sampled fallback.
+        CLUT grid points per axis for a sampled fallback. Defaults to a size chosen from the channel count.
     description, copyright : str, optional
-        Profile description and copyright text.
+        Profile description and copyright text. Default to the class name and a generic notice.
     force_clut : bool, optional
-        Always write sampled CLUTs.
+        Always write sampled CLUTs. Defaults to False.
     strict : bool, optional
         Require an exact profile built from traced functions: raise `ICCWriteError`, naming the
         operation that could not be traced, instead of falling back to sampled CLUTs (or to
-        probing the functions numerically).
+        probing the functions numerically). Defaults to False.
 
     Returns
     -------
@@ -117,6 +117,17 @@ def write_icc_bytes(
     ICCWriteError
         If the space cannot be written at all, or with ``strict=True`` when only a sampled
         fallback would be possible.
+
+    See Also
+    --------
+    lcms2.spaces.ColorSpace.to_icc_profile : Method form, optionally writing a file.
+
+    Examples
+    --------
+    >>> from lcms2.icc import write_icc_bytes
+    >>> from lcms2.spaces import srgb
+    >>> write_icc_bytes(srgb)["method"]
+    'exact_matrix_trc'
     """
     ctx = Context(colorspace, version[0], grid_size)
     description = description or f"{type(colorspace).__name__} (python-lcms2)"

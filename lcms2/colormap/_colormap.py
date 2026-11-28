@@ -30,9 +30,14 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
     colors : array_like, shape (n, 3)
         sRGB floats in 0..1 (values outside are kept only with ``gamut="none"``).
     name : str, optional
-        Display name.
-    space : str, optional
-        Name of the interpolation space the colours were built in (informational).
+        Display name. Defaults to ``"colormap"``.
+    space : str or ColorSpace, optional
+        The interpolation space the colours were built in (informational). Defaults to ``"oklab"``.
+
+    Raises
+    ------
+    ValueError
+        If `colors` is not finite with shape ``(n, 3)`` and ``n >= 1``.
 
     Examples
     --------
@@ -54,6 +59,28 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
     __slots__ = ("_colors", "_name", "_space")
 
     def __init__(self, colors: Any, name: str | None = None, space: Any = "oklab") -> None:
+        """Create a colormap from sampled sRGB colours.
+
+        Parameters
+        ----------
+        colors : array_like, shape (n, 3)
+            sRGB floats in 0..1 (values outside are kept only with ``gamut="none"``).
+        name : str, optional
+            Display name. Defaults to ``"colormap"``.
+        space : str or ColorSpace, optional
+            The interpolation space the colours were built in (informational). Defaults to ``"oklab"``.
+
+        Raises
+        ------
+        ValueError
+            If `colors` is not finite with shape ``(n, 3)`` and ``n >= 1``.
+
+        Examples
+        --------
+        >>> from lcms2.colormap import Colormap
+        >>> Colormap([[0, 0, 0], [1, 1, 1]], name="bw").hex()
+        ['#000000', '#ffffff']
+        """
         arr = np.array(colors, dtype=np.float64)
         if arr.ndim != 2 or arr.shape[1] != 3 or arr.shape[0] < 1:
             raise ValueError(f"colors must have shape (n, 3) with n >= 1, got {arr.shape}")
@@ -85,29 +112,36 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
         ----------
         colors : sequence
             Two or more colours in any form `lcms2._parse.parse_color` accepts.
-        space : str or ColorSpace, default "oklab"
+        space : str or ColorSpace, optional
             Space the colours are interpolated in. Cylindrical spaces (``oklch``,
-            ``lch``, ``hsv``) interpolate hue along the shorter arc.
-        n : int, default 256
-            Number of samples.
+            ``lch``, ``hsv``) interpolate hue along the shorter arc. Defaults to ``"oklab"``.
+        n : int, optional
+            Number of samples. Defaults to 256.
         positions : sequence of float or "uniform", optional
             Increasing positions of the control colours; rescaled to span 0..1.
-            Default: evenly spaced (stops at 0, 1/(k-1), ..., 1). ``"uniform"`` places
-            each stop at its cumulative OKLab distance from the first, so the perceived
-            colour change per step is the same along the whole map.
+            ``"uniform"`` places each stop at its cumulative OKLab distance from the
+            first, so the perceived colour change per step is the same along the whole
+            map. Defaults to evenly spaced stops.
         name : str, optional
-        gamut : {"chroma", "clip", "none"}, default "chroma"
+            Display name. Defaults to ``"custom"``.
+        gamut : {"chroma", "clip", "none"}, optional
             ``"chroma"`` reduces OKLCh chroma at constant lightness and hue until the
             colour fits sRGB; ``"clip"`` clips channels; ``"none"`` leaves them.
+            Defaults to ``"chroma"``.
 
         Returns
         -------
         Colormap
+            The interpolated colormap.
 
         Raises
         ------
         ValueError
             For fewer than two colours, bad positions, ``n < 2`` or an unknown gamut mode.
+
+        See Also
+        --------
+        Colormap.sequential : Design a lightness ramp from a hue.
 
         Examples
         --------
@@ -115,7 +149,9 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
         >>> cm = Colormap.from_colors(["#000", "#f80", "#fff"], n=3)
         >>> cm.hex()
         ['#000000', '#ff8800', '#ffffff']
-        >>> cm = Colormap.from_colors(["#000", "#f80", "#fff"], positions="uniform")
+        >>> cm = Colormap.from_colors(["#000", "#f80", "#fff"], positions="uniform", n=3)
+        >>> len(cm)
+        3
         """
         ctrl = parse_colors(colors)[:, :3]
         if len(ctrl) < 2:
@@ -148,10 +184,24 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
     def get(cls, name: str) -> Colormap:
         """A built-in colormap by name (append ``_r`` to reverse); see `lcms2.colormap.list`.
 
+        Parameters
+        ----------
+        name : str
+            Built-in name, case-insensitive, optionally ending in ``_r``.
+
+        Returns
+        -------
+        Colormap
+            The named colormap.
+
         Raises
         ------
         KeyError
             For an unknown name; the message lists the available ones.
+
+        See Also
+        --------
+        lcms2.colormap.list : The built-in names.
 
         Examples
         --------
@@ -197,6 +247,11 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
     def hex(self) -> list[str]:
         """The colours as ``"#rrggbb"`` strings.
 
+        Returns
+        -------
+        list of str
+            One hex string per entry.
+
         Examples
         --------
         >>> from lcms2.colormap import Colormap
@@ -208,6 +263,11 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
     def reversed(self) -> Colormap:
         """A copy with the colours in reverse order.
 
+        Returns
+        -------
+        Colormap
+            The reversed colormap, named with a ``_r`` suffix.
+
         Examples
         --------
         >>> from lcms2.colormap import Colormap
@@ -218,6 +278,21 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
 
     def resampled(self, n: int) -> Colormap:
         """Linearly resample to ``n`` entries (endpoints preserved).
+
+        Parameters
+        ----------
+        n : int
+            Number of entries, at least 1.
+
+        Returns
+        -------
+        Colormap
+            The resampled colormap.
+
+        Raises
+        ------
+        ValueError
+            If ``n < 1``.
 
         Examples
         --------
@@ -231,7 +306,31 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
         return Colormap(self(t), name=self._name, space=self._space)
 
     def __getitem__(self, key: Any) -> Colormap:
-        """Slice into a sub-colormap, e.g. ``cm[64:192]`` or ``cm[::-1]``."""
+        """Slice into a sub-colormap, e.g. ``cm[64:192]`` or ``cm[::-1]``.
+
+        Parameters
+        ----------
+        key : slice
+            Which entries to keep.
+
+        Returns
+        -------
+        Colormap
+            The selected entries.
+
+        Raises
+        ------
+        TypeError
+            If `key` is not a slice.
+        ValueError
+            If the slice selects nothing.
+
+        Examples
+        --------
+        >>> from lcms2.colormap import Colormap
+        >>> len(Colormap.from_colors(["red", "blue"], n=10)[2:5])
+        3
+        """
         if not isinstance(key, slice):
             raise TypeError("index a Colormap with a slice (cm[a:b]); use cm.colors[i] for one colour")
         sub = self._colors[key]
@@ -269,16 +368,19 @@ class Colormap(GeneratorsMixin, DiagnosticsMixin, ExportMixin):
             already in 0..1; otherwise a missing limit defaults to the data minimum or
             maximum. Values outside the range are clamped.
         vmin, vmax : float, optional
-        bytes : bool, default False
-            Return ``uint8`` 0..255 instead of floats 0..1.
+            Data values mapped to the first and last colour. Default to 0 and 1, or to the
+            data minimum and maximum when the other limit is given.
+        bytes : bool, optional
+            Return ``uint8`` 0..255 instead of floats 0..1. Defaults to False.
         alpha : float or array_like, optional
-            Append an alpha channel (broadcast against `values`).
+            Append an alpha channel (broadcast against `values`). Defaults to no alpha.
         nan_color : colour, optional
-            Colour for NaN (default mid grey; fully transparent when `alpha` is given).
+            Colour for NaN. Defaults to mid grey, or fully transparent when `alpha` is given.
 
         Returns
         -------
         ndarray, shape (..., 3) or (..., 4)
+            Colours, with an alpha channel when `alpha` is given.
 
         Examples
         --------

@@ -22,10 +22,33 @@ _KNOWN_REVISIONS = {
 def normalize_icc_version(version: int | tuple) -> tuple:
     """Return `version` as a published ``(major, minor, bugfix)`` ICC revision.
 
+    Parameters
+    ----------
+    version : int or tuple of int
+        ``2``, ``4`` or ``5`` for that major version's newest revision, or a
+        published ``(major, minor, bugfix)`` revision.
+
+    Returns
+    -------
+    tuple of int
+        The ``(major, minor, bugfix)`` revision.
+
     Raises
     ------
     ICCWriteError
         If the version is not ICC v2, v4 or v5, or not a published revision.
+
+    See Also
+    --------
+    lcms2.icc.write_icc_bytes : Writes a profile at this version.
+
+    Examples
+    --------
+    >>> from lcms2.icc import normalize_icc_version
+    >>> normalize_icc_version(4)
+    (4, 4, 0)
+    >>> normalize_icc_version((2, 1, 0))
+    (2, 1, 0)
     """
     if isinstance(version, (int, np.integer)) and not isinstance(version, bool):
         if int(version) not in _DEFAULT_REVISION:

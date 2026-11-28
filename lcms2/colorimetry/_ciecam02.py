@@ -22,14 +22,23 @@ class CIECAM02:
     ----------
     white_point : array_like
         XYZ of the adopted white, with ``Y = 1`` (for example :data:`D65`).
-    adapting_luminance : float
+    adapting_luminance : float, optional
         Luminance of the adapting field ``La`` in cd/m2 (typically 20% of the white's).
-    background : float
+        Defaults to 64.
+    background : float, optional
         Relative luminance of the background ``Yb`` in percent of the white (20 is typical).
-    surround : {"average", "dim", "dark", "cutsheet"}
-        Viewing surround.
-    degree : float or "auto"
+        Defaults to 20.
+    surround : {"average", "dim", "dark", "cutsheet"}, optional
+        Viewing surround. Defaults to ``"average"``.
+    degree : float or "auto", optional
         Degree of adaptation D in 0..1, or ``"auto"`` to compute it from ``La`` and the surround.
+        Defaults to ``"auto"``.
+
+    Raises
+    ------
+    ValueError
+        If `white_point` is not an XYZ triple with ``Y > 0``, `surround` is unknown, or
+        `degree` is outside 0..1.
 
     Examples
     --------
@@ -47,6 +56,33 @@ class CIECAM02:
         surround: str = "average",
         degree: float | str = "auto",
     ) -> None:
+        """Fix the viewing conditions.
+
+        Parameters
+        ----------
+        white_point : array_like
+            XYZ of the adopted white, with ``Y = 1`` (for example :data:`D65`).
+        adapting_luminance : float, optional
+            Luminance of the adapting field ``La`` in cd/m2. Defaults to 64.
+        background : float, optional
+            Relative luminance of the background ``Yb`` in percent of the white. Defaults to 20.
+        surround : {"average", "dim", "dark", "cutsheet"}, optional
+            Viewing surround. Defaults to ``"average"``.
+        degree : float or "auto", optional
+            Degree of adaptation D in 0..1, or ``"auto"``. Defaults to ``"auto"``.
+
+        Raises
+        ------
+        ValueError
+            If `white_point` is not an XYZ triple with ``Y > 0``, `surround` is unknown, or
+            `degree` is outside 0..1.
+
+        Examples
+        --------
+        >>> from lcms2.colorimetry import CIECAM02, D65
+        >>> CIECAM02(D65, surround="dim").surround
+        'dim'
+        """
         white = np.asarray(white_point, dtype=np.float64)
         if white.shape != (3,) or white[1] <= 0:
             raise ValueError(f"white_point must be an XYZ triple with Y > 0, got {white_point!r}")
@@ -82,16 +118,54 @@ class CIECAM02:
     def forward(self, xyz: ArrayLike) -> np.ndarray:
         """XYZ (``Y = 1`` scale) to JCh (lightness, chroma, hue in degrees).
 
+        Parameters
+        ----------
+        xyz : array_like
+            XYZ of shape ``(..., 3)``.
+
+        Returns
+        -------
+        numpy.ndarray
+            JCh of shape ``(..., 3)``.
+
+        Raises
+        ------
+        ValueError
+            If the last axis is not of length 3.
+
+        See Also
+        --------
+        CIECAM02.reverse : The inverse.
+
         Examples
         --------
         >>> from lcms2.colorimetry import CIECAM02, D65
-        >>> CIECAM02(D65, 64).forward([[0.2, 0.2, 0.2], D65]).shape
-        (2, 3)
+        >>> CIECAM02(D65, 64).forward([0.2, 0.2, 0.2]).round(2).tolist()
+        [41.82, 6.42, 29.64]
         """
         return self._run(np.asarray(xyz, dtype=np.float64) * 100.0, "xyz", False)
 
     def reverse(self, jch: ArrayLike) -> np.ndarray:
         """JCh back to XYZ (``Y = 1`` scale).
+
+        Parameters
+        ----------
+        jch : array_like
+            JCh of shape ``(..., 3)``, with hue in degrees.
+
+        Returns
+        -------
+        numpy.ndarray
+            XYZ of shape ``(..., 3)``.
+
+        Raises
+        ------
+        ValueError
+            If the last axis is not of length 3.
+
+        See Also
+        --------
+        CIECAM02.forward : The inverse.
 
         Examples
         --------

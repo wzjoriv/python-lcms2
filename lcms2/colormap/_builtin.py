@@ -22,12 +22,49 @@ _SPECS: dict[str, Callable[[Any], Any]] = {
 
 
 def names() -> list[str]:
-    """Sorted names of the built-in colormaps."""
+    """Sorted names of the built-in colormaps.
+
+    Returns
+    -------
+    list of str
+        The names accepted by `get`, without the ``_r`` variants.
+
+    See Also
+    --------
+    lcms2.colormap.get : Build one by name.
+
+    Examples
+    --------
+    >>> from lcms2.colormap import list as colormap_names
+    >>> "glacier" in colormap_names()
+    True
+    """
     return sorted(_SPECS)
 
 
 def get(name: str, cls: type | None = None) -> Any:
     """Build the named colormap (a ``_r`` suffix reverses it).
+
+    Parameters
+    ----------
+    name : str
+        Built-in name, case-insensitive, optionally ending in ``_r``.
+    cls : type, optional
+        Colormap class to build. Defaults to `Colormap`.
+
+    Returns
+    -------
+    Colormap
+        The named colormap.
+
+    Raises
+    ------
+    KeyError
+        For an unknown name; the message lists the available ones.
+
+    See Also
+    --------
+    lcms2.colormap.list : The built-in names.
 
     Examples
     --------
