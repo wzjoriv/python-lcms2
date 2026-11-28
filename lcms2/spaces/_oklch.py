@@ -6,8 +6,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from ..colorimetry import lab_to_lch, lch_to_lab
 from ._base import ColorSpace
-from ._lch import lab_to_lch, lch_to_lab
 from ._oklab import oklab
 
 

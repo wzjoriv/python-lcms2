@@ -12,6 +12,7 @@ import numpy as np
 from numpy.typing import DTypeLike
 
 from .._parallel import parallel_worthwhile, run_chunks
+from .._parse import parse_color_text
 from ._domain import check_circular_channels, resolve_channels_and_domain
 
 if TYPE_CHECKING:
@@ -251,12 +252,7 @@ class ColorSpace:
         >>> srgb.to(xyz_d50, np.array([1.0, 1.0, 1.0])).round(4)
         array([0.9642, 1.    , 0.8249])
         """
-        from .._convert import _is_color_text
-
-        if _is_color_text(array):
-            from .._parse import parse_color, parse_colors
-
-            array = parse_color(array) if isinstance(array, str) else parse_colors(array)
+        array = parse_color_text(array)
         if (isinstance(target, str) and _key(target) not in _REGISTRY) or (
             not isinstance(target, (str, ColorSpace))
         ):

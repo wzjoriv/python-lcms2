@@ -197,6 +197,15 @@ def parse_colors(values: Any) -> np.ndarray:
     return np.stack(items)
 
 
+def parse_color_text(data: Any) -> Any:
+    """`data` parsed when it is a colour string or a non-empty list/tuple of strings, else unchanged."""
+    if isinstance(data, str):
+        return parse_color(data)
+    if isinstance(data, (list, tuple)) and len(data) > 0 and all(isinstance(x, str) for x in data):
+        return parse_colors(data)
+    return data
+
+
 def to_hex(rgb: Any) -> str | list[str]:
     """Format sRGB floats in 0..1 as ``"#rrggbb"`` (``"#rrggbbaa"`` with alpha).
 

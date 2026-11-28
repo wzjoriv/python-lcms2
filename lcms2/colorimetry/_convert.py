@@ -77,7 +77,7 @@ def lab_to_lch(lab: ArrayLike) -> np.ndarray:
     [50.0, 10.0, 90.0]
     """
     lab = _triple(lab, "lab")
-    h = np.degrees(np.arctan2(lab[..., 2], lab[..., 1])) % 360.0
+    h = np.mod(np.degrees(np.arctan2(lab[..., 2], lab[..., 1])) + 360.0, 360.0)
     return np.stack([lab[..., 0], np.hypot(lab[..., 1], lab[..., 2]), h], axis=-1)
 
 
