@@ -308,8 +308,8 @@ conversions go through XYZ D50. Transforms are cached (LRU) per profile pair and
 <code class="docutils literal notranslate"><span class="pre">&quot;rgb(255</span> <span class="pre">128</span> <span class="pre">0)&quot;</span></code>, or a list of them), which become sRGB floats in 0..1.</p></li>
 <li><p><strong>src</strong> (<a class="reference internal" href="lcms2.Profile.html#lcms2.Profile" title="lcms2.Profile"><em>Profile</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>path</em><em> or </em><em>colour space</em>) – Source and destination.</p></li>
 <li><p><strong>dst</strong> (<a class="reference internal" href="lcms2.Profile.html#lcms2.Profile" title="lcms2.Profile"><em>Profile</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><em>path</em><em> or </em><em>colour space</em>) – Source and destination.</p></li>
-<li><p><strong>out</strong> – See <a class="reference internal" href="lcms2.Transform.html#lcms2.Transform.apply" title="lcms2.Transform.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Transform.apply()</span></code></a>.</p></li>
-<li><p><strong>out_dtype</strong> – See <a class="reference internal" href="lcms2.Transform.html#lcms2.Transform.apply" title="lcms2.Transform.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Transform.apply()</span></code></a>.</p></li>
+<li><p><strong>out</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a><em>, </em><em>optional</em>) – Array to write the result to; see <a class="reference internal" href="lcms2.Transform.html#lcms2.Transform.apply" title="lcms2.Transform.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Transform.apply()</span></code></a>. Defaults to None.</p></li>
+<li><p><strong>out_dtype</strong> (<em>dtype</em><em>, </em><em>optional</em>) – Data type of the result; see <a class="reference internal" href="lcms2.Transform.html#lcms2.Transform.apply" title="lcms2.Transform.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Transform.apply()</span></code></a>. Defaults to None.</p></li>
 <li><p><strong>**options</strong> – <a class="reference internal" href="lcms2.Transform.html#lcms2.Transform" title="lcms2.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a> keywords: <code class="docutils literal notranslate"><span class="pre">intent</span></code>, <code class="docutils literal notranslate"><span class="pre">bpc</span></code>, <code class="docutils literal notranslate"><span class="pre">proof</span></code>, <code class="docutils literal notranslate"><span class="pre">gamut_check</span></code>, <code class="docutils literal notranslate"><span class="pre">optimize</span></code>,
 <code class="docutils literal notranslate"><span class="pre">precision</span></code>, <code class="docutils literal notranslate"><span class="pre">flags</span></code>.</p></li>
 </ul>
@@ -319,7 +319,22 @@ conversions go through XYZ D50. Transforms are cached (LRU) per profile pair and
 colour space object is involved the result is <code class="docutils literal notranslate"><span class="pre">float64</span></code>, since analytic spaces work in
 floats. Pass <code class="docutils literal notranslate"><span class="pre">out_dtype</span></code> to choose.</p>
 </dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#KeyError" title="(in Python v3.15)"><strong>KeyError</strong></a> – For a name that is neither a built-in profile, a registered colour space nor a file.</p></li>
+<li><p><strong>CMSError</strong> – If LittleCMS cannot build the transform.</p></li>
+</ul>
+</dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="lcms2.Profile.html#lcms2.Profile.transform" title="lcms2.Profile.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Profile.transform</span></code></a></dt><dd><p>The same conversion starting from a profile.</p>
+</dd>
+<dt><a class="reference internal" href="lcms2.Transform.html#lcms2.Transform" title="lcms2.Transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transform</span></code></a></dt><dd><p>Reusable transform for repeated conversions.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">lcms2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lcms2</span><span class="o">.</span><span class="n">convert</span><span class="p">([</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span> <span class="s2">"sRGB"</span><span class="p">,</span> <span class="s2">"Lab"</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0</span>

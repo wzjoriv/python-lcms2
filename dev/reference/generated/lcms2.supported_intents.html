@@ -300,6 +300,18 @@
 <dd><p>Every rendering intent the LittleCMS engine implements, with its description.</p>
 <p>Includes intents added by plugins; <code class="xref py py-attr docutils literal notranslate"><span class="pre">Profile.supported_intents</span></code> lists the ones a
 given profile supports.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> – Intent (an <a class="reference internal" href="lcms2.Intent.html#lcms2.Intent" title="lcms2.Intent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Intent</span></code></a>, or the plain number for plugin intents) to its description.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Profile.supported_intents</span></code></dt><dd><p>Intents a given profile implements.</p>
+</dd>
+</dl>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">lcms2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lcms2</span><span class="o">.</span><span class="n">supported_intents</span><span class="p">()[</span><span class="n">lcms2</span><span class="o">.</span><span class="n">Intent</span><span class="o">.</span><span class="n">PERCEPTUAL</span><span class="p">]</span>

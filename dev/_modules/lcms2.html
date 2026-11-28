@@ -321,7 +321,18 @@
 <div class="viewcode-block" id="get_version">
 <a class="viewcode-back" href="../reference/generated/lcms2.get_version.html#lcms2.get_version">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Version of the linked LittleCMS library, e.g. ``"2.20"``."""</span>
+<span class="w">    </span><span class="sd">"""Version of the linked LittleCMS library, e.g. ``"2.20"``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The ``major.minor`` version.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; get_version().count(".")</span>
+<span class="sd">    1</span>
+<span class="sd">    """</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">_lcms2</span><span class="o">.</span><span class="n">get_version</span><span class="p">()</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">v</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">1000</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">v</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">10</span><span class="si">}</span><span class="s2">"</span></div>
 

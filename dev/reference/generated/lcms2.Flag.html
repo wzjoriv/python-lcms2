@@ -302,6 +302,18 @@
 <p><code class="docutils literal notranslate"><span class="pre">Flag.parse</span></code> accepts an int, a <a class="reference internal" href="#lcms2.Flag" title="lcms2.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a> or a string such as <code class="docutils literal notranslate"><span class="pre">&quot;NOOPTIMIZE,BLACKPOINTCOMPENSATION&quot;</span></code>
 (separators <code class="docutils literal notranslate"><span class="pre">,</span></code> <code class="docutils literal notranslate"><span class="pre">|</span></code> <code class="docutils literal notranslate"><span class="pre">;</span></code> or spaces). <code class="docutils literal notranslate"><span class="pre">8BITS_DEVICELINK</span></code> is spelled <code class="docutils literal notranslate"><span class="pre">EIGHTBITS_DEVICELINK</span></code> in
 Python.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NONE</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – No flags.</p></li>
+<li><p><strong>LOWRESPRECALC</strong> (<a class="reference internal" href="#lcms2.Flag.CLUT_POST_LINEARIZATION" title="lcms2.Flag.CLUT_POST_LINEARIZATION"><em>CLUT_POST_LINEARIZATION</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.CLUT_PRE_LINEARIZATION" title="lcms2.Flag.CLUT_PRE_LINEARIZATION"><em>CLUT_PRE_LINEARIZATION</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.FORCE_CLUT" title="lcms2.Flag.FORCE_CLUT"><em>FORCE_CLUT</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.HIGHRESPRECALC" title="lcms2.Flag.HIGHRESPRECALC"><em>HIGHRESPRECALC</em></a><em>,</em>) – Control how the precalculated lookup table is built.</p></li>
+<li><p><strong>NULLTRANSFORM</strong> (<a class="reference internal" href="#lcms2.Flag.NOWHITEONWHITEFIXUP" title="lcms2.Flag.NOWHITEONWHITEFIXUP"><em>NOWHITEONWHITEFIXUP</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.NONEGATIVES" title="lcms2.Flag.NONEGATIVES"><em>NONEGATIVES</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.NOCACHE" title="lcms2.Flag.NOCACHE"><em>NOCACHE</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.NOOPTIMIZE" title="lcms2.Flag.NOOPTIMIZE"><em>NOOPTIMIZE</em></a><em>,</em>) – Disable fix-ups, caching, optimization or the actual conversion.</p></li>
+<li><p><strong>EIGHTBITS_DEVICELINK</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Write 8-bit device links (<code class="docutils literal notranslate"><span class="pre">8BITS_DEVICELINK</span></code> in C).</p></li>
+<li><p><strong>COPY_ALPHA</strong> (<a class="reference internal" href="#lcms2.Flag.GUESSDEVICECLASS" title="lcms2.Flag.GUESSDEVICECLASS"><em>GUESSDEVICECLASS</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.KEEP_SEQUENCE" title="lcms2.Flag.KEEP_SEQUENCE"><em>KEEP_SEQUENCE</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.NODEFAULTRESOURCEDEF" title="lcms2.Flag.NODEFAULTRESOURCEDEF"><em>NODEFAULTRESOURCEDEF</em></a><em>,</em>) – Device class guessing, profile sequence keeping, default resource disabling and alpha copying.</p></li>
+<li><p><strong>BLACKPOINTCOMPENSATION</strong> (<a class="reference internal" href="#lcms2.Flag.GAMUTCHECK" title="lcms2.Flag.GAMUTCHECK"><em>GAMUTCHECK</em></a><em>, </em><a class="reference internal" href="#lcms2.Flag.SOFTPROOFING" title="lcms2.Flag.SOFTPROOFING"><em>SOFTPROOFING</em></a><em>,</em>) – Gamut warning, soft proofing and black point compensation.</p></li>
+</ul>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Flag</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"gamutcheck|softproofing"</span><span class="p">)</span> <span class="o">==</span> <span class="n">Flag</span><span class="o">.</span><span class="n">GAMUTCHECK</span> <span class="o">|</span> <span class="n">Flag</span><span class="o">.</span><span class="n">SOFTPROOFING</span>
 <span class="go">True</span>
@@ -526,12 +538,54 @@ Python.</p>
 <dt class="sig sig-object py" id="lcms2.Flag.grid_points">
 <span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">grid_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Flag" title="lcms2._constants.Flag"><span class="pre">Flag</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_constants.html#Flag.grid_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Flag.grid_points" title="Link to this definition">¶</a></dt>
 <dd><p>Flag requesting <code class="docutils literal notranslate"><span class="pre">n</span></code> CLUT grid points per dimension (<code class="docutils literal notranslate"><span class="pre">cmsFLAGS_GRIDPOINTS</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>) – Grid points per dimension, from 0 to 255.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Flag</em> – The flag value to combine with other flags.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">n</span></code> is outside 0 to 255.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Flag</span><span class="o">.</span><span class="n">grid_points</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span> <span class="o">==</span> <span class="mi">17</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lcms2.Flag.parse">
 <span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lcms2.Flag" title="lcms2._constants.Flag"><span class="pre">Flag</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lcms2.Flag" title="lcms2._constants.Flag"><span class="pre">Flag</span></a></span></span><a class="reference internal" href="../../_modules/lcms2/_constants.html#Flag.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lcms2.Flag.parse" title="Link to this definition">¶</a></dt>
 <dd><p>Convert <code class="docutils literal notranslate"><span class="pre">None</span></code>, an int or a flag string to a <a class="reference internal" href="#lcms2.Flag" title="lcms2.Flag"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flag</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<a class="reference internal" href="#lcms2.Flag" title="lcms2.Flag"><em>Flag</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> or </em><em>None</em>) – The flags, as a number or a string of names such as <code class="docutils literal notranslate"><span class="pre">&quot;NOOPTIMIZE,BPC&quot;</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> gives no flags.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Flag</em> – The combined flags.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – For an unknown flag name.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><strong>TypeError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">value</span></code> is not a supported type.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="lcms2.Intent.html#lcms2.Intent.parse" title="lcms2.Intent.parse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Intent.parse</span></code></a></dt><dd><p>The equivalent for rendering intents.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Flag</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"bpc"</span><span class="p">)</span> <span class="o">==</span> <span class="n">Flag</span><span class="o">.</span><span class="n">BLACKPOINTCOMPENSATION</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>

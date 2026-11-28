@@ -412,8 +412,10 @@
 <span class="sd">        ``"rgb(255 128 0)"``, or a list of them), which become sRGB floats in 0..1.</span>
 <span class="sd">    src, dst : Profile, str, path or colour space</span>
 <span class="sd">        Source and destination.</span>
-<span class="sd">    out, out_dtype</span>
-<span class="sd">        See :meth:`Transform.apply`.</span>
+<span class="sd">    out : numpy.ndarray, optional</span>
+<span class="sd">        Array to write the result to; see :meth:`Transform.apply`. Defaults to None.</span>
+<span class="sd">    out_dtype : dtype, optional</span>
+<span class="sd">        Data type of the result; see :meth:`Transform.apply`. Defaults to None.</span>
 <span class="sd">    **options</span>
 <span class="sd">        :class:`Transform` keywords: ``intent``, ``bpc``, ``proof``, ``gamut_check``, ``optimize``,</span>
 <span class="sd">        ``precision``, ``flags``.</span>
@@ -424,6 +426,18 @@
 <span class="sd">        Between two profiles the dtype follows the input (see :meth:`Transform.apply`); when a</span>
 <span class="sd">        colour space object is involved the result is ``float64``, since analytic spaces work in</span>
 <span class="sd">        floats. Pass ``out_dtype`` to choose.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    KeyError</span>
+<span class="sd">        For a name that is neither a built-in profile, a registered colour space nor a file.</span>
+<span class="sd">    CMSError</span>
+<span class="sd">        If LittleCMS cannot build the transform.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Profile.transform : The same conversion starting from a profile.</span>
+<span class="sd">    Transform : Reusable transform for repeated conversions.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
