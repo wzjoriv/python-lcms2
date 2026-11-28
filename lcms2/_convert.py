@@ -126,8 +126,10 @@ def convert(
         ``"rgb(255 128 0)"``, or a list of them), which become sRGB floats in 0..1.
     src, dst : Profile, str, path or colour space
         Source and destination.
-    out, out_dtype
-        See :meth:`Transform.apply`.
+    out : numpy.ndarray, optional
+        Array to write the result to; see :meth:`Transform.apply`. Defaults to None.
+    out_dtype : dtype, optional
+        Data type of the result; see :meth:`Transform.apply`. Defaults to None.
     **options
         :class:`Transform` keywords: ``intent``, ``bpc``, ``proof``, ``gamut_check``, ``optimize``,
         ``precision``, ``flags``.
@@ -138,6 +140,18 @@ def convert(
         Between two profiles the dtype follows the input (see :meth:`Transform.apply`); when a
         colour space object is involved the result is ``float64``, since analytic spaces work in
         floats. Pass ``out_dtype`` to choose.
+
+    Raises
+    ------
+    KeyError
+        For a name that is neither a built-in profile, a registered colour space nor a file.
+    CMSError
+        If LittleCMS cannot build the transform.
+
+    See Also
+    --------
+    Profile.transform : The same conversion starting from a profile.
+    Transform : Reusable transform for repeated conversions.
 
     Examples
     --------

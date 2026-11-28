@@ -86,32 +86,43 @@ class Transform:
     ----------
     src : Profile, str, path or list of those
         Source profile; a list makes a multi-profile transform (``dst`` omitted).
-    dst : Profile, str or path
-        Destination profile.
-    intent : Intent, str or int, or one per profile
-        Rendering intent: ``"relative"`` (default; in-gamut colors unchanged), ``"perceptual"``,
-        ``"saturation"`` or ``"absolute"``.
-    bpc : bool or one per profile
-        Black point compensation.
+    *args
+        Either ``dst`` (a Profile, str or path), or the explicit form ``src_format, dst,
+        dst_format[, intent[, flags]]``. A device link takes no argument.
+    intent : Intent, str or int, or one per profile, optional
+        Rendering intent: ``"relative"`` (in-gamut colors unchanged), ``"perceptual"``,
+        ``"saturation"`` or ``"absolute"``. Defaults to relative colorimetric.
+    flags : Flag, int or str, optional
+        Any other ``cmsFLAGS_*``. Defaults to None.
     proof : Profile, optional
-        Proofing profile: simulate ``proof`` on ``dst`` (soft proofing).
-    proof_intent : intent
-        Intent from the source to the proofing device (0-3).
-    gamut_check : bool
+        Proofing profile: simulate ``proof`` on ``dst`` (soft proofing). Defaults to None.
+    proof_intent : Intent, str or int, optional
+        Intent from the source to the proofing device (0-3). Defaults to relative colorimetric.
+    gamut_check : bool, optional
         Mark colours outside the ``proof`` gamut with the alarm colour (see :func:`set_alarm_codes`).
-    optimize : bool
-        Allow LittleCMS to precalculate (False adds ``NOOPTIMIZE``).
-    precision : {"auto", "high", "low"}
-        Precalculation table size.
-    flags : Flag, int or str
-        Any other ``cmsFLAGS_*``.
+        Defaults to False.
+    bpc : bool or one per profile, optional
+        Black point compensation. Defaults to False.
+    optimize : bool, optional
+        Allow LittleCMS to precalculate (False adds ``NOOPTIMIZE``). Defaults to True.
+    precision : {"auto", "high", "low"}, optional
+        Precalculation table size. Defaults to ``"auto"``.
     adaptation : sequence of float, optional
-        Per-profile adaptation states (makes an extended transform).
+        Per-profile adaptation states (makes an extended transform). Defaults to None.
 
     Raises
     ------
     CMSError
         When LittleCMS cannot build the transform (e.g. incompatible profiles).
+    ValueError
+        For an invalid ``precision``, ``proof_intent`` or proofing setup.
+    TypeError
+        For an unsupported combination of arguments.
+
+    See Also
+    --------
+    convert : One-call conversion with a transform cache.
+    Profile.transform : Convert starting from a profile.
 
     Examples
     --------
@@ -429,6 +440,27 @@ class Transform:
     def to_device_link(self, version: float = 4.3, flags: Any = None) -> Profile:
         """A device link profile equivalent to this transform.
 
+        Parameters
+        ----------
+        version : float, optional
+            ICC version of the device link. Defaults to 4.3.
+        flags : Flag, int or str, optional
+            Extra ``cmsFLAGS_*`` for building the link. Defaults to None.
+
+        Returns
+        -------
+        Profile
+            The device link profile.
+
+        Raises
+        ------
+        CMSError
+            If the device link cannot be created.
+
+        See Also
+        --------
+        Profile.ink_limiting : A ready-made CMYK device link.
+
         Examples
         --------
         >>> import lcms2
@@ -495,6 +527,15 @@ def supported_intents() -> dict[Intent | int, str]:
     Includes intents added by plugins; :attr:`Profile.supported_intents` lists the ones a
     given profile supports.
 
+    Returns
+    -------
+    dict
+        Intent (an :class:`Intent`, or the plain number for plugin intents) to its description.
+
+    See Also
+    --------
+    Profile.supported_intents : Intents a given profile implements.
+
     Examples
     --------
     >>> import lcms2
@@ -511,15 +552,67 @@ def supported_intents() -> dict[Intent | int, str]:
 
 
 def get_alarm_codes() -> tuple[int, ...]:
-    """The 16 gamut-check alarm values (process-wide), in 16-bit output encoding."""
+    """The 16 gamut-check alarm values (process-wide), in 16-bit output encoding.
+
+    Returns
+    -------
+    tuple of int
+        The alarm value of each of the 16 output channels.
+
+    See Also
+    --------
+    set_alarm_codes : Change the alarm values.
+
+    Examples
+    --------
+    >>> import lcms2
+    >>> len(lcms2.get_alarm_codes())
+    16
+    """
     return _lcms2.get_alarm_codes()
 
 
 def set_alarm_codes(codes: Sequence[int]) -> None:
-    """Set the gamut-check alarm values (process-wide; affects transforms created afterwards)."""
+    """Set the gamut-check alarm values (process-wide; affects transforms created afterwards).
+
+    Parameters
+    ----------
+    codes : sequence of int
+        The alarm value of each output channel, in 16-bit encoding.
+
+    See Also
+    --------
+    get_alarm_codes : Read the current alarm values.
+
+    Examples
+    --------
+    >>> import lcms2
+    >>> old = lcms2.get_alarm_codes()
+    >>> lcms2.set_alarm_codes(old)
+    >>> lcms2.get_alarm_codes() == old
+    True
+    """
     _lcms2.set_alarm_codes(list(codes))
 
 
 def set_adaptation_state(state: float) -> float:
-    """Set the process-wide absolute-colorimetric adaptation state (0..1); returns the previous one."""
+    """Set the process-wide absolute-colorimetric adaptation state (0..1); returns the previous one.
+
+    Parameters
+    ----------
+    state : float
+        Adaptation state, from 0 (no adaptation) to 1 (full adaptation).
+
+    Returns
+    -------
+    float
+        The previous adaptation state.
+
+    Examples
+    --------
+    >>> import lcms2
+    >>> previous = lcms2.set_adaptation_state(1.0)
+    >>> lcms2.set_adaptation_state(previous)
+    1.0
+    """
     return _lcms2.set_adaptation_state(float(state))
